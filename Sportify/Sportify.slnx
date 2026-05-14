@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Sportify.Aplicacion/Sportify.Aplicacion.csproj" />
+  <Project Path="Sportify.Dominio/Sportify.Dominio.csproj" />
+  <Project Path="Sportify.Infraestructura/Sportify.Infraestructura.csproj" />
+  <Project Path="Sportify.InterfazDeUsuario/Sportify.InterfazDeUsuario.csproj" />
+</Solution>
