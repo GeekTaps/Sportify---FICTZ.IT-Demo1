@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Dominio\\Sportify.Dominio.csproj",
+      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
       "projectName": "Sportify.Dominio",
-      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Dominio\\Sportify.Dominio.csproj",
+      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
       "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Dominio\\obj\\",
+      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Dominio\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"

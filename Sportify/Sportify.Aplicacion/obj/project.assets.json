@@ -1,11 +1,30 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "Sportify.Dominio/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/Sportify.Dominio.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Sportify.Dominio.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Sportify.Dominio/1.0.0": {
+      "type": "project",
+      "path": "../Sportify.Dominio/Sportify.Dominio.csproj",
+      "msbuildProject": "../Sportify.Dominio/Sportify.Dominio.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "Sportify.Dominio >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\USUARIO\\.nuget\\packages\\": {}
@@ -13,11 +32,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
       "projectName": "Sportify.Aplicacion",
-      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
       "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify.Aplicacion\\obj\\",
+      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Aplicacion\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -32,7 +51,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
+              "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Documentos\\GitHub\\Sportify - FICTZ.IT Demo1\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
