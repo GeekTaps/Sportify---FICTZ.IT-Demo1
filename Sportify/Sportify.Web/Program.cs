@@ -6,6 +6,17 @@ using Sportify.Infraestructura.Identity;
 var builder = WebApplication.CreateBuilder(args);
 //crea el builder principal de ASP.NET. Acá es donde se registran servicios.
 
+
+// permite interactuar con react sin que se bloquee
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:7001") // puerto de React al que se conecta
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //habilita MVC. Controllers + Views.
@@ -24,6 +35,7 @@ var app = builder.Build();
 //construye la aplicación. Después de esto ya no se deberían registrar servicios.
 //todos los servicios se registran antes del Build().
 
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -31,6 +43,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// permite interactuar con react sin que se bloquee
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 app.UseRouting();
