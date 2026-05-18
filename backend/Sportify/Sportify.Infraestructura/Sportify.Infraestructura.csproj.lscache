@@ -54,7 +54,6 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
-Class1.cs
 Data/ApplicationDbContext.cs
 Migrations/
  20260515030601_InitialCreate.cs
@@ -64,6 +63,7 @@ obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  Sportify.Infraestructura.AssemblyInfo.cs
  Sportify.Infraestructura.GlobalUsings.g.cs
+Repositorios/RepositorioDeportes.cs
 UsuarioIdentity.cs
 
 [metadataReferences]
