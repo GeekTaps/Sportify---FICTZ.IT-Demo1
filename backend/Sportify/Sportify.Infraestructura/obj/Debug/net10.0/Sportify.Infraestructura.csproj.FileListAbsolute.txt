@@ -1,0 +1,6 @@
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.AssemblyReference.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfoInputs.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfo.cs
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.sourcelink.json
