@@ -59,4 +59,17 @@ public class RepositorioDeportes : IRepositorioDeporte
         return true;
     }
 
+    public bool crearDeporte(string nombre, string descripcion) 
+    {
+        Deporte deporte = new Deporte(nombre, descripcion);
+        archivo.Deportes.Add(deporte);
+        archivo.SaveChanges();
+        return true;
+    }
+
+    public List<Deporte> ListarDeportes()
+    {
+        return archivo.Deportes.ToList();
+    }
+
 }

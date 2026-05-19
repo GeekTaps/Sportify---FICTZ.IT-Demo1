@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj": {}
+    "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj": {
+    "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+        "projectUniqueName": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
         "projectName": "Sportify.Aplicacion",
-        "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
-        "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\obj\\",
+        "projectPath": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+        "packagesPath": "C:\\Users\\estudiante\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\estudiante\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -24,11 +24,10 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
-                "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj"
+              "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
+                "projectPath": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj"
               }
             }
           }
@@ -43,11 +42,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -65,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -343,17 +341,17 @@
         }
       }
     },
-    "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
+    "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
+        "projectUniqueName": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
         "projectName": "Sportify.Dominio",
-        "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
-        "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\obj\\",
+        "projectPath": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
+        "packagesPath": "C:\\Users\\estudiante\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\estudiante\\proyectosDotnet\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\estudiante\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -363,7 +361,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -378,11 +375,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -400,7 +396,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
