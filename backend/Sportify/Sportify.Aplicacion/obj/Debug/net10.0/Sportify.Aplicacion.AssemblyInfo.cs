@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Sportify.Aplicacion")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b89a886c023b12bf9680dc58052d561906b9052")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2f307d478194ec1905298728fd69a9dfa66fb75")]
 [assembly: System.Reflection.AssemblyProductAttribute("Sportify.Aplicacion")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Sportify.Aplicacion")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
