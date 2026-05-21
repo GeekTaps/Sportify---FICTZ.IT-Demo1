@@ -1,60 +1,6 @@
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.deps.json
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.runtimeconfig.json
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.dll
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.dll
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.pdb
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.pdb
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.AssemblyReference.cache
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfoInputs.cache
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfo.cs
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.CoreCompileInputs.cache
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.sourcelink.json
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.13647BCD.Up2Date
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\refint\Sportify.Infraestructura.dll
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.genruntimeconfig.cache
-C:\Users\USUARIO\OneDrive\Documentos\GitHub\Sportify - FICTZ.IT Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\ref\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.deps.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.runtimeconfig.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.AssemblyReference.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfoInputs.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfo.cs
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.CoreCompileInputs.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.sourcelink.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.13647BCD.Up2Date
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\refint\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.genruntimeconfig.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\ref\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.deps.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.runtimeconfig.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Dominio.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\bin\Debug\net10.0\Sportify.Aplicacion.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.AssemblyReference.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfoInputs.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfo.cs
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.CoreCompileInputs.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.sourcelink.json
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.13647BCD.Up2Date
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\refint\Sportify.Infraestructura.dll
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.pdb
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.genruntimeconfig.cache
-C:\Users\catab\OneDrive\Documents\facultad\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\ref\Sportify.Infraestructura.dll
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.AssemblyReference.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfoInputs.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.AssemblyInfo.cs
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.csproj.CoreCompileInputs.cache
+C:\Users\USUARIO\OneDrive\Desktop\INFORMATICA\FACULTAD\3RO\INGE2\Sportify---FICTZ.IT-Demo1\backend\Sportify\Sportify.Infraestructura\obj\Debug\net10.0\Sportify.Infraestructura.sourcelink.json

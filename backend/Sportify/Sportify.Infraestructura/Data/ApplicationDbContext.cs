@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Infraestructura.Identity;
+using System;
 
 namespace Sportify.Infraestructura.Data;
 
@@ -16,4 +17,5 @@ public class ApplicationDbContext : IdentityDbContext<UsuarioIdentity> //esta cl
     //aca irian los DbSet de las entidades que queremos que se creen en la base de datos, por ejemplo:
     //public DbSet<Producto> Productos { get; set; }
     //estos crean una tabla en la base de datos por cada DbSet que declaremos, el nombre de la tabla sera el mismo que el nombre del DbSet, en este caso "Productos", y las columnas de la tabla seran las propiedades de la clase Producto.
+    public DbSet<Sportify.Dominio.Deportes.Deporte> Deportes { get; set; }
 }

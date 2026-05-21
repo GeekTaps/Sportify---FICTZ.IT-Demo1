@@ -8,19 +8,19 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\catab\\.nuget\\packages\\": {}
+    "C:\\Users\\USUARIO\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\catab\\OneDrive\\Documents\\facultad\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
+      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
       "projectName": "Sportify.Dominio",
-      "projectPath": "C:\\Users\\catab\\OneDrive\\Documents\\facultad\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
-      "packagesPath": "C:\\Users\\catab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\catab\\OneDrive\\Documents\\facultad\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\obj\\",
+      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj",
+      "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\catab\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
