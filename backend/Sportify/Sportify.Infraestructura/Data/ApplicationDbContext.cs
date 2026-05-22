@@ -18,5 +18,5 @@ public class ApplicationDbContext : IdentityDbContext<UsuarioIdentity> //esta cl
     //public DbSet<Producto> Productos { get; set; }
     //estos crean una tabla en la base de datos por cada DbSet que declaremos, el nombre de la tabla sera el mismo que el nombre del DbSet, en este caso "Productos", y las columnas de la tabla seran las propiedades de la clase Producto.
     public DbSet<Sportify.Dominio.Deportes.Deporte> Deportes { get; set; }
-    public DbSet<UsuarioIdentity> Usuarios { get; set; }
+    public DbSet<Sportify.Dominio.Turnos.Turno> Turnos { get; set; }
 }
