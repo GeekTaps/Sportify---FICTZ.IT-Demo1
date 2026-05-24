@@ -5,3 +5,5 @@ function BotonModificarDeporte() {
     </button>
   );
 }
+
+export default BotonModificarDeporte;
