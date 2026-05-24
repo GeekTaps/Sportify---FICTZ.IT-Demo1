@@ -267,3 +267,4 @@ namespace Sportify.Infraestructura.Migrations
         }
     }
 }
+// (Duplicated snapshot removed) 
