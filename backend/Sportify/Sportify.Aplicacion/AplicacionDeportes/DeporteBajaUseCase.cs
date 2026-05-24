@@ -17,7 +17,9 @@ public class DeporteBajaUseCase
     {
         if (validadorDeporte.validarId(idDeporte, repositorioDeporte)) //valida que el deporte exista antes de eliminarlo
         {
-            repositorioDeporte.eliminarDeporte(idDeporte);
+           // if () { //valida que el deporte no esté asociado a ningún turno antes de eliminarlo    
+                repositorioDeporte.eliminarDeporte(idDeporte);
+            //} else { }
         }else
         {
             throw new EntidadNotFoundException("El Deporte Que Intenta Eliminar No Existe");
