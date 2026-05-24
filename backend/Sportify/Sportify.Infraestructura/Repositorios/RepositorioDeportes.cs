@@ -53,8 +53,8 @@ public class RepositorioDeportes : IRepositorioDeporte
         {
             return false;
         }
-        deporte.GetType().GetProperty("nombre")!.SetValue(deporte, nuevoNombre);
-        deporte.GetType().GetProperty("descripcion")!.SetValue(deporte, nuevaDescripcion);
+        deporte.nombre = nuevoNombre;
+        deporte.descripcion = nuevaDescripcion;
         archivo.SaveChanges();
         return true;
     }

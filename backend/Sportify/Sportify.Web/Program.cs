@@ -35,6 +35,9 @@ var app = builder.Build();
 //construye la aplicación. Después de esto ya no se deberían registrar servicios.
 //todos los servicios se registran antes del Build().
 
+// Inicializa la base de datos SQLite (aplica migraciones al arrancar).
+RepositoriosSQLites.Inicializar(app.Services);
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

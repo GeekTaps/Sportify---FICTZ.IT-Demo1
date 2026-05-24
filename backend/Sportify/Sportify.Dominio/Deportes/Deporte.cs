@@ -1,9 +1,9 @@
 namespace Sportify.Dominio.Deportes;
 using System;
 public class Deporte{
-    public Guid id { get; private set; }
-    public string nombre { get; private set; }
-    public string descripcion { get; private set; }
+    public Guid id { get; set; }
+    public string nombre { get; set; }
+    public string descripcion { get; set; }
 
     public Deporte(string nombre, string descripcion)
     {
