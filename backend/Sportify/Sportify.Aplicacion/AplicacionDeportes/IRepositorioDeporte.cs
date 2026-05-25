@@ -1,6 +1,12 @@
 namespace Sportify.Aplicacion.AplicacionDeportes;
 using System;
+using Sportify.Dominio.Deportes;
+
 public interface IRepositorioDeporte{
+
+    public bool crearDeporte(string nombre, string descripcion);
+
+    public List<Deporte> ListarDeportes();
     public bool eliminarDeporte(Guid idDeporte);
 
     public bool existeDeporte(Guid idDeporte);
