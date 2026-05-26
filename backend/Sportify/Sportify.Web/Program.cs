@@ -26,8 +26,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Cor
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services
-    .AddIdentity<UsuarioIdentity, IdentityRole>() //configura ASP.NET Identity.
+    .AddIdentity<UsuarioIdentity, IdentityRole>(options =>  //configuracion de contraseña
+    {
+        options.Password.RequiredLength = 6;
+
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+    }) //configura ASP.NET Identity.
     .AddEntityFrameworkStores<ApplicationDbContext>(); //hace que Identity use EF Core.
+
 
 //------------------------------------------------------------------------------------------
 

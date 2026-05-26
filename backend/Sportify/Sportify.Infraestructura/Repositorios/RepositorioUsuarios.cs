@@ -22,6 +22,10 @@ public class repositorioUsuarios : IRepositorioUsuarios
 {
 
     private readonly UserManager<UsuarioIdentity> userManager;
+    public repositorioUsuarios(UserManager<UsuarioIdentity> userManager)
+{
+    this.userManager = userManager;
+}
     
 public async Task<bool> BuscarId(string id)
 {
