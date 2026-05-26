@@ -11,5 +11,7 @@ public interface IValidadorDeporte
 
     public Task<bool> validarNombre(string nombreDeporte, IRepositorioDeporte repositorioDeporte);
 
+    public Task<bool> validarNombre(string nombreDeporte, Guid? excludeId, IRepositorioDeporte repositorioDeporte);
+
     public Task<bool> validarAsociacionConTurnos(Guid idDeporte, IRepositorioTurno repositorioTurno);
 }

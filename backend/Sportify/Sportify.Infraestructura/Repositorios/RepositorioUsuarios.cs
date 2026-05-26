@@ -32,7 +32,7 @@ public class repositorioUsuarios : IRepositorioUsuarios
 
     public async Task<bool> BuscarMail(string mail) //verifico si existe un usuario con el mail parametreado
     {
-        UsuarioIdentity? usuarioBuscado = await archivo.Users.FirstOrDefaultAsync(u => u.Mail == mail);
+        UsuarioIdentity? usuarioBuscado = await archivo.Users.FirstOrDefaultAsync(u => u.Email == mail);
         return usuarioBuscado != null;
     }
 
@@ -50,7 +50,7 @@ public class repositorioUsuarios : IRepositorioUsuarios
         UsuarioIdentity usuarioAModificar = await archivo.Users.FindAsync(id);
         usuarioAModificar.GetType().GetProperty("NombreCompleto")!.SetValue(usuarioAModificar, usuario.NombreCompleto);
         usuarioAModificar.GetType().GetProperty("Contraseña")!.SetValue(usuarioAModificar, usuario.Contraseña);
-        usuarioAModificar.GetType().GetProperty("Mail")!.SetValue(usuarioAModificar, usuario.Mail);
+        usuarioAModificar.GetType().GetProperty("Email")!.SetValue(usuarioAModificar, usuario.Mail);
         usuarioAModificar.GetType().GetProperty("Edad")!.SetValue(usuarioAModificar, usuario.Edad);
         usuarioAModificar.GetType().GetProperty("Dni")!.SetValue(usuarioAModificar, usuario.Dni);
         await archivo.SaveChangesAsync();

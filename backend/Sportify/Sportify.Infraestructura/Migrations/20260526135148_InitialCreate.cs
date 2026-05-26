@@ -31,6 +31,10 @@ namespace Sportify.Infraestructura.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
+                    Contraseña = table.Column<string>(type: "TEXT", nullable: false),
+                    Edad = table.Column<string>(type: "TEXT", nullable: false),
+                    Dni = table.Column<string>(type: "TEXT", nullable: false),
+                    Borrado = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -49,6 +53,37 @@ namespace Sportify.Infraestructura.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Deportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    descripcion = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Deportes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Turnos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    cupo = table.Column<int>(type: "INTEGER", nullable: false),
+                    IdDeporte = table.Column<Guid>(type: "TEXT", nullable: false),
+                    nombreTurno = table.Column<string>(type: "TEXT", nullable: false),
+                    nommbreProfesor = table.Column<string>(type: "TEXT", nullable: false),
+                    horaInicio = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    horaFin = table.Column<TimeOnly>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Turnos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,6 +247,12 @@ namespace Sportify.Infraestructura.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Deportes");
+
+            migrationBuilder.DropTable(
+                name: "Turnos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

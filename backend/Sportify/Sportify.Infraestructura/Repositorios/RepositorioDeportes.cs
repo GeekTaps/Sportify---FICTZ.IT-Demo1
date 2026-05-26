@@ -40,6 +40,11 @@ public class RepositorioDeportes : IRepositorioDeporte
         Deporte? deporte = await archivo.Deportes.FirstOrDefaultAsync(d => d.nombre == nombreDeporte);
         return deporte != null;
     }
+
+    public async Task<Deporte?> ObtenerPorNombre(string nombreDeporte)
+    {
+        return await archivo.Deportes.FirstOrDefaultAsync(d => d.nombre == nombreDeporte);
+    }
     
     public async Task<bool> modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modificar el deporte encontrado por id, cambiando su nombre y descripcion unicamente
     {
