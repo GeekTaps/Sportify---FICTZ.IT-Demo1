@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Sportify.Dominio;
 using Sportify.Dominio.Usuario;
 
@@ -15,11 +16,11 @@ public BajaLogicaUsuarioUseCase(IRepositorioUsuarios repositorioUsuarios)
         this.repositorioUsuarios=repositorioUsuarios;
 
     }
-public void Ejecutar(Guid id)
+public async Task Ejecutar(Guid id)
     {
-        if (this.repositorioUsuarios.BuscarId(id)) //busco existencia del usuario
+        if (await this.repositorioUsuarios.BuscarId(id)) //busco existencia del usuario
         {
-            this.repositorioUsuarios.bajaLogica(id);
+            await this.repositorioUsuarios.bajaLogica(id);
         }
     }
 

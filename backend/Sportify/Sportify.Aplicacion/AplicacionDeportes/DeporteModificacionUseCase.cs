@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Sportify.Aplicacion.AplicacionDeportes;
 
@@ -13,14 +14,16 @@ public class DeporteModificacionUseCase
         this.validadorDeporte = validadorDeporte;
     }
 
-    public void Ejecutar(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modifica los datos de un deporte existente
+    public async Task Ejecutar(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modifica los datos de un deporte existente
     {
-        if (validadorDeporte.validarId(idDeporte, repositorioDeporte)) //valida que el deporte con el ID proporcionado exista antes de modificarlo
+        if (await validadorDeporte.validarId(idDeporte, repositorioDeporte)) //valida que el deporte con el ID proporcionado exista antes de modificarlo
         {
-            if (!validadorDeporte.validarNombre(nuevoNombre, repositorioDeporte)) //valida que el nuevo nombre del deporte no sea el de otro deporte antes de modificarlo
+            // Comprobar si existe otro deporte con el mismo nombre
+            if (await validadorDeporte.validarNombre(nuevoNombre, idDeporte, repositorioDeporte))
             {
-                repositorioDeporte.modificarDeporte(idDeporte, nuevoNombre, nuevaDescripcion);
-            }else
+                await repositorioDeporte.modificarDeporte(idDeporte, nuevoNombre, nuevaDescripcion);
+            }
+            else
             {
                 throw new Exception("Ya Existe Un Deporte Con El Nombre Que Intenta Asignar");
             }

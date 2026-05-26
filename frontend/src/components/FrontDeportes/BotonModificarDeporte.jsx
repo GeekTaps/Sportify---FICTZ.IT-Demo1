@@ -1,7 +1,7 @@
-function BotonModificarDeporte() {
+function BotonModificarDeporte({ onClick }) {
   return (
-    <button>
-      Modificar Datos del Deporte
+    <button type="button" onClick={onClick}>
+      Modificar
     </button>
   );
 }

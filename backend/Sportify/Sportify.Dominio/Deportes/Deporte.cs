@@ -5,6 +5,8 @@ public class Deporte{
     public string nombre { get; set; }
     public string descripcion { get; set; }
 
+    public Deporte() { }
+
     public Deporte(string nombre, string descripcion)
     {
         this.id = Guid.NewGuid();
