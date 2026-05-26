@@ -16,20 +16,11 @@ public BajaLogicaUsuarioUseCase(IRepositorioUsuarios repositorioUsuarios)
         this.repositorioUsuarios=repositorioUsuarios;
 
     }
-<<<<<<< HEAD
 public async Task Ejecutar(string id)
 {
     if (await this.repositorioUsuarios.BuscarId(id))
     {
         await this.repositorioUsuarios.BajaLogica(id);
-=======
-public async Task Ejecutar(Guid id)
-    {
-        if (await this.repositorioUsuarios.BuscarId(id)) //busco existencia del usuario
-        {
-            await this.repositorioUsuarios.bajaLogica(id);
-        }
->>>>>>> origin/development
     }
 }
 

@@ -12,10 +12,6 @@ public class RepositorioPagos : IRepositorioPago
     }
     public List<Pago> listarPagosUsuario(Guid idUsuario)
     {
-<<<<<<< HEAD
-        return new List<Pago>(); //Hola soy zega dejé esto aca asi sin nada porque sino no corre el program
-=======
         throw new NotImplementedException();
->>>>>>> origin/development
     }
 }

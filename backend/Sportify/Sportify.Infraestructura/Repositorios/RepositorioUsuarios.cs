@@ -82,7 +82,7 @@ public async Task ModificarUsuario(string id, Usuario usuario)
         usuario.Mail;
                                                 //esto modifica los datos del usuario
 
-    usuarioAModificar.Edad =
+    usuarioAModificar.Edad =    
         usuario.Edad;
 
     usuarioAModificar.Dni =
