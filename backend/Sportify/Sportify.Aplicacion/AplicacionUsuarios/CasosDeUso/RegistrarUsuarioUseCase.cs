@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Sportify.Dominio;
 using Sportify.Dominio.Usuario;
 namespace Sportify.Aplicacion.AplicacionUsuarios;
@@ -18,7 +19,7 @@ public async Task Ejecutar(Usuario usuario)//(voz robotica) valido usuario, agre
     {
         if (await this.validadoroRegistrarUsuarios.validar(usuario))
         {
-            this.repositorioUsuarios.RegistrarUsuario(usuario);
+            await this.repositorioUsuarios.RegistrarUsuario(usuario);
         }
 
     }

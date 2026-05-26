@@ -1,16 +1,19 @@
 namespace Sportify.Aplicacion.AplicacionTurnos;
+using System;
+using System.Threading.Tasks;
 using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion.AplicacionDeportes;
-public interface ValidadorTurno
+
+public class ValidadorTurno : IValidadorTurno
 {
-    bool validar(Turno turno, IRepositorioDeporte reposDeporte, out string mensajeError)
+    public async Task<(bool valido, string mensajeError)> validar(Turno turno, IRepositorioDeporte reposDeporte)
     {
-        mensajeError = "";
-        if (turno.cupo<=0)
+        string mensajeError = "";
+        if (turno.cupo <= 0)
         {
             mensajeError = "El cupo del turno debe ser mayor a 0";
         }
-        if  (turno.Fecha < DateTime.Now)
+        if (turno.Fecha < DateTime.Now)
         {
             mensajeError += "La fecha del turno no puede ser anterior a la fecha y hora actual";
         }
@@ -30,10 +33,10 @@ public interface ValidadorTurno
         {
             mensajeError += "Debe asignar un profesor al turno";
         }
-        if (!reposDeporte.existeDeporte(turno.IdDeporte))
+        if (!await reposDeporte.existeDeporte(turno.IdDeporte))
         {
             mensajeError += "El deporte asociado al turno no existe";
         }
-        return mensajeError == ""; //devuelve true si el mensaje de error esta vacio, false si no lo esta 
-    } 
+        return (mensajeError == "", mensajeError); //devuelve tupla con booleano y mensaje de error
+    }
 }

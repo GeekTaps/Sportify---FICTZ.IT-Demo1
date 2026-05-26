@@ -4,6 +4,9 @@ import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 import HomePage from './pages/HomePage'
+import DeportePage from './pages/DeportePage'
+import ModificarDeportePage from './pages/ModificarDeportePage'
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 // Test de conexión backend (Con Antigravity, funciona :D)
 
@@ -26,10 +29,29 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
       });
   }, []);
 
-  return (
-    <>
-      <HomePage />
-    </>
+  return ( //esto es lo que se muestra en la interfaz.
+    <BrowserRouter>
+    <nav
+      style={{
+        display: "flex",
+        gap: "15px",
+        padding: "10px",
+        background: "#eee",
+        marginBottom: "20px",
+      }}
+    >
+      <Link to="/">Home</Link>
+      <Link to="/deportes">Deportes</Link>
+    </nav>
+
+      <p>{backendMessage}</p>
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/deportes" element={<DeportePage />} />
+        <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

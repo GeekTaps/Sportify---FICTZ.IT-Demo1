@@ -16,7 +16,11 @@ public async Task<bool> validar (Usuario usuario)   //huele re mal este codigo l
     {
       if (!string.IsNullOrWhiteSpace(usuario.Mail)|| !usuario.Mail.Contains("@"))  //mail valido
       {
+<<<<<<< HEAD
         if (await this.repositorioUsuarios.BuscarMail(usuario.Mail))  //mail que no exista ya 
+=======
+        if (!await this.repositorioUsuarios.BuscarMail(usuario.Mail))  //mail que no exista ya 
+>>>>>>> origin/development
         {
             if (!string.IsNullOrWhiteSpace(usuario.Contraseña)) //contraseña no nula
             {

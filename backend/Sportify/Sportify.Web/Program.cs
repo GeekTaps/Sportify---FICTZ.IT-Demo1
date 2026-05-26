@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Infraestructura.Data;
 using Sportify.Infraestructura.Identity;
+using Sportify.Aplicacion.AplicacionDeportes;
+using Sportify.Infraestructura.Repositorios;
+using Sportify.Aplicacion.AplicacionTurnos;
+using Sportify.Aplicacion.AplicacionUsuarios;
+
 
 var builder = WebApplication.CreateBuilder(args);
 //crea el builder principal de ASP.NET. Acá es donde se registran servicios.
@@ -20,6 +25,19 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 //habilita MVC. Controllers + Views.
+
+//hagan los Scoped y Transient necesarios para la comunicacion con el front.
+
+//Scoped de Repositorios // se registran los repositorios para que puedan ser inyectados en los casos de uso
+builder.Services.AddScoped<IRepositorioDeporte, RepositorioDeportes>();
+builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
+
+//Scoped de Deportes
+builder.Services.AddScoped<DeporteListadoUseCase>();
+builder.Services.AddScoped<DeporteAltaUseCase>();
+builder.Services.AddScoped<DeporteBajaUseCase>();
+builder.Services.AddScoped<DeporteModificacionUseCase>();
+builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
@@ -47,6 +65,15 @@ var app = builder.Build();
 // Inicializa la base de datos SQLite (aplica migraciones al arrancar).
 RepositoriosSQLites.Inicializar(app.Services);
 
+using (var scope = app.Services.CreateScope())
+{
+    var repo = scope.ServiceProvider.GetRequiredService<IRepositorioDeporte>();
+    var existe = await repo.existeDeportePorNombre("Futbol");
+    if (!existe)
+    {
+        await repo.crearDeporte("Futbol", "Deporte de equipo");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -72,5 +99,4 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
-app.Run();
+await app.RunAsync();

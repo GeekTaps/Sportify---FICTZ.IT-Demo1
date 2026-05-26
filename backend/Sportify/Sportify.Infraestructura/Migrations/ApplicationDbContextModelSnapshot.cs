@@ -213,6 +213,13 @@ namespace Sportify.Infraestructura.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("Contraseña")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+>>>>>>> origin/development
                     b.Property<string>("Dni")
                         .IsRequired()
                         .HasColumnType("TEXT");
