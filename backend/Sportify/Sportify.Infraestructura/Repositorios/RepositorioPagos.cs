@@ -10,4 +10,8 @@ public class RepositorioPagos : IRepositorioPago
     {
         throw new NotImplementedException();
     }
+    public List<Pago> listarPagosUsuario(Guid idUsuario)
+    {
+        return new List<Pago>(); //Hola soy zega dejé esto aca asi sin nada porque sino no corre el program
+    }
 }
