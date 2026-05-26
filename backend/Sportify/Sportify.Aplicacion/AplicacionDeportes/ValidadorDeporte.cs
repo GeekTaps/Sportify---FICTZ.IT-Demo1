@@ -1,20 +1,28 @@
 using System;
+using System.Threading.Tasks;
 
 namespace Sportify.Aplicacion.AplicacionDeportes;
+using Sportify.Aplicacion.AplicacionTurnos;
+
 
 public class ValidadorDeporte : IValidadorDeporte
 {
-    public bool validarId(Guid idDeporte, IRepositorioDeporte repositorio)
+    public async Task<bool> validarId(Guid idDeporte, IRepositorioDeporte repositorio)
     {
-        return repositorio.existeDeporte(idDeporte);
+        return await repositorio.existeDeporte(idDeporte);
     }
 
-    public bool validarNombre(string nombreDeporte, IRepositorioDeporte repositorio)
+    public async Task<bool> validarNombre(string nombreDeporte, IRepositorioDeporte repositorio)
     {
         if (string.IsNullOrEmpty(nombreDeporte))
         {
             return false;
         }
-        return repositorio.existeDeportePorNombre(nombreDeporte);
+        return await repositorio.existeDeportePorNombre(nombreDeporte);
+    }
+
+    public async Task<bool> validarAsociacionConTurnos(Guid idDeporte, IRepositorioTurno repositorioTurno)
+    {
+        return !await repositorioTurno.existeTurnoAsociadoAlDeporte(idDeporte);
     }
 }

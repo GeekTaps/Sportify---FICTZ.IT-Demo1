@@ -6,6 +6,6 @@ namespace Sportify.Aplicacion.AplicacionUsuarios;
 public interface IValidadorModificarUsuario
 {
     
-public bool validar (Usuario usuario, Guid id);
+	Task<bool> validar (Usuario usuario, Guid id);
 
 }

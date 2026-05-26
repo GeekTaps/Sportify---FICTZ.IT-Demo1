@@ -12,13 +12,13 @@ public ValidadorModificarUsuario ( IRepositorioUsuarios repositorioUsuarios)
     {
         this.repositorioUsuarios=repositorioUsuarios;
     }
-public bool validar (Usuario usuario, Guid id)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
+public async Task<bool> validar (Usuario usuario, Guid id)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
     {
-     if (this.repositorioUsuarios.BuscarId(id))
+     if (await this.repositorioUsuarios.BuscarId(id))
      {   
       if (!string.IsNullOrWhiteSpace(usuario.Mail)|| !usuario.Mail.Contains("@"))  //mail valido
       {
-        if (!this.repositorioUsuarios.BuscarMail(usuario.Mail))  //mail que no exista ya 
+        if (!await this.repositorioUsuarios.BuscarMail(usuario.Mail))  //mail que no exista ya 
         {
             if (!string.IsNullOrWhiteSpace(usuario.Contraseña)) //contraseña no nula
             {

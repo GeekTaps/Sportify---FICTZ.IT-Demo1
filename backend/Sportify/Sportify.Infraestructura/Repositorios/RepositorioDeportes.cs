@@ -12,64 +12,59 @@ public class RepositorioDeportes : IRepositorioDeporte
 {
     private readonly ApplicationDbContext archivo;
 
-    public bool eliminarDeporte(Guid idDeporte) //eliminar deporte por id
+    public RepositorioDeportes(ApplicationDbContext archivo)
     {
-        Deporte? deporte = archivo.Deportes.Find(idDeporte);
+        this.archivo = archivo;
+    }
+
+    public async Task<bool> eliminarDeporte(Guid idDeporte) //eliminar deporte por id
+    {
+        Deporte? deporte = await archivo.Deportes.FindAsync(idDeporte);
         if (deporte == null)
         {
             return false;
         }
         archivo.Deportes.Remove(deporte);
-        archivo.SaveChanges();
+        await archivo.SaveChangesAsync();
         return true;
     }
 
-    public bool existeDeporte(Guid idDeporte) //se fija si el deporte con dicho Id existe
+    public async Task<bool> existeDeporte(Guid idDeporte) //se fija si el deporte con dicho Id existe
     {
-        Deporte? deporte = archivo.Deportes.Find(idDeporte);
-        if (deporte != null)
-        {
-            return true; //si el deporte existe, devuelve true
-        }
-
-        return false;
+        Deporte? deporte = await archivo.Deportes.FindAsync(idDeporte);
+        return deporte != null;
     }
 
-    public bool existeDeportePorNombre(string nombreDeporte) //se fija si el deporte con dicho nombre existe
+    public async Task<bool> existeDeportePorNombre(string nombreDeporte) //se fija si el deporte con dicho nombre existe
     {
-        Deporte? deporte = archivo.Deportes.FirstOrDefault(d => d.nombre == nombreDeporte);
-        if (deporte != null)
-        {
-            return true; //si el deporte con ese nuevo nombre ya existe, devuelve true
-        }
-
-        return false;
+        Deporte? deporte = await archivo.Deportes.FirstOrDefaultAsync(d => d.nombre == nombreDeporte);
+        return deporte != null;
     }
     
-    public bool modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modificar el deporte encontrado por id, cambiando su nombre y descripcion unicamente
+    public async Task<bool> modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modificar el deporte encontrado por id, cambiando su nombre y descripcion unicamente
     {
-        Deporte? deporte = archivo.Deportes.Find(idDeporte);
+        Deporte? deporte = await archivo.Deportes.FindAsync(idDeporte);
         if (deporte == null)
         {
             return false;
         }
         deporte.nombre = nuevoNombre;
         deporte.descripcion = nuevaDescripcion;
-        archivo.SaveChanges();
+        await archivo.SaveChangesAsync();
         return true;
     }
 
-    public bool crearDeporte(string nombre, string descripcion) 
+    public async Task<bool> crearDeporte(string nombre, string descripcion) 
     {
         Deporte deporte = new Deporte(nombre, descripcion);
-        archivo.Deportes.Add(deporte);
-        archivo.SaveChanges();
+        await archivo.Deportes.AddAsync(deporte);
+        await archivo.SaveChangesAsync();
         return true;
     }
 
-    public List<Deporte> ListarDeportes()
+    public async Task<List<Deporte>> ListarDeportes()
     {
-        return archivo.Deportes.ToList();
+        return await archivo.Deportes.ToListAsync();
     }
 
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Sportify.Dominio.Deportes;
 
 namespace Sportify.Aplicacion.AplicacionDeportes;
@@ -11,8 +13,8 @@ public class DeporteListadoUseCase
         this.repositorioDeporte = repositorioDeporte;
     }
 
-    public List<Deporte> Ejecutar()
+    public async Task<List<Deporte>> Ejecutar()
     {
-        return repositorioDeporte.ListarDeportes();
+        return await repositorioDeporte.ListarDeportes();
     }
 }

@@ -4,6 +4,9 @@ namespace Sportify.Infraestructura.Identity;
 
 public class UsuarioIdentity : IdentityUser
 {
+    // Parameterless constructor required by EF Core for materialization
+    protected UsuarioIdentity() { }
+
     public Guid ID { get; private set; }
     public string NombreCompleto { get; private set; } = "";
     public string Contraseña {get; private set;}

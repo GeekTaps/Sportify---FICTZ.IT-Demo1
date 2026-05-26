@@ -1,17 +1,19 @@
 namespace Sportify.Aplicacion.AplicacionDeportes;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Sportify.Dominio.Deportes;
 
 public interface IRepositorioDeporte{
 
-    public bool crearDeporte(string nombre, string descripcion);
+    public Task<bool> crearDeporte(string nombre, string descripcion);
 
-    public List<Deporte> ListarDeportes();
-    public bool eliminarDeporte(Guid idDeporte);
+    public Task<List<Deporte>> ListarDeportes();
+    public Task<bool> eliminarDeporte(Guid idDeporte);
 
-    public bool existeDeporte(Guid idDeporte);
+    public Task<bool> existeDeporte(Guid idDeporte);
 
-    public bool existeDeportePorNombre(string nombreDeporte);
+    public Task<bool> existeDeportePorNombre(string nombreDeporte);
 
-    public bool modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion);
+    public Task<bool> modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion);
 }
