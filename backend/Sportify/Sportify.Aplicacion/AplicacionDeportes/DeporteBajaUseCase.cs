@@ -28,6 +28,7 @@ public class DeporteBajaUseCase
             } else
             {
                 throw new EntidadAsociadaException("El Deporte Que Intenta Eliminar Está Asociado A Un Turno, Elimine Primero El/ Los Turnos Asociados");
+                
             }
         }else
         {

@@ -1,3 +1,4 @@
+import BotonEliminarDeporte from "../components/FrontDeportes/BotonEliminarDeporte";
 import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDeporte";
 import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
 import { useState } from "react";
@@ -24,6 +25,24 @@ function DeportePage() {
     navigate(`/deportes/modificar/${id}`);
   };
 
+  const eliminarDeporte = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este deporte?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+      setDeportes(deportes.filter((d) => d.id !== id));
+    } catch (error) {
+      console.error("Error al eliminar deporte:", error);
+    }
+  };
+
   return (
     <div>
       <h1>Bienvenido a la página de deportes!</h1>
@@ -36,6 +55,7 @@ function DeportePage() {
           <li key={d.id} style={{ marginBottom: "12px" }}>
             <strong>{d.nombre}</strong> - {d.descripcion}
             <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />
+            <BotonEliminarDeporte onClick={() => eliminarDeporte(d.id)} />
           </li>
         ))}
       </ul>
