@@ -2566,19 +2566,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\USUARIO\\.nuget\\packages\\": {}
+    "C:\\Users\\Asus\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+      "projectUniqueName": "D:\\ProyectoIng2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
       "projectName": "Sportify.Aplicacion",
-      "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
-      "packagesPath": "C:\\Users\\USUARIO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\obj\\",
+      "projectPath": "D:\\ProyectoIng2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\Sportify.Aplicacion.csproj",
+      "packagesPath": "C:\\Users\\Asus\\.nuget\\packages\\",
+      "outputPath": "D:\\ProyectoIng2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Aplicacion\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\USUARIO\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Asus\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -2591,8 +2591,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
-              "projectPath": "C:\\Users\\USUARIO\\OneDrive\\Desktop\\INFORMATICA\\FACULTAD\\3RO\\INGE2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj"
+            "D:\\ProyectoIng2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj": {
+              "projectPath": "D:\\ProyectoIng2\\Sportify---FICTZ.IT-Demo1\\backend\\Sportify\\Sportify.Dominio\\Sportify.Dominio.csproj"
             }
           }
         }

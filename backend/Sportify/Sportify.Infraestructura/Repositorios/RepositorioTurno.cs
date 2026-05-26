@@ -44,4 +44,8 @@ public class RepositorioTurno : IRepositorioTurno
     {
         return await archivo.Turnos.AnyAsync(t => t.IdDeporte == idDeporte); //devuelve true si hay turnos asociados al deporte, false si no hay turnos asociados
     }
+    public async Task<List<Turno>> ListarTurnos()
+    {
+        return await archivo.Turnos.ToListAsync();
+    }
 }
