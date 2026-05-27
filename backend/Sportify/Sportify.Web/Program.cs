@@ -42,6 +42,12 @@ builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 
+//Scoped de Turnos
+builder.Services.AddScoped<TurnoListadoUseCase>();
+builder.Services.AddScoped<TurnoAltaUseCase>();
+builder.Services.AddScoped<TurnoModificacionUseCase>();
+builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
         builder.Configuration.GetConnectionString("DefaultConnection")));
