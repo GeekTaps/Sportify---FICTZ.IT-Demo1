@@ -31,12 +31,15 @@ builder.Services.AddControllersWithViews();
 //Scoped de Repositorios // se registran los repositorios para que puedan ser inyectados en los casos de uso
 builder.Services.AddScoped<IRepositorioDeporte, RepositorioDeportes>();
 builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
+builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
 builder.Services.AddScoped<DeporteAltaUseCase>();
 builder.Services.AddScoped<DeporteBajaUseCase>();
 builder.Services.AddScoped<DeporteModificacionUseCase>();
+builder.Services.AddScoped<RegistrarUsuarioUseCase>();
+builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.

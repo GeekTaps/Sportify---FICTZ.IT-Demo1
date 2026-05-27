@@ -18,11 +18,11 @@ using Sportify.Dominio.Usuario;
 //
 //-----------------------------------------------------------------------------------
 //REWORKEAMOS EL ZEGASITORIO AHORA CON ASYNC TASKS
-public class repositorioUsuarios : IRepositorioUsuarios
+public class RepositorioUsuarios : IRepositorioUsuarios
 {
 
     private readonly UserManager<UsuarioIdentity> userManager;
-    public repositorioUsuarios(UserManager<UsuarioIdentity> userManager)
+    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager)
 {
     this.userManager = userManager;
 }
@@ -82,7 +82,7 @@ public async Task ModificarUsuario(string id, Usuario usuario)
         usuario.Mail;
                                                 //esto modifica los datos del usuario
 
-    usuarioAModificar.Edad =    
+    usuarioAModificar.Edad =
         usuario.Edad;
 
     usuarioAModificar.Dni =

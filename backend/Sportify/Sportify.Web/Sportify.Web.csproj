@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Sportify.Dominio\Sportify.Dominio.csproj" />
     <ProjectReference Include="..\Sportify.Aplicacion\Sportify.Aplicacion.csproj" />
     <ProjectReference Include="..\Sportify.Infraestructura\Sportify.Infraestructura.csproj" />
+    
   </ItemGroup>
-<Compile Include="DTOs\RegistrarUsuarioDTO.cs" />
+
 </Project>

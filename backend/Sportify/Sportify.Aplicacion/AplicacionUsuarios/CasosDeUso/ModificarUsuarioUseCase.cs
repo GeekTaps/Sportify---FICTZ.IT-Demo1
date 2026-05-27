@@ -19,12 +19,12 @@ public modificarUsuarioUseCase(IValidadorModificarUsuario validadorUsuario,IRepo
 //esta parte me dejó muchas dudas
 public async Task Ejecutar(string idUsuario, Usuario usuario)
     {
-        if (await this.validadorModificarUsuario
-            .validar(usuario, idUsuario))
-        {
+         await this.validadorModificarUsuario
+            .validar(usuario, idUsuario);
+        
             await this.repositorioUsuarios
                 .ModificarUsuario(idUsuario, usuario);
-        }
+        
     }
     
 
