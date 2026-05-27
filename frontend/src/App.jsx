@@ -56,7 +56,7 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
             <Routes>
                 <Route path="/" element={<HomePage />} />
 
-                <Route path="/registro" element={<RegistrarUsuarioPage />} />
+                <Route path="/register" element={<RegistrarUsuarioPage />} />
                 <Route path="/deportes" element={<DeportePage />} />
                 <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
                 <Route path="/turnos" element={<TurnoPage />} />

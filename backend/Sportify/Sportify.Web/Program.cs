@@ -100,8 +100,14 @@ using (var scope = app.Services.CreateScope())
     var milkaUser = await userManager.FindByEmailAsync("milka123@mail.com");
     if (milkaUser == null)
     {
-        milkaUser = new UsuarioIdentity("Milka Test", "Password123!", "milka123@mail.com", "25", "12345678");
-        milkaUser.UserName = "milka123@mail.com"; // Requerido por Identity
+        milkaUser = new UsuarioIdentity
+        {
+            NombreCompleto = "Milka Test",
+            Email = "milka123@mail.com",
+            Edad = "25",
+            Dni = "12345678",
+            UserName = "milka123@mail.com" // Requerido por Identity
+        };
         var result = await userManager.CreateAsync(milkaUser, "Milka.123!"); // Contraseña fuerte requerida por defecto
 
         if (result.Succeeded)
