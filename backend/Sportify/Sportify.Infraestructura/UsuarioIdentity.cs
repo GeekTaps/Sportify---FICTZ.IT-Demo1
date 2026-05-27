@@ -11,7 +11,6 @@ namespace Sportify.Infraestructura.Identity;
 //una paja pero si queremos usar entity framework hay que hacerlo
 public class UsuarioIdentity : IdentityUser
 {
-<<<<<<< HEAD
     public string NombreCompleto { get; set; } = "";
     public string Edad { get; set; } = "";
     public string Dni { get; set; } = "";
@@ -19,24 +18,5 @@ public class UsuarioIdentity : IdentityUser
 
     public UsuarioIdentity()
     {
-=======
-    // Parameterless constructor required by EF Core for materialization
-    protected UsuarioIdentity() { }
-
-    public string NombreCompleto { get; private set; } = "";
-    public string Contraseña { get; private set; } = "";
-    public string Edad { get; private set; } = "";
-    public string Dni { get; private set; } = "";
-    public bool Borrado { get; private set; }
-
-    public UsuarioIdentity(string nombre, string contraseña, string mail, string edad, string dni)
-    {
-        this.NombreCompleto = nombre;
-        this.Contraseña = contraseña;
-        this.Email = mail;
-        this.Edad = edad;
-        this.Dni = dni;
-        this.Borrado = false;
->>>>>>> origin/development
     }
 }
