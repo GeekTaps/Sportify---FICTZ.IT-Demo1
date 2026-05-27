@@ -11,7 +11,7 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260526135148_InitialCreate")]
+    [Migration("20260527180646_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -214,10 +214,6 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Contraseña")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Dni")

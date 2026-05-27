@@ -31,7 +31,6 @@ namespace Sportify.Infraestructura.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
-                    Contraseña = table.Column<string>(type: "TEXT", nullable: false),
                     Edad = table.Column<string>(type: "TEXT", nullable: false),
                     Dni = table.Column<string>(type: "TEXT", nullable: false),
                     Borrado = table.Column<bool>(type: "INTEGER", nullable: false),
