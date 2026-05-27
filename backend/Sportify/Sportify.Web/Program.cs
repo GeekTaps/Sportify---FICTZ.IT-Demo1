@@ -38,9 +38,12 @@ builder.Services.AddScoped<DeporteListadoUseCase>();
 builder.Services.AddScoped<DeporteAltaUseCase>();
 builder.Services.AddScoped<DeporteBajaUseCase>();
 builder.Services.AddScoped<DeporteModificacionUseCase>();
+
+builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
+
+//Scoped de Usuarios 
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
-builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
