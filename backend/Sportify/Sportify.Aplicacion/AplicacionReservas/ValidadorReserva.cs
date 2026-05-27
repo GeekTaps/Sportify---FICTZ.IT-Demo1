@@ -8,7 +8,7 @@ namespace Sportify.Aplicacion.AplicacionReservas;
 
 
 
-public class validadorReserva : IValidadorReserva
+public class ValidadorReserva : IValidadorReserva
 {
     public async Task<bool> validarId(Guid idReserva, IRepositorioReserva repositorioReserva) // = chequear si existe
     {
