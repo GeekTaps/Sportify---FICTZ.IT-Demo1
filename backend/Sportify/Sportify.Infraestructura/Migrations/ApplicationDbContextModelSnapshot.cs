@@ -164,6 +164,40 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Deportes");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Turnos.Turno", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IdDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("cupo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("horaFin")
+                        .HasColumnType("TEXT");
+
+                    b.Property<TimeOnly>("horaInicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("nombreTurno")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("nommbreProfesor")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Turnos");
+                });
+
             modelBuilder.Entity("Sportify.Infraestructura.Identity.UsuarioIdentity", b =>
                 {
                     b.Property<string>("Id")
@@ -172,8 +206,19 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Borrado")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Dni")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Edad")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")

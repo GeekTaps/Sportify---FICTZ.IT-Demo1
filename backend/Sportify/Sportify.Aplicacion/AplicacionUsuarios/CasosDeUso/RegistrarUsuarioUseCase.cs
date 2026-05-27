@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Sportify.Dominio;
 using Sportify.Dominio.Usuario;
 namespace Sportify.Aplicacion.AplicacionUsuarios;
@@ -6,20 +7,20 @@ namespace Sportify.Aplicacion.AplicacionUsuarios;
 public class RegistrarUsuarioUseCase
 {
 private readonly IRepositorioUsuarios repositorioUsuarios;
-private readonly IValidadorRegistrarUsuario validadoroRegistrarUsuarios;
+private readonly IValidadorRegistrarUsuario validadorRegistrarUsuarios;
 public RegistrarUsuarioUseCase(IRepositorioUsuarios repositorioUsuarios, IValidadorRegistrarUsuario validadorUsuario)
     {
         this.repositorioUsuarios=repositorioUsuarios;
-        this.validadoroRegistrarUsuarios=validadorUsuario;
+        this.validadorRegistrarUsuarios=validadorUsuario;
     }
 
 
-public void Ejecutar(Usuario usuario)//(voz robotica) valido usuario, agrego usuario, bip, bup, bup, bip
+public async Task Ejecutar(Usuario usuario)//(voz robotica) valido usuario, agrego usuario, bip, bup, bup, bip
     {
-        if (this.validadoroRegistrarUsuarios.validar(usuario))
-        {
-            this.repositorioUsuarios.RegistrarUsuario(usuario);
-        }
+         await this.validadorRegistrarUsuarios.validar(usuario);
+        
+            await this.repositorioUsuarios.RegistrarUsuario(usuario);
+        
 
     }
 

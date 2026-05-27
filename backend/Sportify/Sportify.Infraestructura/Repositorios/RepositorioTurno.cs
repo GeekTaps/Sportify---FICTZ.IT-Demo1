@@ -1,38 +1,55 @@
 namespace Sportify.Infraestructura.Repositorios;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Sportify.Infraestructura.Data;
 using Sportify.Dominio;
 using Sportify.Aplicacion.AplicacionTurnos;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Dominio.Turnos;
 public class RepositorioTurno : IRepositorioTurno
 {
     private readonly ApplicationDbContext archivo;
-    public void AltaTurno (Turno nuevoTurno)
+
+    public RepositorioTurno(ApplicationDbContext archivo)
     {
-        {
-            archivo.Turnos.Add(nuevoTurno); //agrega el nuevo turno a archivo
-            archivo.SaveChanges(); //guarda los cambios en la base de datos
-        }
+        this.archivo = archivo;
     }
 
-    public bool ModificarTurno(Turno nuevoTurno, Guid idTurno) //metodo para modificar un turno
+    public async Task AltaTurno(Turno nuevoTurno)
     {
-        Turno? turno= archivo.Turnos.Find(idTurno); //busca el turno por su id
+        await archivo.Turnos.AddAsync(nuevoTurno); //agrega el nuevo turno a archivo
+        await archivo.SaveChangesAsync(); //guarda los cambios en la base de datos
+    }
+
+    public async Task<bool> ModificarTurno(Turno nuevoTurno, Guid idTurno) //metodo para modificar un turno
+    {
+        Turno? turno = await archivo.Turnos.FindAsync(idTurno); //busca el turno por su id
         if (turno != null)
         {
-            turno= nuevoTurno; //modifica el turno encontrado con los nuevos datos
-            archivo.SaveChanges(); //guarda los cambios en la base de datos
+            turno = nuevoTurno; //modifica el turno encontrado con los nuevos datos
+            await archivo.SaveChangesAsync(); //guarda los cambios en la base de datos
         }
         return turno != null; //devuelve true si se modifico el turno, false si no se encontro el turno
     }
 
-    public bool BuscarTurnoPorId(Guid idTurno) //metodo para obtener un turno por su id
+    public async Task<bool> BuscarTurnoPorId(Guid idTurno) //metodo para obtener un turno por su id
     {
-        Turno? turno = archivo.Turnos.Find(idTurno); //busca el turno por su id
+        Turno? turno = await archivo.Turnos.FindAsync(idTurno); //busca el turno por su id
         return turno != null; //devuelve true si se encuentra el turno, false si no existe
     }
     
+    public async Task<bool> existeTurnoAsociadoAlDeporte(Guid idDeporte) //metodo para verificar si un deporte tiene turnos asociados
+    {
+        return await archivo.Turnos.AnyAsync(t => t.IdDeporte == idDeporte); //devuelve true si hay turnos asociados al deporte, false si no hay turnos asociados
+    }
+    public async Task<List<Turno>> ListarTurnos()
+    {
+        return await archivo.Turnos.ToListAsync();
+    }
+    public async Task<bool> EncontrarRepetido(Turno nuevoTurno)
+    {
+        return await archivo.Turnos.AnyAsync(t => t.IdDeporte == nuevoTurno.IdDeporte && t.Fecha == nuevoTurno.Fecha && t.horaInicio == nuevoTurno.horaInicio && t.horaFin == nuevoTurno.horaFin); //devuelve true si hay un turno repetido (mismo deporte, fecha, hora de inicio y hora de fin), false si no hay turnos repetidos
+    }
 }
