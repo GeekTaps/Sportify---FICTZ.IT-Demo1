@@ -1,6 +1,6 @@
 using System;
 
-namespace Sportify.Aplicacion;
+namespace Sportify.Aplicacion.Excepciones;
 
 public class EntidadRepetidaException : Exception
 {
