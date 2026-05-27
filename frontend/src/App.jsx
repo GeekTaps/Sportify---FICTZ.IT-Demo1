@@ -8,6 +8,7 @@ import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
 import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
+import ReservasPage from './pages/ReservasPage'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 // Test de conexión backend (Con Antigravity, funciona :D)
@@ -45,6 +46,7 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
       <Link to="/">Home</Link>
       <Link to="/deportes">Deportes</Link>
       <Link to="/turnos">Turnos</Link>
+      <Link to="/reservas">Reservas</Link>
     </nav>
 
       <p>{backendMessage}</p>
@@ -56,6 +58,7 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
         <Route path="/turnos" element={<TurnoPage />} />
         <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
         <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
+        <Route path="/reservas" element={<ReservasPage />} />
       </Routes>
     </BrowserRouter>
   )
