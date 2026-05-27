@@ -56,6 +56,7 @@ public async Task validar(Usuario usuario, string idUsuario)   //huele re mal es
     {
         "puta",
         "mierda",
+        "joder",
         "idiota",
         "pelotudo",
         "maricon",
