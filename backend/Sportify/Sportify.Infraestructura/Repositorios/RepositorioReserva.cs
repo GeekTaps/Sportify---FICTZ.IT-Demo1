@@ -12,53 +12,59 @@ public class RepositorioReserva : IRepositorioReserva
 {
     private readonly ApplicationDbContext archivo;
 
+    public RepositorioReserva(ApplicationDbContext archivo)
+    {
+        this.archivo = archivo;
+    }
+
     // *-*-*-*-*-*-*-*-*-* AGREGAR *-*-*-*-*-*-*-*-*-*
 
-    public void agregarReserva(Reserva r)
+    public async Task agregarReserva(Reserva r)
     {
-        archivo.Reservas.Add(r);
-        archivo.SaveChanges();
+        await archivo.Reservas.AddAsync(r);
+        await archivo.SaveChangesAsync();
     }
 
     // *-*-*-*-*-*-*-*-*-* ELIMINAR *-*-*-*-*-*-*-*-*-*
-    
-    public bool eliminarReserva(Guid idReserva)
+
+    public async Task<bool> eliminarReserva(Guid idReserva)
     {
-        Reserva? reserva = archivo.Reservas.Find(idReserva);
+        Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
         if (reserva == null)
         {
           return false;
         }
         archivo.Reservas.Remove(reserva);
-        archivo.SaveChanges();
+        await archivo.SaveChangesAsync();
         return true;
     }
 
     // *-*-*-*-*-*-*-*-*-* CHEQUEAR *-*-*-*-*-*-*-*-*-*
-    
-    public bool existeReserva(Guid idReserva)
+
+    public async Task<bool> existeReserva(Guid idReserva)
     {
-        Reserva? reserva = archivo.Reservas.Find(idReserva);
+        Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
         if (reserva == null)
         {
           return false;
         }
         else return true;
     }
-    
+
     // *-*-*-*-*-*-*-*-*-* BUSCAR POR USUARIO *-*-*-*-*-*-*-*-*-*
 
-    public List<Reserva> listarReservasUsuario(Guid idUsuario)
+    public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
     {   // si no encuentra nada devuelve lista vacía
-        return archivo.Reservas.Where(r => r.idUsuario == idUsuario).ToList();
-        
+        return await archivo.Reservas.Where(r => r.idUsuario == idUsuario).ToListAsync();
+
     }
-    
+
     // *-*-*-*-*-*-*-*-*-* BUSCAR *-*-*-*-*-*-*-*-*-*
 
-    public Reserva? buscarReserva(Guid idReserva)
+    public async Task<Reserva> buscarReserva(Guid idReserva)
     {
-        return archivo.Reservas.FirstOrDefault(r => r.id == idReserva);
+        // asume que reserva existe
+        return await archivo.Reservas.FirstOrDefaultAsync(r => r.id == idReserva);
     }
 
-} 
+}

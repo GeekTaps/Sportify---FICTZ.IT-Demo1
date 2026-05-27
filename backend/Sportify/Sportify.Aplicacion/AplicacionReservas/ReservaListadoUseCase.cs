@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sportify.Dominio.Reservas;
+using Sportify.Aplicacion;
 
 namespace Sportify.Aplicacion.AplicacionReservas;
 
@@ -19,8 +20,8 @@ public class ReservaListadoUseCase
 
     public async Task<List<Reserva>> Ejecutar(Guid idUsuario)
     {
-        List<Reserva> reservas = await repositorioReserva.ListarReservas();
-        if(reservas.IsNullOrEmpty()){
+        List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
+        if(reservas.Count == 0){
             throw new ListadoVacioException("No Cuenta Con Reservas Activas Actualmente");
         }
         return reservas;

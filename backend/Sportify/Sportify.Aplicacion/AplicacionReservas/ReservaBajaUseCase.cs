@@ -1,24 +1,28 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Sportify.Dominio.Reservas;
+using Sportify.Aplicacion;
 
 namespace Sportify.Aplicacion.AplicacionReservas;
 
-public class ReservaAltaUseCase
+public class ReservaBajaUseCase
 {
     IRepositorioReserva repositorioReserva;
     IValidadorReserva validadorReserva;
 
-    public ReservaAltaUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
+    public ReservaBajaUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
     {
         this.repositorioReserva = repositorioReserva;
         this.validadorReserva = validadorReserva;
     }
 
-    public void Ejecutar(Guid idReserva) //ejecuta el caso de uso de eliminar una Reserva
+    public async Task Ejecutar(Guid idReserva) //ejecuta el caso de uso de eliminar una Reserva
     {
-        if (validadorReserva.validarId(idReserva, repositorioReserva)) //valida que la Reserva exista antes de eliminarla
+        if (await validadorReserva.validarId(idReserva, repositorioReserva)) //valida que la Reserva exista antes de eliminarla
 
-            repositorioReserva.eliminarReserva(idReserva);
-        }else
+            await repositorioReserva.eliminarReserva(idReserva);
+        else
         {
             throw new EntidadNotFoundException("La Reserva Que Intenta Eliminar No Existe");
         }
