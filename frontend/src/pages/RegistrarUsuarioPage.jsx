@@ -38,7 +38,7 @@ function RegistrarUsuarioPage() {
     try {
       await apiClient.post("/usuarios/register", {
         nombreCompleto,
-         edad: Number(edad),
+        edad,
         dni,
         email,
         password,

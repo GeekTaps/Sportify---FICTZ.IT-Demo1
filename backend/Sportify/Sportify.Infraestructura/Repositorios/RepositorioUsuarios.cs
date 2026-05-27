@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Data;
 using Sportify.Dominio;
 using Sportify.Aplicacion.AplicacionUsuarios;
+using Sportify.Aplicacion.Excepciones;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Dominio.Deportes;
@@ -62,7 +63,8 @@ public async Task RegistrarUsuario(Usuario usuario)
 
     if (!resultado.Succeeded)
     {
-        throw new Exception("No se pudo registrar el usuario");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
+        var errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+        throw new ValidacionException($"No se pudo registrar el usuario: {errores}");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
     }
 }
 public async Task ModificarUsuario(string id, Usuario usuario)
