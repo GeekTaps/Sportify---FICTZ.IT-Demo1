@@ -7,9 +7,12 @@ namespace Sportify.Aplicacion.AplicacionUsuarios;
 
 public interface IRepositorioUsuarios
 {
-    Task RegistrarUsuario(Usuario usuario);
-    Task<bool> BuscarMail(string mail);
-    Task<bool> BuscarId(Guid id);
-    Task bajaLogica(Guid id);
-    Task modificarUsuario(Guid id, Usuario usuario);
+    
+public Task RegistrarUsuario(Usuario usuario);
+public  Task<bool> BuscarMail(string mail);
+public  Task<bool> BuscarId(string id);
+ public  Task BajaLogica(string id);
+public  Task ModificarUsuario(string id, Usuario usuario);
+
+
 }

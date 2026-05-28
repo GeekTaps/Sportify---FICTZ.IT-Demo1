@@ -44,4 +44,12 @@ public class RepositorioTurno : IRepositorioTurno
     {
         return await archivo.Turnos.AnyAsync(t => t.IdDeporte == idDeporte); //devuelve true si hay turnos asociados al deporte, false si no hay turnos asociados
     }
+    public async Task<List<Turno>> ListarTurnos()
+    {
+        return await archivo.Turnos.ToListAsync();
+    }
+    public async Task<bool> EncontrarRepetido(Turno nuevoTurno)
+    {
+        return await archivo.Turnos.AnyAsync(t => t.IdDeporte == nuevoTurno.IdDeporte && t.Fecha == nuevoTurno.Fecha && t.horaInicio == nuevoTurno.horaInicio && t.horaFin == nuevoTurno.horaFin); //devuelve true si hay un turno repetido (mismo deporte, fecha, hora de inicio y hora de fin), false si no hay turnos repetidos
+    }
 }

@@ -1,66 +1,118 @@
 namespace Sportify.Infraestructura.Repositorios;
 using System;
-
+using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Data;
 using Sportify.Dominio;
 using Sportify.Aplicacion.AplicacionUsuarios;
+using Sportify.Aplicacion.Excepciones;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Dominio.Deportes;
 using Sportify.Infraestructura.Identity;
 using Sportify.Dominio.Usuario;
+
 //SEAN BIENVENIDOS AL ZEGASITORIO HECHO CON ALGUNA QUE OTRA OJEADA AL DE IANN Y MUCHO AMOR PROPIO
 //LOS INVITO A DEJAR UN CORAZON (<3)
 //
+// cata: <3
 //
 //
-//
-public class repositorioUsuarios : IRepositorioUsuarios
+//-----------------------------------------------------------------------------------
+//REWORKEAMOS EL ZEGASITORIO AHORA CON ASYNC TASKS
+public class RepositorioUsuarios : IRepositorioUsuarios
 {
-    private readonly ApplicationDbContext archivo;
 
-    public repositorioUsuarios(ApplicationDbContext archivo)
+    private readonly UserManager<UsuarioIdentity> userManager;
+    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager)
+{
+    this.userManager = userManager;
+}
+    
+public async Task<bool> BuscarId(string id)
+{
+    UsuarioIdentity? usuarioBuscado =
+        await userManager.FindByIdAsync(id);
+
+    return usuarioBuscado != null;
+}
+
+    public async Task<bool> BuscarMail(string mail)
+{
+    UsuarioIdentity? usuarioBuscado =
+        await userManager.FindByEmailAsync(mail);
+
+    return usuarioBuscado != null;
+}
+public async Task RegistrarUsuario(Usuario usuario)
+{                                                           // hola buenas esto registra un usuario
+    UsuarioIdentity usuarioAAgregar = new UsuarioIdentity
     {
-        this.archivo = archivo;
+        NombreCompleto = usuario.NombreCompleto,
+        UserName = usuario.Mail,
+        Email = usuario.Mail,
+        Edad = usuario.Edad,
+        Dni = usuario.Dni,
+        Borrado = false
+    };
+                                    //gpt me dijo que tengo que hacerlo asi :D
+    IdentityResult resultado =
+        await userManager.CreateAsync(  //al parecer usermanager hace cosas 
+            usuarioAAgregar,
+            usuario.Contraseña
+        );
+
+    if (!resultado.Succeeded)
+    {
+        var errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+        throw new ValidacionException($"No se pudo registrar el usuario: {errores}");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
+    }
+}
+public async Task ModificarUsuario(string id, Usuario dto)
+{
+    var usuario = await userManager.FindByIdAsync(id);
+
+    if (usuario == null)
+        throw new Exception("Usuario no encontrado");
+
+    
+
+
+    if (!string.IsNullOrWhiteSpace(dto.NombreCompleto))
+        usuario.NombreCompleto = dto.NombreCompleto;
+
+    if (!string.IsNullOrWhiteSpace(dto.Edad))
+        usuario.Edad = dto.Edad;
+
+    if (!string.IsNullOrWhiteSpace(dto.Dni))
+        usuario.Dni = dto.Dni;
+
+    if (!string.IsNullOrWhiteSpace(dto.Mail))
+        usuario.Email = dto.Mail;
+
+    if (!string.IsNullOrWhiteSpace(dto.Mail))
+        usuario.UserName = dto.Mail;
+
+    if (!string.IsNullOrWhiteSpace(dto.Contraseña))
+    {
+        var token = await userManager.GeneratePasswordResetTokenAsync(usuario);
+        await userManager.ResetPasswordAsync(usuario, token, dto.Contraseña);
     }
 
-    public async Task<bool> BuscarId(Guid id) //verifico si existe un usuario con el id parametreado
+    await userManager.UpdateAsync(usuario);
+}
+
+    public async Task BajaLogica(string id)     
+{
+    UsuarioIdentity? usuarioABorrar =   //busco usuariopor id
+        await userManager.FindByIdAsync(id);
+
+    if (usuarioABorrar == null)
     {
-        UsuarioIdentity? usuarioBuscado = await archivo.Users.FirstOrDefaultAsync(u => u.Id == id.ToString());
-        return usuarioBuscado != null;
+        throw new Exception("Usuario no encontrado");
     }
 
-    public async Task<bool> BuscarMail(string mail) //verifico si existe un usuario con el mail parametreado
-    {
-        UsuarioIdentity? usuarioBuscado = await archivo.Users.FirstOrDefaultAsync(u => u.Email == mail);
-        return usuarioBuscado != null;
-    }
+    usuarioABorrar.Borrado = true;          //borrado logico anashe
 
-    public async Task RegistrarUsuario(Usuario usuario)    //explicacion desatallada en Sportify.Dominio.Usuario
-                                                //conversion de usuario comun a usuarioIdentity, lo agrego a la db    
-    {
-        UsuarioIdentity usuarioAAgregar = new UsuarioIdentity(usuario.NombreCompleto, usuario.Contraseña, usuario.Mail, usuario.Edad, usuario.Dni);
-        await archivo.AddAsync(usuarioAAgregar);
-        await archivo.SaveChangesAsync();
-    }
-
-    public async Task modificarUsuario(Guid id, Usuario usuario) //busco usuario con el id parametreado y cambio todos sus campos
-    {
-        
-        UsuarioIdentity usuarioAModificar = await archivo.Users.FindAsync(id);
-        usuarioAModificar.GetType().GetProperty("NombreCompleto")!.SetValue(usuarioAModificar, usuario.NombreCompleto);
-        usuarioAModificar.GetType().GetProperty("Contraseña")!.SetValue(usuarioAModificar, usuario.Contraseña);
-        usuarioAModificar.GetType().GetProperty("Email")!.SetValue(usuarioAModificar, usuario.Mail);
-        usuarioAModificar.GetType().GetProperty("Edad")!.SetValue(usuarioAModificar, usuario.Edad);
-        usuarioAModificar.GetType().GetProperty("Dni")!.SetValue(usuarioAModificar, usuario.Dni);
-        await archivo.SaveChangesAsync();
-    }  
-
-    public async Task bajaLogica(Guid id) //busco usuario con el id parametreado y lo marco como borrado
-    {
-        UsuarioIdentity usuarioABorrar = await archivo.Users.FindAsync(id);
-        usuarioABorrar.GetType().GetProperty("Borrado")!.SetValue(usuarioABorrar, true);
-        await archivo.SaveChangesAsync();
-
-    }  
+    await userManager.UpdateAsync(usuarioABorrar);
+}
 }
