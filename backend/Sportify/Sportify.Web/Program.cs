@@ -89,41 +89,76 @@ RepositoriosSQLites.Inicializar(app.Services);
 using (var scope = app.Services.CreateScope())
 {
     var repo = scope.ServiceProvider.GetRequiredService<IRepositorioDeporte>();
-    var existe = await repo.existeDeportePorNombre("Futbol");
-    if (!existe)
+    if (!await repo.existeDeportePorNombre("Futbol")) await repo.crearDeporte("Futbol", "Deporte de equipo");
+    if (!await repo.existeDeportePorNombre("Voley")) await repo.crearDeporte("Voley", "Deporte de equipo");
+
+    var deportes = await repo.ListarDeportes();
+    var dFutbol = deportes.First(d => d.nombre == "Futbol");
+    var dVoley = deportes.First(d => d.nombre == "Voley");
+
+    var turnoRepo = scope.ServiceProvider.GetRequiredService<IRepositorioTurno>();
+
+    // Turno a > 48hs
+    var turnoVoley = new Sportify.Dominio.Turnos.Turno {
+        Id = Guid.NewGuid(),
+        IdDeporte = dVoley.id,
+        Fecha = DateTime.Now.AddDays(3),
+        horaInicio = new TimeOnly(18, 0),
+        horaFin = new TimeOnly(19, 0),
+        nombreTurno = "Vóley Avanzado",
+        nommbreProfesor = "Prof. Dibu",
+        cupo = 10
+    };
+    await turnoRepo.AltaTurno(turnoVoley);
+
+    // Turno a < 48hs
+    var turnoFutbol = new Sportify.Dominio.Turnos.Turno {
+        Id = Guid.NewGuid(),
+        IdDeporte = dFutbol.id,
+        Fecha = DateTime.Now.AddDays(1),
+        horaInicio = new TimeOnly(18, 0),
+        horaFin = new TimeOnly(19, 0),
+        nombreTurno = "Fútbol 5",
+        nommbreProfesor = "Prof. Messi",
+        cupo = 10
+    };
+    await turnoRepo.AltaTurno(turnoFutbol);
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UsuarioIdentity>>();
+    var reservaRepo = scope.ServiceProvider.GetRequiredService<IRepositorioReserva>();
+
+    // Usuario malva123@mail.com (0 cancelaciones)
+    var malvaUser = await userManager.FindByEmailAsync("malva123@mail.com");
+    if (malvaUser == null)
     {
-        await repo.crearDeporte("Futbol", "Deporte de equipo");
+        malvaUser = new UsuarioIdentity { NombreCompleto = "Malva", Email = "malva123@mail.com", Edad = "20", Dni = "11111111", UserName = "malva123@mail.com", CancelacionesMes = 0, Creditos = 0 };
+        if ((await userManager.CreateAsync(malvaUser, "Malva.123!")).Succeeded)
+        {
+            await reservaRepo.agregarReserva(new Sportify.Dominio.Reservas.Reserva(Guid.Parse(malvaUser.Id), turnoVoley.Id, true, 1500, $"Vóley - {turnoVoley.Fecha:dd/MM/yy} - 18hs"));
+            await reservaRepo.agregarReserva(new Sportify.Dominio.Reservas.Reserva(Guid.Parse(malvaUser.Id), turnoFutbol.Id, false, 3200, $"Fútbol - {turnoFutbol.Fecha:dd/MM/yy} - 18hs"));
+        }
     }
 
-    // Seed de Usuario milka123@mail.com y sus reservas de prueba
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UsuarioIdentity>>();
+    // Usuario milka123@mail.com (2 cancelaciones)
     var milkaUser = await userManager.FindByEmailAsync("milka123@mail.com");
     if (milkaUser == null)
     {
-        milkaUser = new UsuarioIdentity
+        milkaUser = new UsuarioIdentity { NombreCompleto = "Milka Test", Email = "milka123@mail.com", Edad = "25", Dni = "12345678", UserName = "milka123@mail.com", CancelacionesMes = 2, Creditos = 1 };
+        if ((await userManager.CreateAsync(milkaUser, "Milka.123!")).Succeeded)
         {
-            NombreCompleto = "Milka Test",
-            Email = "milka123@mail.com",
-            Edad = "25",
-            Dni = "12345678",
-            UserName = "milka123@mail.com" // Requerido por Identity
-        };
-        var result = await userManager.CreateAsync(milkaUser, "Milka.123!"); // Contraseña fuerte requerida por defecto
+            await reservaRepo.agregarReserva(new Sportify.Dominio.Reservas.Reserva(Guid.Parse(milkaUser.Id), turnoVoley.Id, true, 1500, $"Vóley - {turnoVoley.Fecha:dd/MM/yy} - 18hs"));
+            await reservaRepo.agregarReserva(new Sportify.Dominio.Reservas.Reserva(Guid.Parse(milkaUser.Id), turnoFutbol.Id, false, 3200, $"Fútbol - {turnoFutbol.Fecha:dd/MM/yy} - 18hs"));
+        }
+    }
 
-        if (result.Succeeded)
+    // Usuario sus123@mail.com (suspendido)
+    var susUser = await userManager.FindByEmailAsync("sus123@mail.com");
+    if (susUser == null)
+    {
+        susUser = new UsuarioIdentity { NombreCompleto = "Sus Test", Email = "sus123@mail.com", Edad = "22", Dni = "33333333", UserName = "sus123@mail.com", CancelacionesMes = 0, Suspendido = true, Creditos = 0 };
+        if ((await userManager.CreateAsync(susUser, "Sus.123!")).Succeeded)
         {
-            var reservaRepo = scope.ServiceProvider.GetRequiredService<IRepositorioReserva>();
-            Guid idUsuario = Guid.Parse(milkaUser.Id);
-
-            // Generamos turnos mock para las reservas
-            Guid mockTurno1 = Guid.NewGuid();
-            Guid mockTurno2 = Guid.NewGuid();
-
-            var reserva1 = new Sportify.Dominio.Reservas.Reserva(idUsuario, mockTurno1, true, 1500.50, "Vóley - 23/06/26 - 18hs");
-            var reserva2 = new Sportify.Dominio.Reservas.Reserva(idUsuario, mockTurno2, false, 3200.00, "Fútbol - 25/06/26 - 20hs");
-
-            await reservaRepo.agregarReserva(reserva1);
-            await reservaRepo.agregarReserva(reserva2);
+            await reservaRepo.agregarReserva(new Sportify.Dominio.Reservas.Reserva(Guid.Parse(susUser.Id), turnoFutbol.Id, false, 3200, $"Fútbol - {turnoFutbol.Fecha:dd/MM/yy} - 18hs"));
         }
     }
 }

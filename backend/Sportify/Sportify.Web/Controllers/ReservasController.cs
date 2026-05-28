@@ -6,6 +6,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
+using Sportify.Aplicacion.AplicacionTurnos;
+using Sportify.Aplicacion.AplicacionDeportes;
+using Sportify.Web.DTOs;
 
 namespace Sportify.Web.Controllers
 {
@@ -22,6 +25,9 @@ namespace Sportify.Web.Controllers
         private readonly ReservaBusquedaUseCase _reservaBusquedaUseCase;
         private readonly ReservaListadoUseCase _reservaListadoUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly IRepositorioTurno _repositorioTurno;
+        private readonly IRepositorioDeporte _repositorioDeporte;
+        private readonly IRepositorioReserva _repositorioReserva;
 
         // El constructor recibe los casos de uso inyectados automáticamente por el contenedor de dependencias de ASP.NET (configurado en Program.cs)
         public ReservasController(
@@ -29,13 +35,19 @@ namespace Sportify.Web.Controllers
             ReservaBajaUseCase reservaBajaUseCase,
             ReservaBusquedaUseCase reservaBusquedaUseCase,
             ReservaListadoUseCase reservaListadoUseCase,
-            UserManager<UsuarioIdentity> userManager)
+            UserManager<UsuarioIdentity> userManager,
+            IRepositorioTurno repositorioTurno,
+            IRepositorioDeporte repositorioDeporte,
+            IRepositorioReserva repositorioReserva)
         {
             _reservaAltaUseCase = reservaAltaUseCase;
             _reservaBajaUseCase = reservaBajaUseCase;
             _reservaBusquedaUseCase = reservaBusquedaUseCase;
             _reservaListadoUseCase = reservaListadoUseCase;
             _userManager = userManager;
+            _repositorioTurno = repositorioTurno;
+            _repositorioDeporte = repositorioDeporte;
+            _repositorioReserva = repositorioReserva;
         }
 
         // POST: api/Reservas
@@ -118,6 +130,176 @@ namespace Sportify.Web.Controllers
             {
                 // Si el ID de reserva no se encuentra en base de datos, retornamos HTTP 404 Not Found
                 return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        [HttpGet("{id:guid}/detalles")]
+        public async Task<IActionResult> BuscarDetalleReserva(Guid id)
+        {
+            try
+            {
+                var reserva = await _reservaBusquedaUseCase.Ejecutar(id);
+                // Obtener Turno
+                var turnoList = await _repositorioTurno.ListarTurnos();
+                var turno = turnoList.FirstOrDefault(t => t.Id == reserva.idTurno);
+                if (turno == null) return NotFound(new { mensaje = "Turno no encontrado" });
+
+                // Obtener Deporte
+                var deportesList = await _repositorioDeporte.ListarDeportes();
+                var deporte = deportesList.FirstOrDefault(d => d.id == turno.IdDeporte);
+                var nombreActividad = deporte?.nombre ?? "Desconocida";
+
+                // Obtener usuario para saber las cancelaciones y suspensión
+                var user = await _userManager.FindByIdAsync(reserva.idUsuario.ToString());
+                int cancelaciones = user?.CancelacionesMes ?? 0;
+                bool suspendido = user?.Suspendido ?? false;
+
+                // Calcular horas de antelación
+                var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
+
+                var dto = new ReservaDetalleDTO
+                {
+                    IdReserva = reserva.id,
+                    Actividad = nombreActividad,
+                    Fecha = turno.Fecha.ToString("dd/MM/yy"),
+                    Horario = turno.horaInicio.ToString("HH:mm") + "hs",
+                    Profesor = turno.nommbreProfesor ?? "Sin profesor",
+                    HorasAnticipacion = horasAnticipacion,
+                    CancelacionesMes = cancelaciones,
+                    Suspendido = suspendido
+                };
+
+                return Ok(dto);
+            }
+            catch (EntidadNotFoundException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        [HttpPost("reservar-turno")]
+        public async Task<IActionResult> ReservarTurno([FromBody] ReservarTurnoRequest request)
+        {
+            try
+            {
+                // Buscar usuario
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    return NotFound(new { mensaje = "Usuario no encontrado." });
+                }
+
+                if (user.Suspendido)
+                {
+                    return BadRequest(new { mensaje = "Tu cuenta está suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar." });
+                }
+
+                // Buscar turno
+                var turnoList = await _repositorioTurno.ListarTurnos();
+                var turno = turnoList.FirstOrDefault(t => t.Id == request.IdTurno);
+                if (turno == null)
+                {
+                    return NotFound(new { mensaje = "Turno no encontrado." });
+                }
+
+                // Verificar cupo
+                if (turno.cupo <= 0)
+                {
+                    return BadRequest(new { mensaje = "No hay cupo disponible para este turno." });
+                }
+
+                bool pagoRealizado = false;
+                string mensaje = "";
+
+                // Lógica de créditos
+                if (user.Creditos > 0)
+                {
+                    pagoRealizado = true;
+                    user.Creditos--;
+                    await _userManager.UpdateAsync(user);
+                    mensaje = "Reserva lista! Se usó el crédito disponible";
+                }
+                else
+                {
+                    pagoRealizado = false;
+                    mensaje = "Reserva casi lista!";
+                }
+
+                // Descontar cupo
+                turno.cupo--;
+                await _repositorioTurno.ModificarTurno(turno, turno.Id);
+
+                // Crear reserva
+                double montoFijo = 2000;
+                var tituloReserva = $"{turno.nombreTurno} - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+                var nuevaReserva = new Reserva(Guid.Parse(user.Id), turno.Id, pagoRealizado, montoFijo, tituloReserva);
+
+                await _reservaAltaUseCase.Ejecutar(nuevaReserva);
+
+                return Ok(new { mensaje = mensaje, reserva = nuevaReserva });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        [HttpPost("{id:guid}/cancelar")]
+        public async Task<IActionResult> CancelarReserva(Guid id)
+        {
+            try
+            {
+                var reserva = await _repositorioReserva.buscarReserva(id);
+                if (reserva == null) return NotFound(new { mensaje = "Reserva no encontrada." });
+
+                var turnoList = await _repositorioTurno.ListarTurnos();
+                var turno = turnoList.FirstOrDefault(t => t.Id == reserva.idTurno);
+                var user = await _userManager.FindByIdAsync(reserva.idUsuario.ToString());
+
+                if (turno == null || user == null) return NotFound(new { mensaje = "Turno o usuario no encontrado." });
+
+                // Calcular horas de antelación
+                var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
+
+                bool estabaSuspendido = user.Suspendido;
+                string mensajeBase = "Reserva cancelada exitosamente.";
+                
+                if (!estabaSuspendido)
+                {
+                    if (horasAnticipacion >= 48)
+                    {
+                        mensajeBase += " Seña devuelta.";
+                    }
+                }
+
+                user.CancelacionesMes++;
+
+                if (!estabaSuspendido && user.CancelacionesMes >= 3)
+                {
+                    user.Suspendido = true;
+                    mensajeBase += " Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
+                }
+
+                await _userManager.UpdateAsync(user);
+
+                // Devolver cupo
+                turno.cupo++;
+                await _repositorioTurno.ModificarTurno(turno, turno.Id);
+
+                // Eliminar reserva
+                await _reservaBajaUseCase.Ejecutar(id);
+
+                return Ok(new { mensaje = mensajeBase });
             }
             catch (Exception ex)
             {

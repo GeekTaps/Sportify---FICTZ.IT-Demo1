@@ -9,6 +9,7 @@ import ModificarDeportePage from './pages/ModificarDeportePage'
 import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
+import ReservarClasePage from "./pages/ReservarClasePage"
 import ReservasPage from './pages/ReservasPage'
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
@@ -48,7 +49,8 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
                 <Link to="/register">Registro</Link>
                 <Link to="/deportes">Deportes</Link>
                 <Link to="/turnos">Turnos</Link>
-                <Link to="/reservas">Reservas</Link>
+                <Link to="/reservar-clase">Reservar Clase</Link>
+                <Link to="/reservas">Mis Reservas</Link>
             </nav>
 
             <p>{backendMessage}</p>
@@ -62,6 +64,7 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
                 <Route path="/turnos" element={<TurnoPage />} />
                 <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                 <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
+                <Route path="/reservar-clase" element={<ReservarClasePage />} />
                 <Route path="/reservas" element={<ReservasPage />} />
             </Routes>
         </BrowserRouter>
