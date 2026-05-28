@@ -6,6 +6,8 @@
 # dotenv files
 .env
 
+*.db
+
 # User-specific files
 *.rsuser
 *.suo
@@ -31,9 +33,8 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+obj/
 [Oo]bj/
-**/bin/
-**/obj/
 [Ll]og/
 [Ll]ogs/
 
@@ -400,26 +401,6 @@ FodyWeavers.xsd
 # Windows Installer files from build outputs
 *.cab
 *.msi
-
-# Local and generated frontend files
-node_modules/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Vite / frontend build outputs
-frontend/dist/
-frontend/.vite/
-
-# Local environment files
-.env.local
-.env.*.local
-
-# OS temporary files
-.DS_Store
-Thumbs.db
 *.msix
 *.msm
 *.msp

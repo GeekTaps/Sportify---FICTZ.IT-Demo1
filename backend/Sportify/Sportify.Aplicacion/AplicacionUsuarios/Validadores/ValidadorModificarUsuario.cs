@@ -2,7 +2,7 @@ using System;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Dominio;
 using Sportify.Dominio.Usuario;
-
+using Sportify.Aplicacion.Excepciones;
 namespace Sportify.Aplicacion.AplicacionUsuarios;
 //SISI 5000 VALIDACIONES LO SE, PERO BUENO SI DEJAN LAS COSAS VACIAS ESTÁ TODO MAL ASI QUE
 public class ValidadorModificarUsuario : IValidadorModificarUsuario
@@ -12,43 +12,41 @@ public ValidadorModificarUsuario ( IRepositorioUsuarios repositorioUsuarios)
     {
         this.repositorioUsuarios=repositorioUsuarios;
     }
-public bool validar (Usuario usuario, Guid id)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
+public async Task validar(Usuario usuario, string idUsuario)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
     {
-     if (this.repositorioUsuarios.BuscarId(id))
-     {   
-      if (!string.IsNullOrWhiteSpace(usuario.Mail)|| !usuario.Mail.Contains("@"))  //mail valido
-      {
-        if (!this.repositorioUsuarios.BuscarMail(usuario.Mail))  //mail que no exista ya 
-        {
-            if (!string.IsNullOrWhiteSpace(usuario.Contraseña)) //contraseña no nula
-            {
-                if  ( usuario.Contraseña.Length>5)
-                 {
-                     if (int.TryParse(usuario.Edad, out int EdadParseada) || string.IsNullOrWhiteSpace(usuario.Edad))
-                     {
-                         if (EdadParseada > 17)
-                         {
-                           if (this.validarNombre(usuario.NombreCompleto))
-                            {
-                              return true;
-                            }
-                         else throw new Exception("El nombre de usuario no debe ser ofensivo");
-                         }
-                      else throw new Exception("Debes ser mayor de 18 años para registrarte");
-                      }
-                else throw new Exception("La edad ingresada no es valida");
-                }
-                else throw new Exception("La contraseña debe tener como minimo 6 caracteres");
-            }
-            else throw new Exception ("La contraseña no puede estar vacía");    
-        }
-        else throw new Exception("Ese mail ya está registrado"); //lo siento pipi la ciberseguridad te la debo
-        }
-    
-    else throw new Exception ("El mail no es valido ");
+    if (!string.IsNullOrWhiteSpace(usuario.Mail))
+    {
+        if (!usuario.Mail.Contains("@"))
+            throw new ValidacionException("El mail no es válido");
+
+        if (await repositorioUsuarios.BuscarMail(usuario.Mail))
+            throw new ValidacionException("Ese mail ya está registrado");
     }
-    else throw new Exception("No existe un usuario con ese id"); 
-    } 
+
+    if (!string.IsNullOrWhiteSpace(usuario.Contraseña))
+    {
+        if (usuario.Contraseña.Length < 6)
+            throw new ValidacionException("La contraseña debe tener al menos 6 caracteres");
+    }
+
+    if (!string.IsNullOrWhiteSpace(usuario.Edad))
+    {
+        if (!int.TryParse(usuario.Edad, out int edad) || edad < 18)
+            throw new ValidacionException("La edad ingresada no es válida o debes ser mayor de 18 años");    
+    }
+
+    if (!string.IsNullOrWhiteSpace(usuario.Dni))
+    {
+        if (!int.TryParse(usuario.Dni, out int dni))
+            throw new ValidacionException("El DNI Ingresado no es válido");  
+    }
+
+    if (!string.IsNullOrWhiteSpace(usuario.NombreCompleto))
+    {
+        if (!validarNombre(usuario.NombreCompleto))
+            throw new ValidacionException("El nombre contiene palabras prohibidas");
+    }
+}
 
 
     public bool validarNombre(String nombre)
@@ -59,6 +57,7 @@ public bool validar (Usuario usuario, Guid id)   //huele re mal este codigo lo s
     {
         "puta",
         "mierda",
+        "joder",
         "idiota",
         "pelotudo",
         "maricon",
@@ -97,7 +96,8 @@ public bool validar (Usuario usuario, Guid id)   //huele re mal este codigo lo s
         "jugadordegenshinimpact",
         "jugadordelol",
         "groomer",
-        "mrbeast"
+        "mrbeast",
+        "patorusuescupeleche"
     };
 
     nombre = nombre.ToLower();

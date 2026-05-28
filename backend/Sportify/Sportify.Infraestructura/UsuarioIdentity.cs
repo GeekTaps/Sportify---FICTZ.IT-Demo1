@@ -1,26 +1,26 @@
 using Microsoft.AspNetCore.Identity;
 
 namespace Sportify.Infraestructura.Identity;
-
+// hola amigos debido a los multiples cambios que hay que hacerle a identity user (propiedad de entity framework)
+// no se puede correr de forma normal el proyecto, o sea salta error por todos lados
+//busque al respecto y tipo como que hay que poner unos comandos para que el entity framework se actualice con los cambios que le hiciste a identity user
+//  si no les anda nada usen estos comandos:
+// dotnet tool install --global dotnet-ef 
+// dotnet ef migrations add UpdateUsuarioIdentity --project Sportify.Infraestructura --startup-project Sportify.Web
+// dotnet ef database update --project Sportify.Infraestructura --startup-project Sportify.Web
+//una paja pero si queremos usar entity framework hay que hacerlo
 public class UsuarioIdentity : IdentityUser
 {
-    public Guid ID { get; private set; }
-    public string NombreCompleto { get; private set; } = "";
-    public string Contraseña {get; private set;}
-    public string Mail { get; private set; }
-    public string Edad { get; private set; } 
-    public string Dni { get; private set; } 
-    public bool Borrado { get; private set; } 
+    public string NombreCompleto { get; set; } = "";
+    public string Edad { get; set; } = "";
+    public string Dni { get; set; } = "";
+    public bool Borrado { get; set; } = false;
+    public bool Suspendido { get; set; } = false;
+    public int CancelacionesMes { get; set; } = 0;
+    public int Creditos { get; set; } = 0;
+    public bool EsAdmin { get; set; } = false;
 
-    public UsuarioIdentity (string nombre, string contraseña, string mail, string edad, string dni)
+    public UsuarioIdentity()
     {
-        this.ID = Guid.NewGuid();
-        this.NombreCompleto=nombre;
-        this.Contraseña=contraseña;
-        this.Mail=mail;
-        this.Edad=edad;
-        this.Dni=dni;
-        this.Borrado=false;
-
     }
 }

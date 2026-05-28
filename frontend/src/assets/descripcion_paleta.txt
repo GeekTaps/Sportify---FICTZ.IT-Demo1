@@ -1,0 +1,30 @@
+Paleta de Colores "Sportify Blue" (8 Tonos)
+💧 Cian Brillante (Logotipo principal): #00D2FF
+
+Uso: Acentos principales, iconos destacados, botones secundarios, texto destacado sobre fondo oscuro.
+
+🔵 Azul Medio (Logotipo principal y texto): #1E5BF0
+
+Uso: Llamadas a la acción principales (CTA), botones de compra, texto destacado sobre fondo claro.
+
+💎 Cian Suave (Matiz del logotipo): #4FD9FB
+
+Uso: Hover de botones cian, texto secundario sobre fondos claros, fondos de secciones deportivas.
+
+🔵 Azul Cobalto Intenso (Gradiente y texto): #0039A6
+
+Uso: Texto del cuerpo, encabezados principales, hover de botones azules, bordes de elementos activos, énfasis visual.
+
+🌚 Azul Pizarra Muy Oscuro (Fondo de sección y estructura): #1A2F50
+
+Uso: Color de fondo de footer (pie de página) o barra de navegación oscura, texto sobre fondos oscuros (1, 2, 3 o 4).
+
+⚓ Gris Medio Suave (Sub-texto): #7F8C8D
+
+Uso: Texto secundario, subtítulos, placeholders de formularios, bordes sutiles.
+
+☁️ Blanco Nieve (Fondo principal): #FFFFFF
+
+Uso: Fondo principal del sitio web, espacios en blanco, texto sobre fondos oscuros (2, 3, 4 o 5).
+
+🍦 Crema Muy Claro (Fondo de sección): #FDFDF2

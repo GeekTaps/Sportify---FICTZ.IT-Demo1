@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Sportify.Dominio.Usuario;
 
 namespace Sportify.Aplicacion.AplicacionUsuarios;
@@ -7,11 +8,11 @@ namespace Sportify.Aplicacion.AplicacionUsuarios;
 public interface IRepositorioUsuarios
 {
     
-public void RegistrarUsuario(Usuario usuario);
-public bool BuscarMail(string mail);
-public bool BuscarId(Guid id);
- public void bajaLogica(Guid id);
-public void modificarUsuario(Guid id, Usuario usuario);
+public Task RegistrarUsuario(Usuario usuario);
+public  Task<bool> BuscarMail(string mail);
+public  Task<bool> BuscarId(string id);
+ public  Task BajaLogica(string id);
+public  Task ModificarUsuario(string id, Usuario usuario);
 
 
 }
