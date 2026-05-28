@@ -13,12 +13,32 @@ namespace Sportify.Web.Controllers;
 public class ModificarUsuarioController : ControllerBase
 {
     private readonly modificarUsuarioUseCase actualizarUsuarioUseCase;
-
+     
     public ModificarUsuarioController(modificarUsuarioUseCase actualizarUsuarioUseCase)
     {
         this.actualizarUsuarioUseCase = actualizarUsuarioUseCase;
+      
     }
+[HttpGet("{id}")]
+public async Task<IActionResult> GetUsuario([FromRoute] string id)
+{
+    try
+    {
+        Usuario usuario = await actualizarUsuarioUseCase.ObtenerPorId(id);
 
+        return Ok(new
+        {
+            nombreCompleto = usuario.NombreCompleto,
+            email = usuario.Mail,
+            dni = usuario.Dni,
+            edad = usuario.Edad
+        });
+    }
+    catch (ValidacionException ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
  
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update([FromRoute] string id, [FromBody] ModificarUsuarioDTO dto)
@@ -45,4 +65,6 @@ public class ModificarUsuarioController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+    
+
 }

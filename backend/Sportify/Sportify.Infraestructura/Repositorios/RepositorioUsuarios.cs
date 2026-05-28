@@ -115,4 +115,21 @@ public async Task ModificarUsuario(string id, Usuario dto)
 
     await userManager.UpdateAsync(usuarioABorrar);
 }
+public async Task<Usuario> ObtenerPorId(string id)
+{
+    UsuarioIdentity usuarioIdentity = await userManager.FindByIdAsync(id);
+
+    if (usuarioIdentity == null)
+    {
+        throw new ValidacionException("Usuario no encontrado");
+    }
+
+    return new Usuario(
+        usuarioIdentity.NombreCompleto,
+        usuarioIdentity.Email,
+        usuarioIdentity.Dni,
+        "",
+        usuarioIdentity.Edad
+    );
+}
 }
