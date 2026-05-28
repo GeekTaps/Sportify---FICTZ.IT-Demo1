@@ -95,7 +95,8 @@ public async Task validar(Usuario usuario, string idUsuario)   //huele re mal es
         "jugadordegenshinimpact",
         "jugadordelol",
         "groomer",
-        "mrbeast"
+        "mrbeast",
+        "patorusuescupeleche"
     };
 
     nombre = nombre.ToLower();
