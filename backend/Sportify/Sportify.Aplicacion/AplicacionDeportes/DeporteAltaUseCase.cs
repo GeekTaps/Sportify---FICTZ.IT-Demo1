@@ -20,7 +20,7 @@ public class DeporteAltaUseCase
         }
         else
         {
-            throw new Exception("Ya Existe Un Deporte Con El Nombre Que Intenta Asignar");
+            throw new Exception("Ya Existe un Deporte Con El Nombre que Intenta Asignar");
         }
     }
 }
