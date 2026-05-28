@@ -143,10 +143,12 @@ function TurnoPage() {
 
   return (
     <div>
-      <h1>Gestión de Turnos</h1>
-      <p>Administra los turnos disponibles en el sistema.</p>
+      <div className="page-header">
+        <h1>Gestión de Turnos</h1>
+        <p>Administra los turnos disponibles en el sistema.</p>
+      </div>
 
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '2rem' }}>
         {user?.esAdmin && <BotonCrearTurno />}
         <BotonMostrarListadoTurnos onClick={cargarTurnos} />
       </div>
@@ -154,24 +156,18 @@ function TurnoPage() {
       {turnos.length === 0 ? (
         <p>Por el momento no hay turnos disponibles</p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul className="grid-list">
           {turnos.map((turno) => (
             <li
               key={turno.id}
-              style={{
-                marginBottom: "15px",
-                padding: "15px",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                backgroundColor: "#f9f9f9",
-              }}
+              className="card"
+              style={{ cursor: "pointer", transition: "all 0.2s" }}
+              onClick={() => abrirModal(turno)}
             >
-              <div 
-                style={{ cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                onClick={() => abrirModal(turno)}
-              >
-                <strong>{turno.nombreTurno || "Sin título"}</strong>
-              </div>
+              <h3 style={{ marginTop: 0, color: "var(--primary)" }}>{turno.nombreTurno || "Sin título"}</h3>
+              <p style={{ color: "var(--text-muted)" }}>
+                Click para ver detalles y reservar
+              </p>
             </li>
           ))}
         </ul>
@@ -179,16 +175,9 @@ function TurnoPage() {
 
       {/* MODAL DEL TURNO */}
       {modalTurno && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          display: "flex", justifyContent: "center", alignItems: "center"
-        }}>
-          <div style={{
-            background: "#fff", padding: "20px", borderRadius: "8px",
-            width: "400px", maxWidth: "90%", textAlign: "left", boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-          }}>
-            <h2 style={{ marginTop: 0 }}>Detalles del Turno</h2>
+        <div className="modal-overlay" onClick={cerrarModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Detalles del Turno</h2>
             <p><strong>Actividad:</strong> {modalTurno.nombreTurno}</p>
             <p><strong>Fecha:</strong> {formatearFecha(modalTurno.fecha)}</p>
             <p><strong>Horario:</strong> {formatearHora(modalTurno.horaInicio)}</p>
@@ -220,22 +209,23 @@ function TurnoPage() {
                       <button 
                         onClick={handleReservar} 
                         disabled={loadingReserva}
-                        style={{ padding: "10px", background: loadingReserva ? "#ccc" : "#28a745", color: "white", border: "none", borderRadius: "4px", cursor: loadingReserva ? "not-allowed" : "pointer", width: "100%", fontWeight: "bold" }}
+                        className="btn btn-primary"
+                        style={{ width: "100%" }}
                       >
                         {loadingReserva ? "Procesando..." : "Reservar turno"}
                       </button>
                     ) : modalTurno.listaEsperaHabilitada ? (
-                      <button onClick={() => alert("Función de lista de espera no implementada aún.")} style={{ padding: "10px", background: "#ffc107", color: "black", border: "none", borderRadius: "4px", cursor: "pointer", width: "100%", fontWeight: "bold" }}>
+                      <button onClick={() => alert("Función de lista de espera no implementada aún.")} className="btn" style={{ background: "#ffc107", color: "black", width: "100%" }}>
                         Entrar a lista de espera
                       </button>
                     ) : (
-                      <p style={{ color: "#856404", backgroundColor: "#fff3cd", border: "1px solid #ffeeba", padding: "10px", borderRadius: "4px", fontWeight: "bold" }}>
+                      <div className="alert alert-warning">
                         Por el momento no hay más cupos para esta actividad
-                      </p>
+                      </div>
                     )}
                     
                     {mensajeReserva && (
-                      <div style={{ marginTop: "15px", padding: "10px", backgroundColor: esErrorReserva ? "#f8d7da" : "#d4edda", color: esErrorReserva ? "#721c24" : "#155724", borderRadius: "4px" }}>
+                      <div className={`alert ${esErrorReserva ? 'alert-error' : 'alert-success'}`} style={{ marginTop: "15px" }}>
                         {mensajeReserva}
                       </div>
                     )}
@@ -247,14 +237,14 @@ function TurnoPage() {
                     {requierePago && (
                         <div style={{ marginTop: "15px" }}>
                             <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                            <button style={{ padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", width: "100%", fontWeight: "bold" }}>
+                            <button className="btn btn-primary" style={{ width: "100%", marginTop: "10px" }}>
                                 Proceder al pago
                             </button>
                         </div>
                     )}
                     
                     <div style={{ marginTop: "20px" }}>
-                        <Link to="/reservas" style={{ color: "#007bff", textDecoration: "none", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
+                        <Link to="/reservas" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
                     </div>
                   </div>
                 )}
@@ -268,7 +258,7 @@ function TurnoPage() {
             )}
 
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-              <button onClick={cerrarModal} style={{ padding: "8px 16px", cursor: "pointer", background: "#ddd", border: "none", borderRadius: "4px" }}>
+              <button onClick={cerrarModal} className="btn" style={{ background: "var(--border)", color: "var(--text-main)" }}>
                 Cerrar
               </button>
             </div>

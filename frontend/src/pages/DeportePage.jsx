@@ -28,16 +28,27 @@ function DeportePage() {
 
   return (
     <div>
-      <h1>Bienvenido a la página de deportes!</h1>
-      <p>Explora los diferentes deportes disponibles.</p>
+      <div className="page-header">
+        <h1>Deportes Disponibles</h1>
+        <p>Explora los diferentes deportes que ofrecemos y anótate en el que más te guste.</p>
+      </div>
 
-      <BotonMostrarListadoDeportes onClick={cargarDeportes} />
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+        <BotonMostrarListadoDeportes onClick={cargarDeportes} />
+      </div>
 
-      <ul>
+      <ul className="grid-list">
         {deportes.map((d) => (
-          <li key={d.id} style={{ marginBottom: "12px" }}>
-            <strong>{d.nombre}</strong> - {d.descripcion}
-            {user?.esAdmin && <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />}
+          <li key={d.id} className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div>
+              <h3 style={{ marginTop: 0, color: "var(--primary)" }}>{d.nombre}</h3>
+              <p style={{ color: "var(--text-muted)", marginBottom: "1.5rem" }}>{d.descripcion}</p>
+            </div>
+            {user?.esAdmin && (
+              <div style={{ marginTop: "auto", display: "flex", justifyContent: "flex-end" }}>
+                <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />
+              </div>
+            )}
           </li>
         ))}
       </ul>
