@@ -3,13 +3,23 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+
+
+import { apiClient } from "./api/api-client"; 
+
 import HomePage from './pages/HomePage'
+
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
+
 import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
+
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
+import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
+
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+
 
 // Test de conexión backend (Con Antigravity, funciona :D)
 
@@ -31,30 +41,56 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
                 setBackendMessage('Error al conectar con el backend. Asegurate de que esté corriendo.');
             });
     }, []);
+  const [user, setUser] = useState(null); //para que no se rompa mientras se implementa el inicio de sesion       
+  const handleLogout = async () => {
+    try {
+        await apiClient.post("/auth/logout");
 
-    return ( //esto es lo que se muestra en la interfaz.
+        setUser(null);
+
+        console.log("logout ok"); // debug
+
+    } catch (err) {
+        console.error("logout error", err);
+    }
+};
+
+
+  
+ // cuando este lo del inicio de sesio implemento lo del comentario de la linea de abajo
+    return ( // los usuarios no logueados ven deportes, turnos , iniciar sesion y registrarse, los no logueados ven turnos, deportes, home, modificar usuario y cerrar sesion
         <BrowserRouter>
-            <nav
-                style={{
-                    display: "flex",
-                    gap: "15px",
-                    padding: "10px",
-                    background: "#eee",
-                    marginBottom: "20px",
-                }}
-            >
-                <Link to="/">Home</Link>
-                <Link to="/register">Registro</Link>
-                <Link to="/deportes">Deportes</Link>
-                <Link to="/turnos">Turnos</Link>
-            </nav>
+            <nav style={{
+    display: "flex",
+    justifyContent: "flex-start",
+    gap: "25px",
+    padding: "10px",
+    background: "#eee",
+    alignItems: "center",
+    width: "100%"
+}}>
+    <Link to="/">Home</Link>
+    <Link to="/deportes">Deportes</Link>
+    <Link to="/turnos">Turnos</Link>
+    <Link to="/register">Registro</Link>
 
+    {user && (
+        <Link to={`/modificarUsuario/${user.id}`}> 
+            Modificar Datos 
+        </Link>   //dejo esto de modificar usuario asi sino se rompe, el user&& (junto al user null declarado arriba(const [user, setUser] = useState(null);)) tiene que ver con qué se muestra a usuarios logueados y que se muestra a los no logueasdos
+    )} 
+            <button>  
+                Cerrar sesión 
+            </button>        
+</nav>    
+      
             <p>{backendMessage}</p>
 
             <Routes>
                 <Route path="/" element={<HomePage />} />
 
                 <Route path="/register" element={<RegistrarUsuarioPage />} />
+                <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                 <Route path="/deportes" element={<DeportePage />} />
                 <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
                 <Route path="/turnos" element={<TurnoPage />} />
@@ -63,7 +99,7 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
 
             </Routes>
         </BrowserRouter>
-    )
-}
+    );
 
-export default App
+  }
+export default App;
