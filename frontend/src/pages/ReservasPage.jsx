@@ -105,7 +105,7 @@ function ReservasPage() {
   return (
     <div>
       <h1>Mis Reservas</h1>
-      <p>Visualiza tus reservas activas.</p>
+      
 
       {user?.esAdmin && (
         <div style={{ padding: "10px", background: "#ffeb3b", color: "black", marginBottom: "15px" }}>
@@ -113,11 +113,7 @@ function ReservasPage() {
         </div>
       )}
 
-      {mensaje && (
-        <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f8d7da", color: "#721c24", borderRadius: "5px" }}>
-          {mensaje}
-        </div>
-      )}
+
 
       {mensaje && <p style={{ color: "red", fontWeight: "bold" }}>{mensaje}</p>}
 
