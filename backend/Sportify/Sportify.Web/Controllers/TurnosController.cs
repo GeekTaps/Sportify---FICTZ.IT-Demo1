@@ -11,12 +11,14 @@ public class TurnosController : ControllerBase
     private readonly TurnoListadoUseCase listadoUseCase;
     private readonly TurnoAltaUseCase altaUseCase;
     private readonly TurnoModificacionUseCase modificacionUseCase;
+    private readonly Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte;
 
-    public TurnosController(TurnoListadoUseCase listadoUseCase, TurnoAltaUseCase altaUseCase, TurnoModificacionUseCase modificacionUseCase)
+    public TurnosController(TurnoListadoUseCase listadoUseCase, TurnoAltaUseCase altaUseCase, TurnoModificacionUseCase modificacionUseCase, Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte)
     {
         this.listadoUseCase = listadoUseCase;
         this.altaUseCase = altaUseCase;
         this.modificacionUseCase = modificacionUseCase;
+        this.repositorioDeporte = repositorioDeporte;
     }
 
     [HttpGet]
@@ -62,6 +64,17 @@ public class TurnosController : ControllerBase
             return BadRequest(new { message = "El turno no puede estar vacío." });
         }
 
+        var deportes = await repositorioDeporte.ListarDeportes();
+        var deporte = deportes.FirstOrDefault(d => d.id == turno.IdDeporte);
+        if (deporte != null)
+        {
+            turno.nombreTurno = $"{deporte.nombre} - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+        }
+        else
+        {
+            turno.nombreTurno = $"Turno - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+        }
+
         try
         {
             await altaUseCase.Ejecutar(turno);
@@ -87,6 +100,17 @@ public class TurnosController : ControllerBase
         if (turno == null)
         {
             return BadRequest(new { message = "El turno no puede estar vacío." });
+        }
+
+        var deportes = await repositorioDeporte.ListarDeportes();
+        var deporte = deportes.FirstOrDefault(d => d.id == turno.IdDeporte);
+        if (deporte != null)
+        {
+            turno.nombreTurno = $"{deporte.nombre} - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+        }
+        else
+        {
+            turno.nombreTurno = $"Turno - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
         }
 
         try

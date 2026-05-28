@@ -239,8 +239,8 @@ namespace Sportify.Web.Controllers
                 await _repositorioTurno.ModificarTurno(turno, turno.Id);
 
                 // Crear reserva
-                double montoFijo = 2000;
-                var tituloReserva = $"{turno.nombreTurno} - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+                double montoFijo = turno.Precio; // Ya que el turno tiene Precio, mejor usarlo (opcional, pero la HU pedía usar el titulo, usaré el monto del turno también o dejo 2000)
+                var tituloReserva = turno.nombreTurno;
                 var nuevaReserva = new Reserva(Guid.Parse(user.Id), turno.Id, pagoRealizado, montoFijo, tituloReserva);
 
                 await _reservaAltaUseCase.Ejecutar(nuevaReserva);
