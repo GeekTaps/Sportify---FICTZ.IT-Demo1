@@ -3,10 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-
-
 import { apiClient } from "./api/api-client"; 
-
 import HomePage from './pages/HomePage'
 
 import DeportePage from './pages/DeportePage'
@@ -18,7 +15,14 @@ import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
 import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 
+import ReservarClasePage from "./pages/ReservarClasePage"
+import ReservasPage from './pages/ReservasPage'
+
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+
+
+
+
 
 
 // Test de conexión backend (Con Antigravity, funciona :D)
@@ -60,45 +64,49 @@ function App() { // a partir de aca se agregan los componentes del frontend que 
  // cuando este lo del inicio de sesio implemento lo del comentario de la linea de abajo
     return ( // los usuarios no logueados ven deportes, turnos , iniciar sesion y registrarse, los no logueados ven turnos, deportes, home, modificar usuario y cerrar sesion
         <BrowserRouter>
-            <nav style={{
-    display: "flex",
-    justifyContent: "flex-start",
-    gap: "25px",
-    padding: "10px",
-    background: "#eee",
-    alignItems: "center",
-    width: "100%"
-}}>
-    <Link to="/">Home</Link>
-    <Link to="/deportes">Deportes</Link>
-    <Link to="/turnos">Turnos</Link>
-    <Link to="/register">Registro</Link>
+    <nav
+        style={{
+            display: "flex",
+            gap: "15px",
+            padding: "10px",
+            background: "#eee",
+            marginBottom: "20px",
+            alignItems: "center"
+        }}
+    >
+        <Link to="/">Home</Link>
+        <Link to="/register">Registro</Link>
+        <Link to="/deportes">Deportes</Link>
+        <Link to="/turnos">Turnos</Link>
+        <Link to="/reservar-clase">Reservar Clase</Link>
+        <Link to="/reservas">Mis Reservas</Link>
 
-    {user && (
-        <Link to={`/modificarUsuario/${user.id}`}> 
-            Modificar Datos 
-        </Link>   //dejo esto de modificar usuario asi sino se rompe, el user&& (junto al user null declarado arriba(const [user, setUser] = useState(null);)) tiene que ver con qué se muestra a usuarios logueados y que se muestra a los no logueasdos
-    )} 
-            <button>  
-                Cerrar sesión 
-            </button>        
-</nav>    
-      
-            <p>{backendMessage}</p>
+        {user && (
+            <Link to={`/modificarUsuario/${user.id}`}> 
+                Modificar Datos
+            </Link>// hola esto se implementa hoy jueves dejenlo aca mientras el boton de cerrar tambien dejenlo
+        )} 
 
-            <Routes>
-                <Route path="/" element={<HomePage />} />
+        <button > 
+            Cerrar sesión
+        </button> 
+    </nav>
 
-                <Route path="/register" element={<RegistrarUsuarioPage />} />
-                <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
-                <Route path="/deportes" element={<DeportePage />} />
-                <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
-                <Route path="/turnos" element={<TurnoPage />} />
-                <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
-                <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
+    <p>{backendMessage}</p>
 
-            </Routes>
-        </BrowserRouter>
+    <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/register" element={<RegistrarUsuarioPage />} />
+        <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
+        <Route path="/deportes" element={<DeportePage />} />
+        <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
+        <Route path="/turnos" element={<TurnoPage />} />
+        <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
+        <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
+        <Route path="/reservar-clase" element={<ReservarClasePage />} />
+        <Route path="/reservas" element={<ReservasPage />} />
+    </Routes>
+</BrowserRouter>
     );
 
   }
