@@ -88,6 +88,7 @@ function App() {
     
 
     return ( //esto es lo que se muestra en la interfaz.
+         <AuthProvider>
         <BrowserRouter>
             <nav
                 style={{
@@ -106,7 +107,7 @@ function App() {
                 <Link to="/reservas">Reservas</Link>
             </nav>
 
-            <p>{backendMessage}</p>
+            
 
                 <Routes>
                     <Route path="/" element={<HomePage />} />
@@ -125,6 +126,7 @@ function App() {
                     {/* <Route path="/reservar-clase" element={<ReservarClasePage />} /> */}
                 </Routes>
             </BrowserRouter>
+            </AuthProvider>
     )
 }
 
