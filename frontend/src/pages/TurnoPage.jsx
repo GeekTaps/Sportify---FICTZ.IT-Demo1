@@ -1,7 +1,5 @@
 import BotonModificarTurno from "../components/FrontTurnos/BotonModificarTurno";
-import BotonMostrarListadoTurnos from "../components/FrontTurnos/BotonMostrarListadoTurnos";
-import BotonCrearTurno from "../components/FrontTurnos/BotonCrearTurno";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
@@ -34,6 +32,10 @@ function TurnoPage() {
       alert("Error al cargar los turnos. Asegúrate de que el backend esté ejecutándose.");
     }
   };
+
+  useEffect(() => {
+    cargarTurnos();
+  }, []);
 
   const modificarTurno = (id) => {
     navigate(`/turnos/modificar/${id}`);
@@ -147,8 +149,6 @@ function TurnoPage() {
       <p>Administra los turnos disponibles en el sistema.</p>
 
       <div style={{ marginBottom: "20px" }}>
-        {user?.esAdmin && <BotonCrearTurno />}
-        <BotonMostrarListadoTurnos onClick={cargarTurnos} />
       </div>
 
       {turnos.length === 0 ? (

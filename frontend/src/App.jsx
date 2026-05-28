@@ -39,7 +39,11 @@ function Navigation() {
         >
             <Link to="/">Home</Link>
             <Link to="/deportes">Deportes</Link>
-            <Link to="/turnos">Turnos</Link>
+            <Link to="/turnos">Ver Turnos</Link>
+
+            {user && user.esAdmin && (
+                <Link to="/turnos/crear">Crear Turno</Link>
+            )}
 
             {!user && (
                 <>
