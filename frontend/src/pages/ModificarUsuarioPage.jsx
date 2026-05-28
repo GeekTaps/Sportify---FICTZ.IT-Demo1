@@ -66,7 +66,7 @@ function ModificarUsuarioPage() {
     if (!confirmDelete) return;
 
     try {
-      await apiClient.patch(`/usuarios/baja/${id}`);
+      await apiClient.post(`/usuarios/${id}/baja`);
 
       setSuccess("Cuenta eliminada correctamente");
 

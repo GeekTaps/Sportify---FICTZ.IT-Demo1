@@ -11,7 +11,7 @@ import ModificarDeportePage from './pages/ModificarDeportePage'
 import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
-// import ModificarUsuarioPage from "./pages/ModificarUsuarioPage" // from development
+import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 // import ReservarClasePage from "./pages/ReservarClasePage" // from development
 
 import ReservasPage from './pages/ReservasPage'
@@ -51,7 +51,7 @@ function Navigation() {
             {user && !user.esAdmin && (
                 <>
                     <Link to="/reservas">Mis Reservas</Link>
-                    {/* <Link to={`/modificarUsuario/${user.id}`}> Modificar Datos </Link> // hola esto se implementa hoy jueves dejenlo aca mientras el boton de cerrar tambien dejenlo */}
+                    <Link to={`/modificarUsuario/${user.id}`}> Modificar Datos </Link>
                 </>
             )}
 
@@ -113,7 +113,7 @@ function App() {
                     <Route path="/reservas" element={<ReservasPage />} />
 
                     {/* Rutas de development: */}
-                    {/* <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} /> */}
+                    <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                     {/* <Route path="/reservar-clase" element={<ReservarClasePage />} /> */}
                 </Routes>
             </BrowserRouter>

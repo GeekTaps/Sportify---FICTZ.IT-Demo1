@@ -19,18 +19,12 @@ public class ModificarUsuarioController : ControllerBase
     }
 
  
-    [HttpPatch("me")]
-    public async Task<IActionResult> UpdateMe([FromBody] Usuario dto)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] Usuario dto)
     {
         try
         {
-        
-            var identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (identityId == null)
-                return Unauthorized(new { message = "No estás autenticado" });
-
-            await actualizarUsuarioUseCase.Ejecutar(identityId, dto);
+            await actualizarUsuarioUseCase.Ejecutar(id, dto);
 
             return Ok(new
             {
