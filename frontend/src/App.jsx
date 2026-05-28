@@ -6,7 +6,7 @@ import './App.css'
 import HomePage from './pages/HomePage'
 
 // Test de conexión backend (Con Antigravity, funciona :D)
-
+gi
 function App() { // a partir de aca se agregan los componentes del frontend que van a aparecer en la interfaz con la que interactuara el usuario
   // contador automatico de clicks
   const [count, setCount] = useState(0)
