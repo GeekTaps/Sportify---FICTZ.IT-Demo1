@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function ReservarClasePage() {
-  const [email, setEmail] = useState("");
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [turnos, setTurnos] = useState([]);
   const [turnoSeleccionado, setTurnoSeleccionado] = useState("");
   
@@ -11,6 +13,19 @@ function ReservarClasePage() {
   const [esError, setEsError] = useState(false);
   const [reservaExitosa, setReservaExitosa] = useState(false);
   const [requierePago, setRequierePago] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      alert("Debes iniciar sesión para reservar una clase.");
+      navigate("/login");
+      return;
+    }
+    if (user.esAdmin) {
+      alert("Los administradores no pueden reservar clases.");
+      navigate("/turnos");
+      return;
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     // Cargar turnos disponibles
@@ -31,8 +46,8 @@ function ReservarClasePage() {
 
   const handleReservar = async (e) => {
     e.preventDefault();
-    if (!email || !turnoSeleccionado) {
-      setMensaje("Por favor ingresá tu email y seleccioná un turno.");
+    if (!turnoSeleccionado) {
+      setMensaje("Por favor seleccioná un turno.");
       setEsError(true);
       return;
     }
@@ -47,7 +62,7 @@ function ReservarClasePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            email: email, 
+            email: user.email, 
             idTurno: turnoSeleccionado 
         })
       });
@@ -83,18 +98,6 @@ function ReservarClasePage() {
         
         {!reservaExitosa ? (
             <form onSubmit={handleReservar} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                <div>
-                    <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Email del usuario</label>
-                    <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        placeholder="ej: malva123@mail.com"
-                        style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
-                        required
-                    />
-                </div>
-
                 <div>
                     <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Clase / Turno</label>
                     <select 

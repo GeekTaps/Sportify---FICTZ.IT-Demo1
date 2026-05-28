@@ -1,9 +1,11 @@
 import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDeporte";
 import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function DeportePage() {
+  const { user } = useContext(AuthContext);
   const [deportes, setDeportes] = useState([]);
   const navigate = useNavigate();
 
@@ -35,7 +37,7 @@ function DeportePage() {
         {deportes.map((d) => (
           <li key={d.id} style={{ marginBottom: "12px" }}>
             <strong>{d.nombre}</strong> - {d.descripcion}
-            <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />
+            {user?.esAdmin && <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />}
           </li>
         ))}
       </ul>
