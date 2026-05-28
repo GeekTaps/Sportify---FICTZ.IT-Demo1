@@ -14,37 +14,38 @@ public ValidadorModificarUsuario ( IRepositorioUsuarios repositorioUsuarios)
     }
 public async Task validar(Usuario usuario, string idUsuario)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
     {
-    
-    if (string.IsNullOrWhiteSpace(usuario.Mail) || !usuario.Mail.Contains("@"))
-        throw new ValidacionException("El mail no es válido");
+    if (!string.IsNullOrWhiteSpace(usuario.Mail))
+    {
+        if (!usuario.Mail.Contains("@"))
+            throw new ValidacionException("El mail no es válido");
 
-    if (await repositorioUsuarios.BuscarMail(usuario.Mail))
-        throw new ValidacionException("Ese mail ya está registrado");
+        if (await repositorioUsuarios.BuscarMail(usuario.Mail))
+            throw new ValidacionException("Ese mail ya está registrado");
+    }
 
-    if (string.IsNullOrWhiteSpace(usuario.Contraseña))
-        throw new ValidacionException("La contraseña no puede estar vacía");
+    if (!string.IsNullOrWhiteSpace(usuario.Contraseña))
+    {
+        if (usuario.Contraseña.Length < 6)
+            throw new ValidacionException("La contraseña debe tener al menos 6 caracteres");
+    }
 
-    if (usuario.Contraseña.Length < 6)
-        throw new ValidacionException("La contraseña debe tener al menos 6 caracteres");
+    if (!string.IsNullOrWhiteSpace(usuario.Edad))
+    {
+        if (!int.TryParse(usuario.Edad, out int edad) || edad < 18)
+            throw new ValidacionException("La edad ingresada no es válida o debes ser mayor de 18 años");    
+    }
 
-       if (string.IsNullOrWhiteSpace(usuario.Edad))
-        throw new ValidacionException("La edad ingresada no es válida");
+    if (!string.IsNullOrWhiteSpace(usuario.Dni))
+    {
+        if (!int.TryParse(usuario.Dni, out int dni))
+            throw new ValidacionException("El DNI Ingresado no es válido");  
+    }
 
-    if (!int.TryParse(usuario.Edad, out int edad))
-        throw new ValidacionException("La edad ingresada no es válida");    
-
-    if (string.IsNullOrWhiteSpace(usuario.Dni))
-        throw new ValidacionException("El DNI Ingresado no es válido");
-
-    if ( !int.TryParse(usuario.Dni, out int dni))
-        throw new ValidacionException("El DNI Ingresado no es válido");  
-    if (edad <= 17)
-        throw new ValidacionException("Debes ser mayor de 18 años");
-
-    if (!validarNombre(usuario.NombreCompleto))
-        throw new ValidacionException("El nombre contiene palabras prohibidas");
-
-   
+    if (!string.IsNullOrWhiteSpace(usuario.NombreCompleto))
+    {
+        if (!validarNombre(usuario.NombreCompleto))
+            throw new ValidacionException("El nombre contiene palabras prohibidas");
+    }
 }
 
 

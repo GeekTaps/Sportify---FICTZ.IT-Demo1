@@ -47,6 +47,11 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
+builder.Services.AddScoped<modificarUsuarioUseCase>();
+builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
+
+builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
+
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
@@ -74,7 +79,8 @@ builder.Services
         options.Password.RequireLowercase = false;
         options.Password.RequireNonAlphanumeric = false;
     }) //configura ASP.NET Identity.
-    .AddEntityFrameworkStores<ApplicationDbContext>(); //hace que Identity use EF Core.
+    .AddEntityFrameworkStores<ApplicationDbContext>() //hace que Identity use EF Core.
+    .AddDefaultTokenProviders();
 
 
 //------------------------------------------------------------------------------------------

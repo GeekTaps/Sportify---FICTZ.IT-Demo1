@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.Excepciones;
 using Sportify.Dominio.Usuario;
+using Sportify.Web.DTOs;
 
 namespace Sportify.Web.Controllers;
 
@@ -20,11 +21,19 @@ public class ModificarUsuarioController : ControllerBase
 
  
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] Usuario dto)
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] ModificarUsuarioDTO dto)
     {
         try
         {
-            await actualizarUsuarioUseCase.Ejecutar(id, dto);
+            Usuario usuario = new Usuario(
+                dto.NombreCompleto ?? "",
+                dto.Email ?? "",
+                dto.Dni ?? "",
+                dto.Password ?? "",
+                dto.Edad ?? ""
+            );
+
+            await actualizarUsuarioUseCase.Ejecutar(id, usuario);
 
             return Ok(new
             {
