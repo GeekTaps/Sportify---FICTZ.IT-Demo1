@@ -1,9 +1,12 @@
+import BotonEliminarDeporte from "../components/FrontDeportes/BotonEliminarDeporte";
 import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDeporte";
 import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function DeportePage() {
+  const { user } = useContext(AuthContext);
   const [deportes, setDeportes] = useState([]);
   const navigate = useNavigate();
 
@@ -24,6 +27,24 @@ function DeportePage() {
     navigate(`/deportes/modificar/${id}`);
   };
 
+  const eliminarDeporte = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este deporte?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+      setDeportes(deportes.filter((d) => d.id !== id));
+    } catch (error) {
+      console.error("Error al eliminar deporte:", error);
+    }
+  };
+
   return (
     <div>
       <h1>Bienvenido a la página de deportes!</h1>
@@ -35,7 +56,8 @@ function DeportePage() {
         {deportes.map((d) => (
           <li key={d.id} style={{ marginBottom: "12px" }}>
             <strong>{d.nombre}</strong> - {d.descripcion}
-            <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />
+            {user?.esAdmin && <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />}
+            {user?.esAdmin && <BotonEliminarDeporte onClick={() => eliminarDeporte(d.id)} />}
           </li>
         ))}
       </ul>

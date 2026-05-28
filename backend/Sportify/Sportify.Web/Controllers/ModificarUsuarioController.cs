@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.Excepciones;
 using Sportify.Dominio.Usuario;
+using Sportify.Web.DTOs;
 
 namespace Sportify.Web.Controllers;
 
@@ -12,25 +13,47 @@ namespace Sportify.Web.Controllers;
 public class ModificarUsuarioController : ControllerBase
 {
     private readonly modificarUsuarioUseCase actualizarUsuarioUseCase;
-
+     
     public ModificarUsuarioController(modificarUsuarioUseCase actualizarUsuarioUseCase)
     {
         this.actualizarUsuarioUseCase = actualizarUsuarioUseCase;
+      
     }
+[HttpGet("{id}")]
+public async Task<IActionResult> GetUsuario([FromRoute] string id)
+{
+    try
+    {
+        Usuario usuario = await actualizarUsuarioUseCase.ObtenerPorId(id);
 
+        return Ok(new
+        {
+            nombreCompleto = usuario.NombreCompleto,
+            email = usuario.Mail,
+            dni = usuario.Dni,
+            edad = usuario.Edad
+        });
+    }
+    catch (ValidacionException ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
  
-    [HttpPatch("me")]
-    public async Task<IActionResult> UpdateMe([FromBody] Usuario dto)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update([FromRoute] string id, [FromBody] ModificarUsuarioDTO dto)
     {
         try
         {
-        
-            var identityId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Usuario usuario = new Usuario(
+                dto.NombreCompleto ?? "",
+                dto.Email ?? "",
+                dto.Dni ?? "",
+                dto.Password ?? "",
+                dto.Edad ?? ""
+            );
 
-            if (identityId == null)
-                return Unauthorized(new { message = "No estás autenticado" });
-
-            await actualizarUsuarioUseCase.Ejecutar(identityId, dto);
+            await actualizarUsuarioUseCase.Ejecutar(id, usuario);
 
             return Ok(new
             {
@@ -42,4 +65,6 @@ public class ModificarUsuarioController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+    
+
 }

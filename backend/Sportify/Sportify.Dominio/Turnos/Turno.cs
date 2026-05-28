@@ -9,5 +9,7 @@ public class Turno
     public String nommbreProfesor { get; set; } //nombre del profesor que dicta el turno (opcional, chequear con front si es realmente necesario)
     public TimeOnly horaInicio { get; set; } //hora de inicio del turno
     public TimeOnly horaFin { get; set; } //hora de fin del turno
+    public double Precio { get; set; } = 2000;
+    public bool ListaEsperaHabilitada { get; set; } = false;
 
 }

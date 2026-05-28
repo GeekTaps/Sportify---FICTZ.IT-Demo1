@@ -13,6 +13,6 @@ public  Task<bool> BuscarMail(string mail);
 public  Task<bool> BuscarId(string id);
  public  Task BajaLogica(string id);
 public  Task ModificarUsuario(string id, Usuario usuario);
-
+public  Task<Usuario> ObtenerPorId(string id);
 
 }

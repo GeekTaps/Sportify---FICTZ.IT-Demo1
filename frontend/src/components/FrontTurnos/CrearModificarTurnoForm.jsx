@@ -131,26 +131,6 @@ function CrearModificarTurnoForm({
 
       <div style={{ marginBottom: "15px" }}>
         <label>
-          Nombre del Turno:
-          <input
-            type="text"
-            value={nombreTurno}
-            onChange={(e) => setNombreTurno(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
           Nombre del Profesor:
           <input
             type="text"

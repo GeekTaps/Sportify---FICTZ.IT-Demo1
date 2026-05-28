@@ -66,11 +66,6 @@ function CrearModificarTurnoPage() {
       return;
     }
 
-    if (!nombreTurno.trim()) {
-      setError("El nombre del turno no puede estar vacío.");
-      return;
-    }
-
     if (!nommbreProfesor.trim()) {
       setError("El nombre del profesor no puede estar vacío.");
       return;
@@ -97,7 +92,7 @@ function CrearModificarTurnoPage() {
       fecha: `${fecha}T${horaInicio}:00`,
       cupo: parseInt(cupo),
       idDeporte: idDeporte,
-      nombreTurno: nombreTurno.trim(),
+      nombreTurno: "Autogenerado", // El backend se encarga de cambiarlo
       nommbreProfesor: nommbreProfesor.trim(),
       horaInicio: horaInicio,
       horaFin: horaFin,

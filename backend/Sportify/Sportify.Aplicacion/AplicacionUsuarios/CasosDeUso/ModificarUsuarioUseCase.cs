@@ -1,32 +1,35 @@
-using System;
-using System.Threading.Tasks;
-using Sportify.Dominio;
-using Sportify.Dominio.Usuario;
+    using System;
+    using System.Threading.Tasks;
+    using Sportify.Dominio;
+    using Sportify.Dominio.Usuario;
 
-namespace Sportify.Aplicacion.AplicacionUsuarios;
+    namespace Sportify.Aplicacion.AplicacionUsuarios;
 
-public class modificarUsuarioUseCase
+    public class modificarUsuarioUseCase
+    {
+    private readonly IRepositorioUsuarios repositorioUsuarios;
+    private readonly IValidadorModificarUsuario validadorModificarUsuario;
+
+    public modificarUsuarioUseCase(IValidadorModificarUsuario validadorUsuario,IRepositorioUsuarios repositorioUsuarios)
+        {
+            this.validadorModificarUsuario=validadorUsuario;
+            this.repositorioUsuarios=repositorioUsuarios;
+
+        }
+    //esta parte me dejó muchas dudas
+    public async Task Ejecutar(string idUsuario, Usuario dto)
+        {
+            await this.validadorModificarUsuario
+                .validar(dto, idUsuario);
+            
+                await this.repositorioUsuarios
+                    .ModificarUsuario(idUsuario, dto);
+            
+        }
+       public async Task<Usuario> ObtenerPorId(string id)
 {
-private readonly IRepositorioUsuarios repositorioUsuarios;
-private readonly IValidadorModificarUsuario validadorModificarUsuario;
-
-public modificarUsuarioUseCase(IValidadorModificarUsuario validadorUsuario,IRepositorioUsuarios repositorioUsuarios)
-    {
-        this.validadorModificarUsuario=validadorUsuario;
-        this.repositorioUsuarios=repositorioUsuarios;
+    return await repositorioUsuarios.ObtenerPorId(id);
+} 
 
     }
-//esta parte me dejó muchas dudas
-public async Task Ejecutar(string idUsuario, Usuario usuario)
-    {
-         await this.validadorModificarUsuario
-            .validar(usuario, idUsuario);
-        
-            await this.repositorioUsuarios
-                .ModificarUsuario(idUsuario, usuario);
-        
-    }
-    
-
-}
 

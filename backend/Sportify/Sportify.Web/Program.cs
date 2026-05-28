@@ -47,6 +47,11 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
+builder.Services.AddScoped<modificarUsuarioUseCase>();
+builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
+
+builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
+
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
@@ -74,7 +79,8 @@ builder.Services
         options.Password.RequireLowercase = false;
         options.Password.RequireNonAlphanumeric = false;
     }) //configura ASP.NET Identity.
-    .AddEntityFrameworkStores<ApplicationDbContext>(); //hace que Identity use EF Core.
+    .AddEntityFrameworkStores<ApplicationDbContext>() //hace que Identity use EF Core.
+    .AddDefaultTokenProviders();
 
 
 //------------------------------------------------------------------------------------------
@@ -107,7 +113,9 @@ using (var scope = app.Services.CreateScope())
         horaFin = new TimeOnly(19, 0),
         nombreTurno = "Vóley Avanzado",
         nommbreProfesor = "Prof. Dibu",
-        cupo = 10
+        cupo = 10,
+        Precio = 1500,
+        ListaEsperaHabilitada = true
     };
     await turnoRepo.AltaTurno(turnoVoley);
 
@@ -120,12 +128,52 @@ using (var scope = app.Services.CreateScope())
         horaFin = new TimeOnly(19, 0),
         nombreTurno = "Fútbol 5",
         nommbreProfesor = "Prof. Messi",
-        cupo = 10
+        cupo = 10,
+        Precio = 3200,
+        ListaEsperaHabilitada = false
     };
     await turnoRepo.AltaTurno(turnoFutbol);
 
+    // Turno sin cupo con lista de espera
+    var turnoVoleyLlenoConEspera = new Sportify.Dominio.Turnos.Turno {
+        Id = Guid.NewGuid(),
+        IdDeporte = dVoley.id,
+        Fecha = DateTime.Now.AddDays(4),
+        horaInicio = new TimeOnly(18, 0),
+        horaFin = new TimeOnly(19, 0),
+        nombreTurno = "Vóley Lleno - Espera",
+        nommbreProfesor = "Prof. Scaloni",
+        cupo = 0,
+        Precio = 2000,
+        ListaEsperaHabilitada = true
+    };
+    await turnoRepo.AltaTurno(turnoVoleyLlenoConEspera);
+
+    // Turno sin cupo sin lista de espera
+    var turnoVoleyLlenoSinEspera = new Sportify.Dominio.Turnos.Turno {
+        Id = Guid.NewGuid(),
+        IdDeporte = dVoley.id,
+        Fecha = DateTime.Now.AddDays(5),
+        horaInicio = new TimeOnly(18, 0),
+        horaFin = new TimeOnly(19, 0),
+        nombreTurno = "Vóley Lleno - Sin Espera",
+        nommbreProfesor = "Prof. Samuel",
+        cupo = 0,
+        Precio = 2000,
+        ListaEsperaHabilitada = false
+    };
+    await turnoRepo.AltaTurno(turnoVoleyLlenoSinEspera);
+
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UsuarioIdentity>>();
     var reservaRepo = scope.ServiceProvider.GetRequiredService<IRepositorioReserva>();
+
+    // Usuario Administrador
+    var adminUser = await userManager.FindByEmailAsync("admin@mail.com");
+    if (adminUser == null)
+    {
+        adminUser = new UsuarioIdentity { NombreCompleto = "Admin", Email = "admin@mail.com", Edad = "30", Dni = "00000000", UserName = "admin@mail.com", EsAdmin = true };
+        await userManager.CreateAsync(adminUser, "Admin.123!");
+    }
 
     // Usuario malva123@mail.com (0 cancelaciones)
     var malvaUser = await userManager.FindByEmailAsync("malva123@mail.com");

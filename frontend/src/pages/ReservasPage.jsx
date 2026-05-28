@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function ReservasPage() {
+  const { user } = useContext(AuthContext);
   const [reservas, setReservas] = useState([]);
-  const [email, setEmail] = useState("");
   const [mensaje, setMensaje] = useState("");
   
   // Estados para el Modal
@@ -13,14 +14,14 @@ function ReservasPage() {
   const [cancelando, setCancelando] = useState(false);
 
   const cargarReservas = async () => {
-    if (!email) {
-      setMensaje("Por favor ingresa un email de usuario");
+    if (!user) {
+      setMensaje("Debes iniciar sesión para ver tus reservas");
       return;
     }
     
     try {
       setMensaje("");
-      const response = await fetch(`http://localhost:5266/api/Reservas/usuario/email/${email}`);
+      const response = await fetch(`http://localhost:5266/api/Reservas/usuario/email/${user.email}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -41,6 +42,14 @@ function ReservasPage() {
       setReservas([]);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      cargarReservas();
+    } else {
+      setMensaje("Debes iniciar sesión para ver tus reservas");
+    }
+  }, [user]);
 
   const abrirModal = async (idReserva) => {
     setLoadingDetalles(true);
@@ -96,18 +105,19 @@ function ReservasPage() {
   return (
     <div>
       <h1>Mis Reservas</h1>
-      <p>Visualiza tus reservas activas ingresando tu email.</p>
+      <p>Visualiza tus reservas activas.</p>
 
-      <div style={{ marginBottom: "20px", display: "flex", justifyContent: "center", gap: "10px" }}>
-        <input 
-          type="email" 
-          placeholder="Ingresa tu email (ej: milka123@mail.com)" 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: "8px", width: "300px" }}
-        />
-        <button onClick={cargarReservas} style={{ padding: "8px 16px", cursor: "pointer" }}>Buscar</button>
-      </div>
+      {user?.esAdmin && (
+        <div style={{ padding: "10px", background: "#ffeb3b", color: "black", marginBottom: "15px" }}>
+          Advertencia: Eres administrador. Esta vista está pensada para clientes.
+        </div>
+      )}
+
+      {mensaje && (
+        <div style={{ marginBottom: "20px", padding: "10px", backgroundColor: "#f8d7da", color: "#721c24", borderRadius: "5px" }}>
+          {mensaje}
+        </div>
+      )}
 
       {mensaje && <p style={{ color: "red", fontWeight: "bold" }}>{mensaje}</p>}
 
