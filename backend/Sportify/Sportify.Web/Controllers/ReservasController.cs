@@ -217,11 +217,23 @@ namespace Sportify.Web.Controllers
                     return BadRequest(new { mensaje = "No hay cupo disponible para este turno." });
                 }
 
+                // Verificar duplicados
+                var reservasUsuario = await _repositorioReserva.listarReservasUsuario(Guid.Parse(user.Id));
+                if (reservasUsuario.Any(r => r.idTurno == request.IdTurno))
+                {
+                    return BadRequest(new { mensaje = "Ya reservaste este turno." });
+                }
+
+                if (turno.Precio > 0 && user.Creditos == 0)
+                {
+                    return Ok(new { mensaje = "Requiere pago" });
+                }
+
                 bool pagoRealizado = false;
                 string mensaje = "";
 
-                // Lógica de créditos
-                if (user.Creditos > 0)
+                // Lógica de créditos o gratis
+                if (turno.Precio > 0 && user.Creditos > 0)
                 {
                     pagoRealizado = true;
                     user.Creditos--;
@@ -230,8 +242,8 @@ namespace Sportify.Web.Controllers
                 }
                 else
                 {
-                    pagoRealizado = false;
-                    mensaje = "Reserva casi lista!";
+                    pagoRealizado = true; // Es gratis
+                    mensaje = "Reserva generada con éxito.";
                 }
 
                 // Descontar cupo

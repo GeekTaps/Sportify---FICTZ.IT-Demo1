@@ -1,7 +1,11 @@
 import BotonModificarTurno from "../components/FrontTurnos/BotonModificarTurno";
 import { useState, useContext, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+
+// Inicializar MercadoPago con la Public Key
+initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
 
 function TurnoPage() {
   const { user } = useContext(AuthContext);
@@ -16,8 +20,20 @@ function TurnoPage() {
   const [reservaExitosa, setReservaExitosa] = useState(false);
   const [requierePago, setRequierePago] = useState(false);
   const [esErrorReserva, setEsErrorReserva] = useState(false);
+  const [preferenceId, setPreferenceId] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Revisar si volvimos de Mercado Pago con error
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("pago") === "rechazado") {
+      alert("El pago no pudo completarse. Se ha cancelado la reserva y se restauró el cupo de la clase.");
+      // Limpiar URL
+      navigate("/turnos", { replace: true });
+    }
+  }, [location, navigate]);
 
   const cargarTurnos = async () => {
     try {
@@ -100,6 +116,7 @@ function TurnoPage() {
     setReservaExitosa(false);
     setRequierePago(false);
     setEsErrorReserva(false);
+    setPreferenceId(null);
   };
 
   const handleReservar = async () => {
@@ -108,6 +125,7 @@ function TurnoPage() {
     setReservaExitosa(false);
     setRequierePago(false);
     setEsErrorReserva(false);
+    setPreferenceId(null);
 
     try {
       const response = await fetch("http://localhost:5266/api/Reservas/reservar-turno", {
@@ -126,8 +144,31 @@ function TurnoPage() {
         setMensajeReserva(data.mensaje);
         setReservaExitosa(true);
         
-        if (data.mensaje === "Reserva casi lista!") {
+        if (data.mensaje === "Requiere pago") {
             setRequierePago(true);
+            setMensajeReserva("Redirigiendo a Mercado Pago...");
+            // Pedir al backend que cree la preferencia de Mercado Pago
+            try {
+              const pagoResponse = await fetch("http://localhost:5266/api/pagos/crear-preferencia", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  idTurno: modalTurno.id,
+                  email: user.email
+                })
+              });
+              
+              if (pagoResponse.ok) {
+                const pagoData = await pagoResponse.json();
+                setPreferenceId(pagoData.preferenceId);
+              } else {
+                const errorData = await pagoResponse.json();
+                setMensajeReserva(`Error MP: ${errorData.message} - ${errorData.error || ''}`);
+              }
+            } catch (err) {
+              console.error("Error al crear preferencia:", err);
+              setMensajeReserva("Error al crear preferencia: " + err.message);
+            }
         }
         // Actualizamos cupo localmente o recargamos
         cargarTurnos();
@@ -247,9 +288,11 @@ function TurnoPage() {
                     {requierePago && (
                         <div style={{ marginTop: "15px" }}>
                             <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                            <button style={{ padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", width: "100%", fontWeight: "bold" }}>
-                                Proceder al pago
-                            </button>
+                            {preferenceId ? (
+                              <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts: { action: 'pay' } }} />
+                            ) : (
+                              <p>Cargando botón de pago...</p>
+                            )}
                         </div>
                     )}
                     
