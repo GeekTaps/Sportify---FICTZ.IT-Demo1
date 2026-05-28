@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Sportify.Dominio.Pagos;
+using Sportify.Dominio.Reservas;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Sportify.Infraestructura.Data;
@@ -22,6 +24,12 @@ public class RepositorioPagos : IRepositorioPago
 
     public async Task registrarPago(Pago pagoRealizado)
     {
+        var reserva = await archivo.Reservas.FirstOrDefaultAsync(r => r.id == pagoRealizado.idReserva && r.idUsuario == pagoRealizado.idUsuario);
+        if (reserva != null)
+        {
+            reserva.marcarComoPagada(); 
+        }
+
         archivo.Pagos.Add(pagoRealizado);
         await archivo.SaveChangesAsync();
     }

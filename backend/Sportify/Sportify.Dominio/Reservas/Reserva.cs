@@ -21,4 +21,9 @@ public class Reserva{
         this.monto = monto;
         this.titulo = titulo;
     }
+
+    public void marcarComoPagada()
+    {
+        this.paga = true;
+    }
 }

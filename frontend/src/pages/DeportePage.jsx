@@ -24,10 +24,18 @@ function DeportePage() {
     navigate(`/deportes/modificar/${id}`);
   };
 
+  const irACrearDeporte = () => {
+    navigate("/deportes/crear");
+  };
+
   return (
     <div>
       <h1>Bienvenido a la página de deportes!</h1>
       <p>Explora los diferentes deportes disponibles.</p>
+
+      <button type="button" onClick={irACrearDeporte}>
+        Ir a Crear Deporte
+      </button>
 
       <BotonMostrarListadoDeportes onClick={cargarDeportes} />
 
