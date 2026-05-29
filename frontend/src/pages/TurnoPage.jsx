@@ -109,6 +109,24 @@ function TurnoPage() {
     }
   };
 
+  const handleEliminarTurno = async (idTurno) => {
+    if (!window.confirm("¿Seguro que querés eliminar este turno?")) return;
+    try {
+      const response = await fetch(`http://localhost:5266/api/turnos/${idTurno}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error("Error al eliminar");
+      }
+      alert("Turno eliminado con éxito");
+      cerrarModal();
+      cargarTurnos();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo eliminar el turno.");
+    }
+  };
+
   const cerrarModal = () => {
     setModalTurno(null);
     setUserInfo(null);
@@ -210,9 +228,11 @@ function TurnoPage() {
               onClick={() => abrirModal(turno)}
             >
               <h3 style={{ marginTop: 0, color: "var(--primary)" }}>{turno.nombreTurno || "Sin título"}</h3>
+              {/* 
               <p style={{ color: "var(--text-muted)" }}>
                 Click para ver detalles y reservar
               </p>
+              */}
             </li>
           ))}
         </ul>
@@ -300,8 +320,15 @@ function TurnoPage() {
             )}
 
             {user?.esAdmin && (
-              <div style={{ marginTop: "15px" }}>
+              <div style={{ marginTop: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
                 <BotonModificarTurno onClick={() => modificarTurno(modalTurno.id)} />
+                <button
+                  onClick={() => handleEliminarTurno(modalTurno.id)}
+                  className="btn btn-danger"
+                  style={{ width: "100%" }}
+                >
+                  Eliminar Turno
+                </button>
               </div>
             )}
 

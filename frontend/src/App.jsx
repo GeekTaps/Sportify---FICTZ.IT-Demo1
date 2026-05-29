@@ -110,31 +110,11 @@ function Footer() {
 }
 
 function App() {
-    const [backendMessage, setBackendMessage] = useState('Probando conexión con .NET...');
-
-    useEffect(() => {
-        fetch('http://localhost:5266/api/testconnection')
-            .then(res => res.json())
-            .then(data => {
-                setBackendMessage(data.message);
-            })
-            .catch(err => {
-                console.error(err);
-                setBackendMessage('Error al conectar con el backend. Asegurate de que esté corriendo.');
-            });
-    }, []);
-
     return (
         <AuthProvider>
             <BrowserRouter>
                 <div className="app-container">
                     <Navigation />
-
-                    {backendMessage !== 'Conexión exitosa a SQLite.' && (
-                        <div className="alert alert-warning" style={{ borderRadius: 0, margin: 0, textAlign: 'center', fontSize: '0.85rem' }}>
-                            {backendMessage}
-                        </div>
-                    )}
 
                     <main className="main-content">
                         <Routes>

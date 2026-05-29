@@ -36,9 +36,9 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                 throw new ValidacionException("Fecha de inicio inválida");
             }
 
-            if (fechaInicio.Date <= DateTime.Today)
+            if (fechaInicio.Date < DateTime.Today)
             {
-                throw new ValidacionException("La fecha de inicio debe ser posterior a la fecha actual.");
+                throw new ValidacionException("No puede elegir un día anterior al actual");
             }
 
             // Validar cupo y precio
@@ -59,7 +59,12 @@ namespace Sportify.Aplicacion.AplicacionTurnos
 
             TimeOnly horaFin = horaInicio.AddHours(1);
 
-            DayOfWeek diaSemanaObj = fechaInicio.DayOfWeek;
+            // Validar si es hoy, que la hora no haya pasado
+            var fechaConHoraExacta = new DateTime(fechaInicio.Year, fechaInicio.Month, fechaInicio.Day, horaInicio.Hour, horaInicio.Minute, 0);
+            if (fechaConHoraExacta < DateTime.Now)
+            {
+                throw new ValidacionException("La hora del turno debe ser posterior a la hora actual");
+            }
 
             // Validar deporte existente
             var deportes = await repositorioDeporte.ListarDeportes();
@@ -69,7 +74,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                 throw new ValidacionException("El deporte no existe.");
             }
 
-            // Buscar el turno original para encontrar el patrón de la serie
+            // Buscar el turno original
             var turnosExistentes = await repositorioTurno.ListarTurnos();
             var turnoOriginal = turnosExistentes.FirstOrDefault(t => t.Id == idOriginal);
             if (turnoOriginal == null)
@@ -77,95 +82,35 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                 throw new ValidacionException("Turno original no encontrado.");
             }
 
-            var deporteOriginalId = turnoOriginal.IdDeporte;
-            var diaSemanaOriginal = turnoOriginal.Fecha.DayOfWeek;
-            var horaInicioOriginal = turnoOriginal.horaInicio;
-            var startDate = fechaInicio.Date;
+            // Chequear conflicto
+            bool existe = turnosExistentes.Any(t => 
+                t.Id != idOriginal && 
+                t.IdDeporte == idDeporteNuevo && 
+                t.Fecha.Date == fechaConHoraExacta.Date && 
+                t.horaInicio == horaInicio);
 
-            var fechaLimite = startDate.AddDays(30);
-
-            // Encontrar todos los turnos de los próximos 30 días que pertenecen a esta "serie"
-            var today = DateTime.Today;
-            var turnosSerie = turnosExistentes.Where(t => 
-                t.IdDeporte == deporteOriginalId &&
-                t.Fecha.Date >= today &&
-                t.Fecha.Date <= today.AddDays(30) &&
-                t.Fecha.DayOfWeek == diaSemanaOriginal &&
-                t.horaInicio == horaInicioOriginal).ToList();
-
-            // Calcular fechas de los próximos 30 días que caen en el NUEVO día de la semana
-            var fechasNuevasDelMes = new List<DateTime>();
-            
-            for (int i = 0; i <= 30; i++)
+            if (existe)
             {
-                var dt = startDate.AddDays(i);
-                if (dt.DayOfWeek == diaSemanaObj)
-                {
-                    var fechaConHora = new DateTime(dt.Year, dt.Month, dt.Day, horaInicio.Hour, horaInicio.Minute, 0);
-                    if (fechaConHora >= DateTime.Now)
-                    {
-                        fechasNuevasDelMes.Add(dt);
-                    }
-                }
+                throw new EntidadRepetidaException("Ya hay un turno de esa actividad en ese horario");
             }
 
-            // Si cambiaron las propiedades clave, hay que verificar conflictos
-            bool cambioClave = (deporteOriginalId != idDeporteNuevo || diaSemanaOriginal != diaSemanaObj || horaInicioOriginal != horaInicio);
+            /*
+            LOGICA MENSUAL COMENTADA:
+            var turnosSerie = ...
+            */
 
-            if (cambioClave)
-            {
-                foreach (var fecha in fechasNuevasDelMes)
-                {
-                    bool existe = turnosExistentes.Any(t => 
-                        !turnosSerie.Contains(t) && // Ignorar los que vamos a modificar
-                        t.IdDeporte == idDeporteNuevo && 
-                        t.Fecha.Date == fecha.Date && 
-                        t.horaInicio == horaInicio);
+            // Modificar el turno individual
+            turnoOriginal.IdDeporte = idDeporteNuevo;
+            turnoOriginal.Fecha = fechaConHoraExacta;
+            turnoOriginal.horaInicio = horaInicio;
+            turnoOriginal.horaFin = horaFin;
+            turnoOriginal.cupo = cupo;
+            turnoOriginal.Precio = precio;
+            turnoOriginal.nombreTurno = $"{deporteObj.nombre} - {fechaConHoraExacta:dd/MM/yy} - {horaInicio:HH:mm}hs";
+            turnoOriginal.nommbreProfesor = nombreProfesor;
+            turnoOriginal.ListaEsperaHabilitada = listaEsperaHabilitada;
 
-                    if (existe)
-                    {
-                        throw new EntidadRepetidaException("Ya hay un turno de ese deporte para ese horario");
-                    }
-                }
-            }
-
-            // Modificar los turnos de la serie (o recrearlos si las fechas no coinciden en cantidad, 
-            // pero para simplificar, borramos la serie actual y creamos una nueva serie en su lugar, 
-            // manteniendo el ID del primero si es posible o simplemente borrando y creando).
-            // Lo más seguro es borrar la serie en el mes actual y crear la nueva.
-            
-            // Borrado
-            foreach (var t in turnosSerie)
-            {
-                await repositorioTurno.BajaTurno(t.Id);
-            }
-
-            // Creación
-            var turnosNuevos = new List<Turno>();
-            foreach (var fecha in fechasNuevasDelMes)
-            {
-                var fechaConHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, horaInicio.Hour, horaInicio.Minute, 0);
-
-                var turno = new Turno
-                {
-                    Id = Guid.NewGuid(),
-                    IdDeporte = idDeporteNuevo,
-                    Fecha = fechaConHora,
-                    horaInicio = horaInicio,
-                    horaFin = horaFin,
-                    cupo = cupo,
-                    Precio = precio,
-                    nombreTurno = $"{deporteObj.nombre} - {fechaConHora:dd/MM/yy} - {horaInicio:HH:mm}hs",
-                    nommbreProfesor = nombreProfesor,
-                    ListaEsperaHabilitada = listaEsperaHabilitada
-                };
-                turnosNuevos.Add(turno);
-            }
-
-            foreach (var nuevo in turnosNuevos)
-            {
-                await repositorioTurno.AltaTurno(nuevo);
-            }
+            await repositorioTurno.ModificarTurno(turnoOriginal, idOriginal);
         }
     }
 }

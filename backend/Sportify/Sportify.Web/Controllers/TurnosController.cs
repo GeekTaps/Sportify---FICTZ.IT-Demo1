@@ -14,6 +14,7 @@ public class TurnosController : ControllerBase
     private readonly TurnoAltaMensualUseCase altaMensualUseCase;
     private readonly TurnoModificacionMensualUseCase modificacionMensualUseCase;
     private readonly Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte;
+    private readonly IRepositorioTurno repositorioTurno;
 
     public TurnosController(
         TurnoListadoUseCase listadoUseCase, 
@@ -21,7 +22,8 @@ public class TurnosController : ControllerBase
         TurnoModificacionUseCase modificacionUseCase, 
         TurnoAltaMensualUseCase altaMensualUseCase,
         TurnoModificacionMensualUseCase modificacionMensualUseCase,
-        Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte)
+        Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte,
+        IRepositorioTurno repositorioTurno)
     {
         this.listadoUseCase = listadoUseCase;
         this.altaUseCase = altaUseCase;
@@ -29,6 +31,7 @@ public class TurnosController : ControllerBase
         this.altaMensualUseCase = altaMensualUseCase;
         this.modificacionMensualUseCase = modificacionMensualUseCase;
         this.repositorioDeporte = repositorioDeporte;
+        this.repositorioTurno = repositorioTurno;
     }
 
     [HttpGet]
@@ -193,6 +196,27 @@ public class TurnosController : ControllerBase
             catch (EntidadRepetidaException ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> EliminarTurno(Guid id)
+        {
+            try
+            {
+                var eliminado = await repositorioTurno.BajaTurno(id);
+                if (eliminado)
+                {
+                    return Ok(new { message = "Turno eliminado con éxito" });
+                }
+                else
+                {
+                    return NotFound(new { message = "Turno no encontrado." });
+                }
             }
             catch (Exception ex)
             {

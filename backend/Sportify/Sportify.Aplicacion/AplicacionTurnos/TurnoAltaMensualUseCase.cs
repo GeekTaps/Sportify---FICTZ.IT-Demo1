@@ -35,7 +35,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                 throw new ValidacionException("Fecha de inicio inválida");
             }
 
-            if (fechaInicio.Date <= DateTime.Today)
+            if (fechaInicio.Date < DateTime.Today)
             {
                 throw new ValidacionException("No puede elegir un día anterior al actual");
             }
@@ -58,6 +58,13 @@ namespace Sportify.Aplicacion.AplicacionTurnos
 
             TimeOnly horaFin = horaInicio.AddHours(1);
 
+            // Validar si es hoy, que la hora no haya pasado
+            var fechaConHoraExacta = new DateTime(fechaInicio.Year, fechaInicio.Month, fechaInicio.Day, horaInicio.Hour, horaInicio.Minute, 0);
+            if (fechaConHoraExacta < DateTime.Now)
+            {
+                throw new ValidacionException("La hora del turno debe ser posterior a la hora actual");
+            }
+
             DayOfWeek diaSemanaObj = fechaInicio.DayOfWeek;
 
             // Validar deporte existente
@@ -69,8 +76,13 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             }
 
             var fechasDelMes = new List<DateTime>();
-            var startDate = fechaInicio.Date;
             
+            // CREACIÓN INDIVIDUAL
+            fechasDelMes.Add(fechaInicio.Date);
+
+            /*
+            // CREACIÓN MENSUAL COMENTADA:
+            var startDate = fechaInicio.Date;
             for (int i = 0; i <= 30; i++)
             {
                 var dt = startDate.AddDays(i);
@@ -83,6 +95,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                     }
                 }
             }
+            */
 
             if (!fechasDelMes.Any())
             {

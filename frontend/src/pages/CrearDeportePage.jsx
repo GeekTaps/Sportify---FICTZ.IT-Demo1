@@ -30,14 +30,16 @@ function CrearDeportePage() {
         body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() }),
       });
 
-      if (response.ok) {
-        setSuccess("Deporte registrado correctamente.");
-        setNombre("");
-        setDescripcion("");
-        setTimeout(() => navigate("/deportes"), 1000);
-      } else {
-        setError("Error al registrar el deporte.");
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        setError(body?.message ?? "Error al registrar el deporte.");
+        return;
       }
+
+      setSuccess("Deporte registrado correctamente.");
+      setNombre("");
+      setDescripcion("");
+      setTimeout(() => navigate("/deportes"), 1000);
     } catch (err) {
       console.error(err);
       setError("Error al registrar el deporte.");

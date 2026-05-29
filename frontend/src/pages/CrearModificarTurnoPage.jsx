@@ -71,14 +71,7 @@ function CrearModificarTurnoPage() {
       return;
     }
 
-    const fechaSeleccionada = new Date(fechaInicio + "T00:00:00");
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
 
-    if (fechaSeleccionada <= hoy) {
-      setError("No puede elegir un día anterior al actual");
-      return;
-    }
 
     if (parseInt(cupo) <= 0) {
       setError("El cupo debe ser mayor a 0");

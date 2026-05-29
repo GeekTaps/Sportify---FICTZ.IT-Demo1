@@ -24,12 +24,19 @@ function CrearModificarTurnoForm({
 }) {
   const minFecha = (() => {
     const hoy = new Date();
-    hoy.setDate(hoy.getDate() + 1);
     return hoy.toISOString().split("T")[0];
   })();
 
+  const minHora = (() => {
+    if (fechaInicio === minFecha) {
+      const hoy = new Date();
+      return `${String(hoy.getHours()).padStart(2, "0")}:${String(hoy.getMinutes()).padStart(2, "0")}`;
+    }
+    return undefined;
+  })();
+
   return (
-    <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
+    <form onSubmit={onSubmit} style={{ maxWidth: "520px" }} noValidate>
       <div className="form-group">
         <label htmlFor="deporte">Deporte</label>
         <select
@@ -67,6 +74,7 @@ function CrearModificarTurnoForm({
           value={horaInicio}
           onChange={(e) => setHoraInicio(e.target.value)}
           required
+          min={minHora}
         />
       </div>
 
@@ -135,7 +143,7 @@ function CrearModificarTurnoForm({
         {loading
           ? "Guardando..."
           : isModifying
-          ? "Modificar Turno"
+          ? "Guardar Cambios"
           : "Crear Turno"}
       </button>
     </form>
