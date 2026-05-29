@@ -5,6 +5,7 @@ import heroImg from './assets/hero.png'
 import './App.css'
 // import { apiClient } from "./api/api-client"; // from development
 
+import CrearDeportePage from './pages/CrearDeportePage'
 import HomePage from './pages/HomePage'
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
@@ -137,6 +138,7 @@ function App() {
                     <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                     <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                     <Route path="/reservas" element={<ReservasPage />} />
+                    <Route path="/deportes/crear" element={<CrearDeportePage />} />
 
                     {/* Rutas de development: */}
                     <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
