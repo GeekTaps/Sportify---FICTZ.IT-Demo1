@@ -38,8 +38,15 @@ function Navigation() {
             }}
         >
             <Link to="/">Home</Link>
-            <Link to="/deportes">Deportes</Link>
-            <Link to="/turnos">Turnos</Link>
+            <Link to="/deportes">Ver Deportes</Link>
+            <Link to="/turnos">Ver Turnos</Link>
+
+            {user && user.esAdmin && (
+                <>
+                    <Link to="/turnos/crear">Crear Turno</Link>
+                    <Link to="/deportes/crear">Crear Deporte</Link>
+                </>
+            )}
 
             {(!user || !user.id) && (
                 <>
@@ -88,6 +95,7 @@ function Navigation() {
 function App() {
     const [backendMessage, setBackendMessage] = useState('Probando conexión con .NET...');
 
+<<<<<<< HEAD
     useEffect(() => {
         fetch('http://localhost:5266/api/testconnection')
             .then(res => res.json())
@@ -99,6 +107,12 @@ function App() {
                 setBackendMessage('Error al conectar con el backend. Asegurate de que esté corriendo.');
             });
     }, []);
+=======
+    return ( //esto es lo que se muestra en la interfaz.
+         <AuthProvider>
+        <BrowserRouter>
+                <Navigation />
+>>>>>>> 9f4cad282819a0ff42e199a623843c0681f8452f
 
     /* 
     // from development branch:

@@ -1,7 +1,6 @@
 import BotonEliminarDeporte from "../components/FrontDeportes/BotonEliminarDeporte";
 import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDeporte";
-import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
@@ -22,6 +21,10 @@ function DeportePage() {
       console.error("Error al cargar deportes:", error);
     }
   };
+
+  useEffect(() => {
+    cargarDeportes();
+  }, []);
 
   const modificarDeporte = (id) => {
     navigate(`/deportes/modificar/${id}`);
@@ -53,6 +56,7 @@ function DeportePage() {
       <h1>Bienvenido a la página de deportes!</h1>
       <p>Explora los diferentes deportes disponibles.</p>
 
+<<<<<<< HEAD
       {user?.esAdmin && (
   <button type="button" onClick={irACrearDeporte}>
     Ir a Crear Deporte
@@ -61,6 +65,8 @@ function DeportePage() {
 
       <BotonMostrarListadoDeportes onClick={cargarDeportes} />
 
+=======
+>>>>>>> 9f4cad282819a0ff42e199a623843c0681f8452f
       <ul>
         {deportes.map((d) => (
           <li key={d.id} style={{ marginBottom: "12px" }}>

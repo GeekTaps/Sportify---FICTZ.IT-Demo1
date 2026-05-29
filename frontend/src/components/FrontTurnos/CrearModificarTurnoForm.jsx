@@ -1,6 +1,6 @@
 function CrearModificarTurnoForm({
-  fecha,
-  setFecha,
+  diaSemana,
+  setDiaSemana,
   cupo,
   setCupo,
   idDeporte,
@@ -11,8 +11,10 @@ function CrearModificarTurnoForm({
   setNommbreProfesor,
   horaInicio,
   setHoraInicio,
-  horaFin,
-  setHoraFin,
+  precio,
+  setPrecio,
+  listaEsperaHabilitada,
+  setListaEsperaHabilitada,
   deportes,
   onSubmit,
   loading,
@@ -50,11 +52,10 @@ function CrearModificarTurnoForm({
 
       <div style={{ marginBottom: "15px" }}>
         <label>
-          Fecha:
-          <input
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
+          Día de la semana:
+          <select
+            value={diaSemana}
+            onChange={(e) => setDiaSemana(e.target.value)}
             required
             style={{
               display: "block",
@@ -64,7 +65,16 @@ function CrearModificarTurnoForm({
               borderRadius: "4px",
               border: "1px solid #ddd",
             }}
-          />
+          >
+            <option value="">Selecciona un día</option>
+            <option value="Lunes">Lunes</option>
+            <option value="Martes">Martes</option>
+            <option value="Miércoles">Miércoles</option>
+            <option value="Jueves">Jueves</option>
+            <option value="Viernes">Viernes</option>
+            <option value="Sábado">Sábado</option>
+            <option value="Domingo">Domingo</option>
+          </select>
         </label>
       </div>
 
@@ -88,25 +98,7 @@ function CrearModificarTurnoForm({
         </label>
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Hora de Fin:
-          <input
-            type="time"
-            value={horaFin}
-            onChange={(e) => setHoraFin(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
+
 
       <div style={{ marginBottom: "15px" }}>
         <label>
@@ -146,6 +138,40 @@ function CrearModificarTurnoForm({
               border: "1px solid #ddd",
             }}
           />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Precio ($):
+          <input
+            type="number"
+            min="0"
+            step="100"
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+            required
+            style={{
+              display: "block",
+              marginTop: "5px",
+              padding: "8px",
+              width: "100%",
+              borderRadius: "4px",
+              border: "1px solid #ddd",
+            }}
+          />
+        </label>
+      </div>
+
+      <div style={{ marginBottom: "15px" }}>
+        <label style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <input
+            type="checkbox"
+            checked={listaEsperaHabilitada}
+            onChange={(e) => setListaEsperaHabilitada(e.target.checked)}
+            style={{ transform: "scale(1.2)" }}
+          />
+          Habilitar Lista de Espera
         </label>
       </div>
 
