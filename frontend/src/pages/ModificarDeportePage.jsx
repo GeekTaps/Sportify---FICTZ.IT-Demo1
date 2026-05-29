@@ -50,8 +50,10 @@ function ModificarDeportePage() {
 
   return (
     <div>
-      <h1>Modificar Deporte</h1>
-      <p>Ingresa el nuevo nombre y la nueva descripción del deporte.</p>
+      <div className="page-header" style={{ textAlign: "left" }}>
+        <h1>Modificar Deporte</h1>
+        <p>Ingresá el nuevo nombre y descripción del deporte.</p>
+      </div>
 
       <ModificarDeporteForm
         nombre={nombre}
@@ -64,7 +66,14 @@ function ModificarDeportePage() {
         success={success}
       />
 
-      <button type="button" onClick={() => navigate("/deportes")}>Volver a Deportes</button>
+      <button
+        type="button"
+        onClick={() => navigate("/deportes")}
+        className="btn btn-outline"
+        style={{ marginTop: "1rem" }}
+      >
+        ← Volver a Deportes
+      </button>
     </div>
   );
 }

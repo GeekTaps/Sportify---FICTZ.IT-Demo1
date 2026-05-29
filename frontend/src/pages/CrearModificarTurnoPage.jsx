@@ -136,17 +136,9 @@ function CrearModificarTurnoPage() {
           ? "Modifica los datos del turno."
           : "Ingresa los datos para crear un nuevo turno."}
       </p>
-      <div style={{
-        padding: "10px",
-        backgroundColor: "#e3f2fd",
-        borderLeft: "4px solid #2196F3",
-        marginBottom: "20px",
-        borderRadius: "4px"
-      }}>
-        <p style={{ margin: "5px 0" }}>
-          <strong>Información importante:</strong>
-        </p>
-        <ul style={{ margin: "5px 0", paddingLeft: "20px" }}>
+      <div className="info-panel">
+        <strong>Información importante:</strong>
+        <ul>
           <li>La duración del turno debe ser <strong>exactamente 1 hora</strong></li>
           <li>La fecha no puede ser anterior a la fecha y hora actual</li>
           <li>El cupo debe ser mayor a 0</li>
@@ -180,18 +172,10 @@ function CrearModificarTurnoPage() {
       <button
         type="button"
         onClick={() => navigate("/turnos")}
-        style={{
-          marginTop: "15px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#757575",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
+        className="btn btn-outline"
+        style={{ marginTop: "1rem" }}
       >
-        Volver a Turnos
+        ← Volver a Turnos
       </button>
     </div>
   );

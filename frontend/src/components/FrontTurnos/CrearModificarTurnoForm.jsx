@@ -21,176 +21,95 @@ function CrearModificarTurnoForm({
   isModifying = false,
 }) {
   return (
-    <form onSubmit={onSubmit}>
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Deporte:
-          <select
-            value={idDeporte}
-            onChange={(e) => setIdDeporte(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          >
-            <option value="">Selecciona un deporte</option>
-            {deportes.map((deporte) => (
-              <option key={deporte.id} value={deporte.id}>
-                {deporte.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Fecha:
-          <input
-            type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Hora de Inicio:
-          <input
-            type="time"
-            value={horaInicio}
-            onChange={(e) => setHoraInicio(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Hora de Fin:
-          <input
-            type="time"
-            value={horaFin}
-            onChange={(e) => setHoraFin(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Cupo (cantidad de personas):
-          <input
-            type="number"
-            value={cupo}
-            onChange={(e) => setCupo(e.target.value)}
-            required
-            min="1"
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      <div style={{ marginBottom: "15px" }}>
-        <label>
-          Nombre del Profesor:
-          <input
-            type="text"
-            value={nommbreProfesor}
-            onChange={(e) => setNommbreProfesor(e.target.value)}
-            required
-            style={{
-              display: "block",
-              marginTop: "5px",
-              padding: "8px",
-              width: "100%",
-              borderRadius: "4px",
-              border: "1px solid #ddd",
-            }}
-          />
-        </label>
-      </div>
-
-      {error && (
-        <div
-          style={{
-            color: "red",
-            marginBottom: "15px",
-            padding: "10px",
-            backgroundColor: "#ffebee",
-            borderRadius: "4px",
-          }}
+    <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
+      <div className="form-group">
+        <label htmlFor="deporte">Deporte</label>
+        <select
+          id="deporte"
+          value={idDeporte}
+          onChange={(e) => setIdDeporte(e.target.value)}
+          required
         >
-          {error}
-        </div>
-      )}
+          <option value="">Seleccioná un deporte</option>
+          {deportes.map((deporte) => (
+            <option key={deporte.id} value={deporte.id}>
+              {deporte.nombre}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {success && (
-        <div
-          style={{
-            color: "green",
-            marginBottom: "15px",
-            padding: "10px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "4px",
-          }}
-        >
-          {success}
-        </div>
-      )}
+      <div className="form-group">
+        <label htmlFor="fecha">Fecha</label>
+        <input
+          id="fecha"
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="horaInicio">Hora de Inicio</label>
+        <input
+          id="horaInicio"
+          type="time"
+          value={horaInicio}
+          onChange={(e) => setHoraInicio(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="horaFin">Hora de Fin</label>
+        <input
+          id="horaFin"
+          type="time"
+          value={horaFin}
+          onChange={(e) => setHoraFin(e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="cupo">Cupo (cantidad de personas)</label>
+        <input
+          id="cupo"
+          type="number"
+          value={cupo}
+          onChange={(e) => setCupo(e.target.value)}
+          required
+          min="1"
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="profesor">Nombre del Profesor</label>
+        <input
+          id="profesor"
+          type="text"
+          value={nommbreProfesor}
+          onChange={(e) => setNommbreProfesor(e.target.value)}
+          required
+          placeholder="Nombre del profesor a cargo"
+        />
+      </div>
+
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       <button
         type="submit"
         disabled={loading}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: loading ? "#cccccc" : "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        className="btn btn-primary"
+        style={{ marginTop: "0.5rem" }}
       >
-        {loading ? "Guardando..." : isModifying ? "Modificar Turno" : "Crear Turno"}
+        {loading
+          ? "Guardando..."
+          : isModifying
+          ? "Modificar Turno"
+          : "Crear Turno"}
       </button>
     </form>
   );

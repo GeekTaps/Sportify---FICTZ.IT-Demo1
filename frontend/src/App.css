@@ -1,4 +1,4 @@
-/* Layout Global */
+/* ─── Layout Global ──────────────────────────── */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -14,7 +14,7 @@
   box-sizing: border-box;
 }
 
-/* Navbar */
+/* ─── Navbar ─────────────────────────────────── */
 .navbar {
   display: flex;
   align-items: center;
@@ -23,6 +23,7 @@
   background-color: var(--bg-nav);
   color: var(--text-inverse);
   box-shadow: var(--shadow-md);
+  border-bottom: 1px solid rgba(0, 210, 255, 0.18);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -53,8 +54,30 @@
 }
 
 .navbar-links a:hover {
-  color: var(--c-azul-pizarra);
-  background-color: var(--secondary);
+  color: var(--c-cian-brillante);
+  background-color: rgba(0, 210, 255, 0.1);
+}
+
+/* Active route highlight */
+.navbar-links a.nav-active {
+  color: var(--c-cian-brillante);
+  position: relative;
+}
+
+.navbar-links a.nav-active::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: -2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c-cian-brillante);
+}
+
+/* The secondary button in navbar should keep its style when active */
+.navbar-links a.btn.nav-active::after {
+  display: none;
 }
 
 .navbar-user-actions {
@@ -63,7 +86,7 @@
   gap: 1rem;
 }
 
-/* Utilities: Buttons */
+/* ─── Buttons ────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -77,6 +100,7 @@
   font-family: inherit;
   font-size: 1rem;
   text-align: center;
+  text-decoration: none;
 }
 
 .btn:disabled {
@@ -113,6 +137,7 @@
 
 .btn-danger:hover:not(:disabled) {
   background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 .btn-outline {
@@ -126,7 +151,7 @@
   color: var(--text-inverse);
 }
 
-/* Utilities: Cards */
+/* ─── Cards ──────────────────────────────────── */
 .card {
   background-color: var(--bg-main);
   border-radius: 12px;
@@ -137,11 +162,11 @@
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
 }
 
-/* Form Styles */
+/* ─── Forms ──────────────────────────────────── */
 .form-group {
   margin-bottom: 1.25rem;
   display: flex;
@@ -151,18 +176,26 @@
 
 .form-group label {
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   color: var(--c-azul-pizarra);
+  font-size: 0.9rem;
 }
 
-/* Modals */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ─── Modals ─────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(26, 47, 80, 0.6);
+  background-color: rgba(26, 47, 80, 0.65);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -173,9 +206,9 @@
 .modal-content {
   background: var(--bg-main);
   padding: 2rem;
-  border-radius: 12px;
-  width: 450px;
-  max-width: 90%;
+  border-radius: 14px;
+  width: 480px;
+  max-width: 92%;
   box-shadow: var(--shadow-lg);
   max-height: 90vh;
   overflow-y: auto;
@@ -184,36 +217,37 @@
 .modal-content hr {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 1.5rem 0;
+  margin: 1.25rem 0;
 }
 
-/* Messages */
+/* ─── Alerts ─────────────────────────────────── */
 .alert {
-  padding: 1rem;
+  padding: 0.875rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
   font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .alert-success {
   background-color: #d1fae5;
   color: #065f46;
-  border: 1px solid #10b981;
+  border: 1px solid #6ee7b7;
 }
 
 .alert-error {
   background-color: #fee2e2;
   color: #991b1b;
-  border: 1px solid #ef4444;
+  border: 1px solid #fca5a5;
 }
 
 .alert-warning {
   background-color: #fef3c7;
   color: #92400e;
-  border: 1px solid #f59e0b;
+  border: 1px solid #fcd34d;
 }
 
-/* Grid layout for lists */
+/* ─── Grid list ──────────────────────────────── */
 .grid-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -223,7 +257,7 @@
   margin: 0;
 }
 
-/* Page Headers */
+/* ─── Page Headers ───────────────────────────── */
 .page-header {
   margin-bottom: 2rem;
   text-align: center;
@@ -235,5 +269,403 @@
 
 .page-header p {
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ─── Hero (HomePage) ────────────────────────── */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 4.5rem 1.5rem 4rem;
+  margin: -2rem -2rem 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(0, 210, 255, 0.10) 0%, rgba(30, 91, 240, 0.05) 35%, transparent 70%),
+    var(--bg-main);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--c-cian-brillante), var(--c-azul-medio), var(--c-azul-cobalto));
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--c-azul-medio);
+  background: rgba(0, 210, 255, 0.1);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-size: 3.4rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+
+.hero-divider {
+  width: 64px;
+  height: 4px;
+  border: none;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--c-cian-brillante), var(--c-azul-medio));
+  margin: 0 auto 2.5rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .hero h1 { font-size: 2.4rem; }
+}
+
+/* ─── Footer ─────────────────────────────────── */
+.footer {
+  background-color: var(--bg-nav);
+  padding: 2.5rem 2rem 1.5rem;
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.footer-logo {
+  height: 28px;
+  width: auto;
+  opacity: 0.8;
+}
+
+.footer-tagline {
+  color: var(--c-gris-medio);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.footer-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.25rem 0;
+}
+
+.footer-copy {
+  color: rgba(127, 140, 141, 0.55);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+/* ─── Auth Pages (Login / Register) ─────────── */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem 1rem 3rem;
+}
+
+.form-card {
+  background: var(--bg-main);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem 2.25rem;
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid var(--border);
+}
+
+.form-card-logo {
+  display: block;
+  height: 72px;
+  width: auto;
+  margin: 0 auto 1.25rem;
+}
+
+.form-card h2 {
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.form-card-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 2rem;
+}
+
+.form-card-footer-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.form-card-footer-link a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ─── Info Panel ─────────────────────────────── */
+.info-panel {
+  padding: 1rem 1.25rem;
+  background-color: rgba(0, 210, 255, 0.06);
+  border-left: 4px solid var(--c-cian-brillante);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 1.5rem;
+}
+
+.info-panel strong {
+  color: var(--c-azul-cobalto);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.info-panel ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.info-panel li {
+  color: var(--text-muted);
+  font-size: 0.925rem;
+  margin-bottom: 0.2rem;
+}
+
+/* ─── Reservas List ──────────────────────────── */
+.reserva-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+.reserva-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.875rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.reserva-card:hover {
+  border-color: var(--c-azul-medio);
+  box-shadow: var(--shadow-md);
+  transform: translateX(3px);
+}
+
+.reserva-card-info h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  color: var(--c-azul-cobalto);
+}
+
+.reserva-card-info p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.reserva-card-arrow {
+  color: var(--c-gris-medio);
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+/* ─── Admin Warning ──────────────────────────── */
+.admin-warning {
+  padding: 0.875rem 1.25rem;
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  color: #92400e;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+/* ─── Split Screen Auth (Login / Register) ───── */
+.auth-split-page {
+  display: flex;
+  min-height: 78vh;
+  margin: -2rem;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.auth-split-left {
+  flex: 0 0 42%;
+  background: linear-gradient(160deg, var(--c-azul-pizarra) 0%, var(--c-azul-cobalto) 55%, var(--c-azul-medio) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-split-left::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 260px;
+  height: 260px;
+  background: rgba(0, 210, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-split-left::after {
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  left: -60px;
+  width: 220px;
+  height: 220px;
+  background: rgba(79, 217, 251, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.auth-split-logo {
+  width: 180px;
+  height: auto;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 4px 16px rgba(0, 210, 255, 0.4));
+  position: relative;
+  z-index: 1;
+}
+
+/* Circular badge holding the white-background athlete icon */
+.auth-split-logo-icon {
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-main);
+  padding: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 28px rgba(0, 210, 255, 0.28);
+  position: relative;
+  z-index: 1;
+}
+
+.auth-split-letters {
+  width: 168px;
+  height: auto;
+  margin: 1.25rem 0 1.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-split-left h2 {
+  color: white;
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-split-left p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  max-width: 280px;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-split-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 3.5rem;
+  background: var(--bg-main);
+  overflow-y: auto;
+}
+
+.auth-split-form {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-split-form h2 {
+  text-align: left;
+  margin-bottom: 0.35rem;
+}
+
+.auth-split-form-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 1.75rem;
+}
+
+.auth-split-form-footer {
+  margin-top: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.auth-split-form-footer a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .auth-split-page {
+    flex-direction: column;
+    min-height: unset;
+    margin: -2rem -2rem 0;
+  }
+
+  .auth-split-left {
+    flex: unset;
+    padding: 2.5rem 2rem;
+  }
+
+  .auth-split-logo {
+    width: 130px;
+  }
+
+  .auth-split-right {
+    padding: 2.5rem 1.75rem;
+  }
 }

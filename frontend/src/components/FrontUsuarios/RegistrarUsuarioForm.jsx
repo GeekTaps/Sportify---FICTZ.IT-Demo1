@@ -16,66 +16,73 @@ function RegisterForm({
 }) {
   return (
     <form onSubmit={onSubmit}>
-
-      <div>
-        <label>Nombre Completo</label>
-        <br />
+      <div className="form-group">
+        <label htmlFor="reg-nombre">Nombre Completo</label>
         <input
+          id="reg-nombre"
           type="text"
+          placeholder="Juan Pérez"
           value={nombreCompleto}
           onChange={(e) => setNombreCompleto(e.target.value)}
         />
       </div>
 
-      <div>
-        <label>Edad</label>
-        <br />
+      <div className="form-group">
+        <label htmlFor="reg-edad">Edad</label>
         <input
-          type="text"
+          id="reg-edad"
+          type="number"
+          placeholder="25"
           value={edad}
           onChange={(e) => setEdad(e.target.value)}
+          min="1"
         />
       </div>
 
-      <div>
-        <label>DNI</label>
-        <br />
+      <div className="form-group">
+        <label htmlFor="reg-dni">DNI</label>
         <input
+          id="reg-dni"
           type="text"
+          placeholder="12345678"
           value={dni}
           onChange={(e) => setDni(e.target.value)}
         />
       </div>
 
-      <div>
-        <label>Email</label>
-        <br />
+      <div className="form-group">
+        <label htmlFor="reg-email">Email</label>
         <input
+          id="reg-email"
           type="email"
+          placeholder="tu@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
 
-      <div>
-        <label>Contraseña</label>
-        <br />
+      <div className="form-group">
+        <label htmlFor="reg-password">Contraseña</label>
         <input
+          id="reg-password"
           type="password"
+          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
 
-      <br />
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
-      <button type="submit" disabled={loading}>
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn btn-primary"
+        style={{ width: "100%", marginTop: "0.25rem" }}
+      >
         {loading ? "Registrando..." : "Registrarse"}
       </button>
-
-      {error && <p>{error}</p>}
-      {success && <p>{success}</p>}
-
     </form>
   );
 }

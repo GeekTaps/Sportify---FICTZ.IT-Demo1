@@ -1,30 +1,46 @@
-function ModificarDeporteForm({ nombre, setNombre, descripcion, setDescripcion, onSubmit, loading, error, success }) {
+function ModificarDeporteForm({
+  nombre,
+  setNombre,
+  descripcion,
+  setDescripcion,
+  onSubmit,
+  loading,
+  error,
+  success,
+}) {
   return (
-    <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "400px" }}>
-      <label>
-        Nombre del deporte:
+    <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
+      <div className="form-group">
+        <label htmlFor="nombre-deporte">Nombre del deporte</label>
         <input
+          id="nombre-deporte"
           type="text"
           value={nombre}
-          onChange={(event) => setNombre(event.target.value)}
+          onChange={(e) => setNombre(e.target.value)}
           placeholder="Nuevo nombre"
         />
-      </label>
+      </div>
 
-      <label>
-        Descripción del deporte:
+      <div className="form-group">
+        <label htmlFor="descripcion-deporte">Descripción del deporte</label>
         <textarea
+          id="descripcion-deporte"
           value={descripcion}
-          onChange={(event) => setDescripcion(event.target.value)}
+          onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Nueva descripción"
           rows={4}
         />
-      </label>
+      </div>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {success && <div style={{ color: "green" }}>{success}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
-      <button type="submit" disabled={loading}>
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn btn-primary"
+        style={{ marginTop: "0.5rem" }}
+      >
         {loading ? "Modificando..." : "Modificar"}
       </button>
     </form>

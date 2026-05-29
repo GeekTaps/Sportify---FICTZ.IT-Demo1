@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import logoIcono from "../assets/logo_dibujito_sportify.png";
+import logoLetras from "../assets/logo_letras_sportify-no-bg.png";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -38,30 +40,67 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleLogin} style={{ maxWidth: "300px", margin: "auto", display: "flex", flexDirection: "column", gap: "10px" }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
-        />
-        {error && <p style={{ color: "red", margin: 0 }}>{error}</p>}
-        <button type="submit" disabled={loading} style={{ padding: "10px", background: "#2196F3", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          {loading ? "Cargando..." : "Iniciar Sesión"}
-        </button>
-      </form>
+    <div className="auth-split-page">
+      {/* Panel izquierdo */}
+      <div className="auth-split-left">
+        <img src={logoIcono} alt="" className="auth-split-logo-icon" />
+        <img src={logoLetras} alt="Sportify" className="auth-split-letters" />
+        <h2>Tu deporte, tu ritmo</h2>
+        <p>
+          Reservá clases, gestioná tus actividades y disfrutá al máximo de tu
+          experiencia deportiva.
+        </p>
+      </div>
+
+      {/* Panel derecho — formulario */}
+      <div className="auth-split-right">
+        <div className="auth-split-form">
+          <h2>Iniciar Sesión</h2>
+          <p className="auth-split-form-subtitle">Ingresá tus datos para continuar</p>
+
+          <form onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {error && <div className="alert alert-error">{error}</div>}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-primary"
+              style={{ width: "100%", marginTop: "0.25rem" }}
+            >
+              {loading ? "Iniciando..." : "Iniciar Sesión"}
+            </button>
+          </form>
+
+          <div className="auth-split-form-footer">
+            ¿No tenés cuenta?{" "}
+            <Link to="/register">Registrate aquí</Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

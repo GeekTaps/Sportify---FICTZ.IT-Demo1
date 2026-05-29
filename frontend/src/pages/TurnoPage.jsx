@@ -189,17 +189,18 @@ function TurnoPage() {
             {loadingUser ? (
               <p>Verificando datos de usuario...</p>
             ) : !user ? (
-              <p style={{ color: "#856404", fontWeight: "bold", border: "1px solid #ffeeba", padding: "8px", borderRadius: "4px", backgroundColor: "#fff3cd" }}>
-                Debes iniciar sesión para reservar.
-              </p>
+              <div className="alert alert-warning">
+                Debes iniciar sesión para reservar.{" "}
+                <Link to="/login" style={{ color: "inherit", fontWeight: 700 }}>Iniciar sesión →</Link>
+              </div>
             ) : userInfo?.esAdmin ? (
               null
             ) : userInfo?.error ? (
               <p style={{ color: "red" }}>Error al verificar tu cuenta.</p>
             ) : userInfo?.suspendido ? (
-              <p style={{ color: "darkred", fontWeight: "bold", border: "1px solid darkred", padding: "8px", borderRadius: "4px", backgroundColor: "#ffebee" }}>
-                La cuenta se encuentra suspendida. No es posible reservar por el momento
-              </p>
+              <div className="alert alert-error">
+                La cuenta se encuentra suspendida. No es posible reservar por el momento.
+              </div>
             ) : (
               // Usuario Activo
               <div>
@@ -215,7 +216,7 @@ function TurnoPage() {
                         {loadingReserva ? "Procesando..." : "Reservar turno"}
                       </button>
                     ) : modalTurno.listaEsperaHabilitada ? (
-                      <button onClick={() => alert("Función de lista de espera no implementada aún.")} className="btn" style={{ background: "#ffc107", color: "black", width: "100%" }}>
+                      <button onClick={() => alert("Función de lista de espera no implementada aún.")} className="btn btn-secondary" style={{ width: "100%" }}>
                         Entrar a lista de espera
                       </button>
                     ) : (
@@ -232,8 +233,8 @@ function TurnoPage() {
                   </>
                 ) : (
                   <div style={{ textAlign: "center", padding: "10px" }}>
-                    <h3 style={{ color: requierePago ? "#ff9800" : "green", marginTop: 0 }}>{mensajeReserva}</h3>
-                    
+                    <h3 style={{ color: requierePago ? "var(--c-azul-medio)" : "#065f46", marginTop: 0 }}>{mensajeReserva}</h3>
+
                     {requierePago && (
                         <div style={{ marginTop: "15px" }}>
                             <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
@@ -242,9 +243,9 @@ function TurnoPage() {
                             </button>
                         </div>
                     )}
-                    
+
                     <div style={{ marginTop: "20px" }}>
-                        <Link to="/reservas" style={{ color: "var(--primary)", textDecoration: "none", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
+                        <Link to="/reservas" style={{ color: "var(--primary)", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
                     </div>
                   </div>
                 )}

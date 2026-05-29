@@ -40,20 +40,26 @@ body {
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
+  line-height: 1.65;
+  font-size: 16px;
 }
 
 /* Base Typo */
 h1, h2, h3, h4, h5, h6 {
   color: var(--c-azul-cobalto);
-  font-weight: 600;
-  line-height: 1.2;
+  font-weight: 700;
+  line-height: 1.18;
   margin-top: 0;
+  letter-spacing: -0.02em;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
+h1 { font-size: 2.6rem; margin-bottom: 1rem; }
+h2 { font-size: 1.9rem; font-weight: 600; margin-bottom: 0.75rem; }
+h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+p { margin-top: 0; }
+
+strong { color: var(--c-azul-pizarra); font-weight: 600; }
 
 a {
   color: var(--primary);
@@ -83,4 +89,53 @@ input:focus, select:focus, textarea:focus {
 
 input::placeholder {
   color: var(--c-gris-medio);
+}
+
+/* ─── Gradient text ──────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--c-cian-brillante) 0%, var(--c-azul-medio) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Badges ─────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge-info {
+  background-color: rgba(0, 210, 255, 0.12);
+  color: var(--c-azul-cobalto);
+}
+
+/* ─── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-section);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-gris-medio);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-azul-medio);
 }
