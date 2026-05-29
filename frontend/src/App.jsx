@@ -39,11 +39,14 @@ function Navigation() {
             }}
         >
             <Link to="/">Home</Link>
-            <Link to="/deportes">Deportes</Link>
+            <Link to="/deportes">Ver Deportes</Link>
             <Link to="/turnos">Ver Turnos</Link>
 
             {user && user.esAdmin && (
-                <Link to="/turnos/crear">Crear Turno</Link>
+                <>
+                    <Link to="/turnos/crear">Crear Turno</Link>
+                    <Link to="/deportes/crear">Crear Deporte</Link>
+                </>
             )}
 
             {!user && (
@@ -94,22 +97,7 @@ function App() {
     return ( //esto es lo que se muestra en la interfaz.
          <AuthProvider>
         <BrowserRouter>
-            <nav
-                style={{
-                    display: "flex",
-                    gap: "15px",
-                    padding: "10px",
-                    background: "#eee",
-                    marginBottom: "20px",
-                }}
-            >
-                <Link to="/">Home</Link>
-                <Link to="/register">Registro</Link>
-                <Link to="/deportes">Deportes</Link>
-                <Link to="/deportes/crear">Registrar deporte</Link>
-                <Link to="/turnos">Turnos</Link>
-                <Link to="/reservas">Reservas</Link>
-            </nav>
+                <Navigation />
 
             
 
