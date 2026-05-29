@@ -12,6 +12,7 @@ import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
 import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
+import CrearDeportePage from './pages/CrearDeportePage'
 // import ReservarClasePage from "./pages/ReservarClasePage" // from development
 
 import ReservasPage from './pages/ReservasPage'
@@ -137,6 +138,7 @@ function App() {
                     <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                     <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                     <Route path="/reservas" element={<ReservasPage />} />
+                    <Route path="/deportes/crear" element={<CrearDeportePage />} />
 
                     {/* Rutas de development: */}
                     <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />

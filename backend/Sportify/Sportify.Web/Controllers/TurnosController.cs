@@ -146,7 +146,7 @@ public class TurnosController : ControllerBase
             {
                 await altaMensualUseCase.Ejecutar(
                     request.IdDeporte, 
-                    request.DiaSemana, 
+                    request.FechaInicio, 
                     request.HoraInicio, 
                     request.Cupo, 
                     request.Precio,
@@ -177,7 +177,7 @@ public class TurnosController : ControllerBase
                 await modificacionMensualUseCase.Ejecutar(
                     id,
                     request.IdDeporte, 
-                    request.DiaSemana, 
+                    request.FechaInicio, 
                     request.HoraInicio, 
                     request.Cupo, 
                     request.Precio,

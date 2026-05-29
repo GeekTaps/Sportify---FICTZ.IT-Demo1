@@ -8,7 +8,7 @@ function CrearModificarTurnoPage() {
   const isModifying = !!id;
 
   const [deportes, setDeportes] = useState([]);
-  const [diaSemana, setDiaSemana] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
   const [cupo, setCupo] = useState("");
   const [idDeporte, setIdDeporte] = useState("");
   const [nombreTurno, setNombreTurno] = useState("");
@@ -41,8 +41,7 @@ function CrearModificarTurnoPage() {
           const data = await response.json();
           if (data.fecha) {
             const dateObj = new Date(data.fecha);
-            const dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            setDiaSemana(dias[dateObj.getDay()]);
+            setFechaInicio(dateObj.toISOString().split("T")[0]);
           }
           setCupo(data.cupo);
           setIdDeporte(data.idDeporte);
@@ -67,8 +66,17 @@ function CrearModificarTurnoPage() {
     setError("");
     setSuccess("");
 
-    if (!diaSemana || !cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
+    if (!fechaInicio || !cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
       setError("No puede haber campos en blanco");
+      return;
+    }
+
+    const fechaSeleccionada = new Date(fechaInicio + "T00:00:00");
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    if (fechaSeleccionada <= hoy) {
+      setError("La fecha de inicio debe ser posterior a la fecha actual.");
       return;
     }
 
@@ -86,7 +94,7 @@ function CrearModificarTurnoPage() {
 
     const turnoData = {
       idDeporte: idDeporte,
-      diaSemana: diaSemana,
+      fechaInicio: fechaInicio,
       horaInicio: horaInicio,
       cupo: parseInt(cupo),
       precio: parseFloat(precio),
@@ -144,15 +152,15 @@ function CrearModificarTurnoPage() {
         </p>
         <ul style={{ margin: "5px 0", paddingLeft: "20px" }}>
           <li>Todas las clases duran exactamente 1 hora</li>
-          <li>Se crearán todos los turnos para el día seleccionado durante los próximos 30 días</li>
+          <li>Se crearán todos los turnos para la fecha seleccionada durante los próximos 30 días</li>
           <li>No puede haber más de un turno de una misma actividad en el mismo día y horario</li>
           <li>El cupo no puede ser 0</li>
         </ul>
       </div>
 
       <CrearModificarTurnoForm
-        diaSemana={diaSemana}
-        setDiaSemana={setDiaSemana}
+        fechaInicio={fechaInicio}
+        setFechaInicio={setFechaInicio}
         cupo={cupo}
         setCupo={setCupo}
         idDeporte={idDeporte}

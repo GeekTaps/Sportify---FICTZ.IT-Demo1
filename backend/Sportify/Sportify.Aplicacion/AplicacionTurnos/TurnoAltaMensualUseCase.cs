@@ -19,15 +19,25 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             this.repositorioDeporte = repositorioDeporte;
         }
 
-        public async Task Ejecutar(Guid idDeporte, string diaSemanaStr, string horaInicioStr, int cupo, double precio, string nombreProfesor, bool listaEsperaHabilitada)
+        public async Task Ejecutar(Guid idDeporte, string fechaInicioStr, string horaInicioStr, int cupo, double precio, string nombreProfesor, bool listaEsperaHabilitada)
         {
             // Validar campos vacíos
             if (idDeporte == Guid.Empty || 
-                string.IsNullOrWhiteSpace(diaSemanaStr) || 
+                string.IsNullOrWhiteSpace(fechaInicioStr) || 
                 string.IsNullOrWhiteSpace(horaInicioStr) || 
                 string.IsNullOrWhiteSpace(nombreProfesor))
             {
                 throw new ValidacionException("No puede haber campos en blanco");
+            }
+
+            if (!DateTime.TryParse(fechaInicioStr, out DateTime fechaInicio))
+            {
+                throw new ValidacionException("Fecha de inicio inválida");
+            }
+
+            if (fechaInicio.Date <= DateTime.Today)
+            {
+                throw new ValidacionException("La fecha de inicio debe ser posterior a la fecha actual.");
             }
 
             // Validar cupo y precio
@@ -43,26 +53,12 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             // Validar parsing de hora
             if (!TimeOnly.TryParse(horaInicioStr, out TimeOnly horaInicio))
             {
-                throw new ValidacionException("No puede haber campos en blanco"); // o formato de hora invalido
+                throw new ValidacionException("Formato de hora inválido");
             }
 
             TimeOnly horaFin = horaInicio.AddHours(1);
 
-            // Mapear el día de la semana
-            DayOfWeek diaSemanaObj;
-            switch (diaSemanaStr.ToLower())
-            {
-                case "lunes": diaSemanaObj = DayOfWeek.Monday; break;
-                case "martes": diaSemanaObj = DayOfWeek.Tuesday; break;
-                case "miércoles":
-                case "miercoles": diaSemanaObj = DayOfWeek.Wednesday; break;
-                case "jueves": diaSemanaObj = DayOfWeek.Thursday; break;
-                case "viernes": diaSemanaObj = DayOfWeek.Friday; break;
-                case "sábado":
-                case "sabado": diaSemanaObj = DayOfWeek.Saturday; break;
-                case "domingo": diaSemanaObj = DayOfWeek.Sunday; break;
-                default: throw new ValidacionException("No puede haber campos en blanco");
-            }
+            DayOfWeek diaSemanaObj = fechaInicio.DayOfWeek;
 
             // Validar deporte existente
             var deportes = await repositorioDeporte.ListarDeportes();
@@ -73,14 +69,13 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             }
 
             var fechasDelMes = new List<DateTime>();
-            var today = DateTime.Today;
+            var startDate = fechaInicio.Date;
             
             for (int i = 0; i <= 30; i++)
             {
-                var dt = today.AddDays(i);
+                var dt = startDate.AddDays(i);
                 if (dt.DayOfWeek == diaSemanaObj)
                 {
-                    // Combinar la fecha con la hora para verificar que no sea en el pasado
                     var fechaConHora = new DateTime(dt.Year, dt.Month, dt.Day, horaInicio.Hour, horaInicio.Minute, 0);
                     if (fechaConHora >= DateTime.Now)
                     {
@@ -91,7 +86,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
 
             if (!fechasDelMes.Any())
             {
-                throw new ValidacionException("No se encontraron fechas para ese día en el mes actual.");
+                throw new ValidacionException("No se encontraron fechas para el día seleccionado.");
             }
 
             // Generar los objetos Turno

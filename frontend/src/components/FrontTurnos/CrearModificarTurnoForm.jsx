@@ -1,6 +1,6 @@
 function CrearModificarTurnoForm({
-  diaSemana,
-  setDiaSemana,
+  fechaInicio,
+  setFechaInicio,
   cupo,
   setCupo,
   idDeporte,
@@ -22,6 +22,12 @@ function CrearModificarTurnoForm({
   success,
   isModifying = false,
 }) {
+  const minFecha = (() => {
+    const hoy = new Date();
+    hoy.setDate(hoy.getDate() + 1);
+    return hoy.toISOString().split("T")[0];
+  })();
+
   return (
     <form onSubmit={onSubmit}>
       <div style={{ marginBottom: "15px" }}>
@@ -52,11 +58,13 @@ function CrearModificarTurnoForm({
 
       <div style={{ marginBottom: "15px" }}>
         <label>
-          Día de la semana:
-          <select
-            value={diaSemana}
-            onChange={(e) => setDiaSemana(e.target.value)}
+          Fecha de inicio:
+          <input
+            type="date"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
             required
+            min={minFecha}
             style={{
               display: "block",
               marginTop: "5px",
@@ -65,16 +73,7 @@ function CrearModificarTurnoForm({
               borderRadius: "4px",
               border: "1px solid #ddd",
             }}
-          >
-            <option value="">Selecciona un día</option>
-            <option value="Lunes">Lunes</option>
-            <option value="Martes">Martes</option>
-            <option value="Miércoles">Miércoles</option>
-            <option value="Jueves">Jueves</option>
-            <option value="Viernes">Viernes</option>
-            <option value="Sábado">Sábado</option>
-            <option value="Domingo">Domingo</option>
-          </select>
+          />
         </label>
       </div>
 
@@ -143,7 +142,7 @@ function CrearModificarTurnoForm({
 
       <div style={{ marginBottom: "15px" }}>
         <label>
-          Precio ($):
+          Precio:
           <input
             type="number"
             min="0"
@@ -163,17 +162,7 @@ function CrearModificarTurnoForm({
         </label>
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <input
-            type="checkbox"
-            checked={listaEsperaHabilitada}
-            onChange={(e) => setListaEsperaHabilitada(e.target.checked)}
-            style={{ transform: "scale(1.2)" }}
-          />
-          Habilitar Lista de Espera
-        </label>
-      </div>
+      
 
       {error && (
         <div
