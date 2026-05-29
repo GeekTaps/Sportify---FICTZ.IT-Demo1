@@ -31,7 +31,9 @@ function DeportePage() {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este deporte?")) {
       return;
     }
-
+    const irACrearDeporte = () => {
+  navigate("/deportes/crear");
+  };
     try {
       const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
         method: "DELETE",
@@ -44,15 +46,18 @@ function DeportePage() {
       console.error("Error al eliminar deporte:", error);
     }
   };
+  
 
   return (
     <div>
       <h1>Bienvenido a la página de deportes!</h1>
       <p>Explora los diferentes deportes disponibles.</p>
 
-      <button type="button" onClick={irACrearDeporte}>
-        Ir a Crear Deporte
-      </button>
+      {user?.esAdmin && (
+  <button type="button" onClick={irACrearDeporte}>
+    Ir a Crear Deporte
+  </button>
+)}
 
       <BotonMostrarListadoDeportes onClick={cargarDeportes} />
 

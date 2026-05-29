@@ -132,4 +132,21 @@ public async Task<Usuario> ObtenerPorId(string id)
         usuarioIdentity.Edad
     );
 }
+public async Task<List<Usuario>> ListarUsuarios()
+{
+    List<UsuarioIdentity> usuariosIdentity =
+        await userManager.Users.ToListAsync();
+
+    List<Usuario> usuarios = usuariosIdentity
+        .Select(u => new Usuario(
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            u.Edad
+        ))
+        .ToList();
+
+    return usuarios;
+}
 }
