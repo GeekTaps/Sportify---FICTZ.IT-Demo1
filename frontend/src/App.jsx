@@ -5,6 +5,7 @@ import heroImg from './assets/hero.png'
 import './App.css'
 // import { apiClient } from "./api/api-client"; // from development
 
+import CrearDeportePage from './pages/CrearDeportePage'
 import HomePage from './pages/HomePage'
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
