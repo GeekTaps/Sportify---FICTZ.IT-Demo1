@@ -69,7 +69,7 @@ public async Task<IActionResult> GetUserInfo(string email)
 public async Task<IActionResult> Login([FromBody] LoginDTO dto)
 {
     var user = await userManager.FindByEmailAsync(dto.Email);
-    if (user == null)
+    if (user == null || user.Borrado)
     {
         return BadRequest(new { message = "Usuario o contraseña incorrectos" });
     }

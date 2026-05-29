@@ -1,48 +1,46 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import ModificarDeporteForm from "../components/FrontDeportes/ModificarDeporteForm";
+import { useNavigate } from "react-router-dom";
+import RegistrarDeporteForm from "../components/FrontDeportes/RegistrarDeporteForm";
 
-function ModificarDeportePage() {
-  const { id } = useParams();
+function CrearDeportePage() {
   const navigate = useNavigate();
+
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleModificar = async (event) => {
+  const registrarDeporte = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
 
     if (!nombre.trim() || !descripcion.trim()) {
-      setError("Debes completar nombre y descripción antes de modificar");
+      setError("Completá todos los campos.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch("http://localhost:5266/api/deportes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() }),
       });
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => null);
-        setError(body?.message ?? "No se pudo modificar el deporte.");
-        return;
+      if (response.ok) {
+        setSuccess("Deporte registrado correctamente.");
+        setNombre("");
+        setDescripcion("");
+        setTimeout(() => navigate("/deportes"), 1000);
+      } else {
+        setError("Error al registrar el deporte.");
       }
-
-      setSuccess("Modificación exitosa");
-      setTimeout(() => navigate("/deportes"), 1000);
     } catch (err) {
       console.error(err);
-      setError("Error al modificar el deporte. Intenta nuevamente.");
+      setError("Error al registrar el deporte.");
     } finally {
       setLoading(false);
     }
@@ -51,16 +49,16 @@ function ModificarDeportePage() {
   return (
     <div>
       <div className="page-header" style={{ textAlign: "left" }}>
-        <h1>Modificar Deporte</h1>
-        <p>Ingresá el nuevo nombre y descripción del deporte.</p>
+        <h1>Registrar Deporte</h1>
+        <p>Agregá una nueva actividad deportiva al catálogo.</p>
       </div>
 
-      <ModificarDeporteForm
+      <RegistrarDeporteForm
         nombre={nombre}
         setNombre={setNombre}
         descripcion={descripcion}
         setDescripcion={setDescripcion}
-        onSubmit={handleModificar}
+        onSubmit={registrarDeporte}
         loading={loading}
         error={error}
         success={success}
@@ -78,4 +76,4 @@ function ModificarDeportePage() {
   );
 }
 
-export default ModificarDeportePage;
+export default CrearDeportePage;

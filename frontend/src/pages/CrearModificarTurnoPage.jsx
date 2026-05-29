@@ -8,13 +8,14 @@ function CrearModificarTurnoPage() {
   const isModifying = !!id;
 
   const [deportes, setDeportes] = useState([]);
-  const [fecha, setFecha] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
   const [cupo, setCupo] = useState("");
   const [idDeporte, setIdDeporte] = useState("");
   const [nombreTurno, setNombreTurno] = useState("");
   const [nommbreProfesor, setNommbreProfesor] = useState("");
   const [horaInicio, setHoraInicio] = useState("");
-  const [horaFin, setHoraFin] = useState("");
+  const [precio, setPrecio] = useState("");
+  const [listaEsperaHabilitada, setListaEsperaHabilitada] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,13 +39,17 @@ function CrearModificarTurnoPage() {
           const response = await fetch(`http://localhost:5266/api/turnos/${id}`);
           if (!response.ok) throw new Error("Error al cargar turno");
           const data = await response.json();
-          setFecha(data.fecha ? data.fecha.split("T")[0] : "");
+          if (data.fecha) {
+            const dateObj = new Date(data.fecha);
+            setFechaInicio(dateObj.toISOString().split("T")[0]);
+          }
           setCupo(data.cupo);
           setIdDeporte(data.idDeporte);
           setNombreTurno(data.nombreTurno || "");
           setNommbreProfesor(data.nommbreProfesor || "");
           setHoraInicio(data.horaInicio);
-          setHoraFin(data.horaFin);
+          setPrecio(data.precio || "");
+          setListaEsperaHabilitada(data.listaEsperaHabilitada || false);
         } catch (error) {
           console.error("Error al cargar turno:", error);
           setError("No se pudo cargar el turno.");
@@ -61,47 +66,46 @@ function CrearModificarTurnoPage() {
     setError("");
     setSuccess("");
 
-    if (!fecha || !cupo || !idDeporte || !horaInicio || !horaFin) {
-      setError("Debes completar todos los campos.");
+    if (!fechaInicio || !cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
+      setError("No puede haber campos en blanco");
       return;
     }
 
-    if (!nommbreProfesor.trim()) {
-      setError("El nombre del profesor no puede estar vacío.");
+    const fechaSeleccionada = new Date(fechaInicio + "T00:00:00");
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    if (fechaSeleccionada <= hoy) {
+      setError("No puede elegir un día anterior al actual");
       return;
     }
 
-    if (horaInicio >= horaFin) {
-      setError("La hora de inicio debe ser anterior a la hora de fin.");
+    if (parseInt(cupo) <= 0) {
+      setError("El cupo debe ser mayor a 0");
       return;
     }
 
-    // Validar que la duración sea exactamente 1 hora
-    const [hInicio, mInicio] = horaInicio.split(":").map(Number);
-    const [hFin, mFin] = horaFin.split(":").map(Number);
-    const minutosDuracion = (hFin * 60 + mFin) - (hInicio * 60 + mInicio);
-    if (minutosDuracion !== 60) {
-      setError("La duración del turno debe ser exactamente 1 hora.");
+    if (parseFloat(precio) < 0) {
+      setError("El precio no puede ser negativo");
       return;
     }
 
     setLoading(true);
 
     const turnoData = {
-      id: isModifying ? id : "00000000-0000-0000-0000-000000000000",
-      fecha: `${fecha}T${horaInicio}:00`,
-      cupo: parseInt(cupo),
       idDeporte: idDeporte,
-      nombreTurno: "Autogenerado", // El backend se encarga de cambiarlo
-      nommbreProfesor: nommbreProfesor.trim(),
+      fechaInicio: fechaInicio,
       horaInicio: horaInicio,
-      horaFin: horaFin,
+      cupo: parseInt(cupo),
+      precio: parseFloat(precio),
+      nombreProfesor: nommbreProfesor.trim(),
+      listaEsperaHabilitada: listaEsperaHabilitada
     };
 
     try {
       const url = isModifying
-        ? `http://localhost:5266/api/turnos/${id}`
-        : "http://localhost:5266/api/turnos";
+        ? `http://localhost:5266/api/turnos/mensual/${id}`
+        : "http://localhost:5266/api/turnos/mensual";
       const method = isModifying ? "PUT" : "POST";
 
       const response = await fetch(url, {
@@ -118,7 +122,7 @@ function CrearModificarTurnoPage() {
         return;
       }
 
-      setSuccess(`Turno ${isModifying ? "modificado" : "creado"} con éxito.`);
+      setSuccess(`Turno ${isModifying ? "modificado" : "creado"} con éxito`);
       setTimeout(() => navigate("/turnos"), 1500);
     } catch (err) {
       console.error(err);
@@ -130,25 +134,29 @@ function CrearModificarTurnoPage() {
 
   return (
     <div>
-      <h1>{isModifying ? "Modificar Turno" : "Crear Nuevo Turno"}</h1>
-      <p>
-        {isModifying
-          ? "Modifica los datos del turno."
-          : "Ingresa los datos para crear un nuevo turno."}
-      </p>
+      <div className="page-header" style={{ textAlign: "left" }}>
+        <h1>{isModifying ? "Modificar Turno" : "Crear Nuevo Turno"}</h1>
+        <p>
+          {isModifying
+            ? "Modificá los datos del turno."
+            : "Ingresá los datos para crear un nuevo turno."}
+        </p>
+      </div>
+      {/* 
       <div className="info-panel">
         <strong>Información importante:</strong>
         <ul>
-          <li>La duración del turno debe ser <strong>exactamente 1 hora</strong></li>
-          <li>La fecha no puede ser anterior a la fecha y hora actual</li>
-          <li>El cupo debe ser mayor a 0</li>
-          <li>Todos los campos son obligatorios</li>
+          <li>Todas las clases duran <strong>exactamente 1 hora</strong></li>
+          <li>Se crearán todos los turnos para la fecha seleccionada durante los próximos 30 días</li>
+          <li>No puede haber más de un turno de una misma actividad en el mismo día y horario</li>
+          <li>El cupo no puede ser 0</li>
         </ul>
       </div>
+      */}
 
       <CrearModificarTurnoForm
-        fecha={fecha}
-        setFecha={setFecha}
+        fechaInicio={fechaInicio}
+        setFechaInicio={setFechaInicio}
         cupo={cupo}
         setCupo={setCupo}
         idDeporte={idDeporte}
@@ -159,8 +167,10 @@ function CrearModificarTurnoPage() {
         setNommbreProfesor={setNommbreProfesor}
         horaInicio={horaInicio}
         setHoraInicio={setHoraInicio}
-        horaFin={horaFin}
-        setHoraFin={setHoraFin}
+        precio={precio}
+        setPrecio={setPrecio}
+        listaEsperaHabilitada={listaEsperaHabilitada}
+        setListaEsperaHabilitada={setListaEsperaHabilitada}
         deportes={deportes}
         onSubmit={handleSubmit}
         loading={loading}

@@ -39,7 +39,7 @@ function RegistrarUsuarioPage() {
         password,
       });
 
-      setSuccess("Usuario registrado correctamente.");
+      setSuccess("Usuario registrado correctamente");
       setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       console.error(err);

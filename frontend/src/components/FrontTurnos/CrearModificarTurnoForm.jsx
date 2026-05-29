@@ -1,6 +1,6 @@
 function CrearModificarTurnoForm({
-  fecha,
-  setFecha,
+  fechaInicio,
+  setFechaInicio,
   cupo,
   setCupo,
   idDeporte,
@@ -11,8 +11,10 @@ function CrearModificarTurnoForm({
   setNommbreProfesor,
   horaInicio,
   setHoraInicio,
-  horaFin,
-  setHoraFin,
+  precio,
+  setPrecio,
+  listaEsperaHabilitada,
+  setListaEsperaHabilitada,
   deportes,
   onSubmit,
   loading,
@@ -20,6 +22,12 @@ function CrearModificarTurnoForm({
   success,
   isModifying = false,
 }) {
+  const minFecha = (() => {
+    const hoy = new Date();
+    hoy.setDate(hoy.getDate() + 1);
+    return hoy.toISOString().split("T")[0];
+  })();
+
   return (
     <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
       <div className="form-group">
@@ -40,13 +48,14 @@ function CrearModificarTurnoForm({
       </div>
 
       <div className="form-group">
-        <label htmlFor="fecha">Fecha</label>
+        <label htmlFor="fechaInicio">Fecha de inicio</label>
         <input
-          id="fecha"
+          id="fechaInicio"
           type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
+          value={fechaInicio}
+          onChange={(e) => setFechaInicio(e.target.value)}
           required
+          min={minFecha}
         />
       </div>
 
@@ -57,17 +66,6 @@ function CrearModificarTurnoForm({
           type="time"
           value={horaInicio}
           onChange={(e) => setHoraInicio(e.target.value)}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="horaFin">Hora de Fin</label>
-        <input
-          id="horaFin"
-          type="time"
-          value={horaFin}
-          onChange={(e) => setHoraFin(e.target.value)}
           required
         />
       </div>
@@ -95,6 +93,35 @@ function CrearModificarTurnoForm({
           placeholder="Nombre del profesor a cargo"
         />
       </div>
+
+      <div className="form-group">
+        <label htmlFor="precio">Precio</label>
+        <input
+          id="precio"
+          type="number"
+          min="0"
+          step="100"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+          required
+          placeholder="0"
+        />
+      </div>
+
+      {/* 
+      <div className="form-group" style={{ flexDirection: "row", alignItems: "center", gap: "0.6rem" }}>
+        <input
+          id="listaEspera"
+          type="checkbox"
+          checked={listaEsperaHabilitada}
+          onChange={(e) => setListaEsperaHabilitada(e.target.checked)}
+          style={{ width: "auto", padding: 0 }}
+        />
+        <label htmlFor="listaEspera" style={{ margin: 0 }}>
+          Habilitar lista de espera cuando se agote el cupo
+        </label>
+      </div>
+      */}
 
       {error && <div className="alert alert-error">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}

@@ -1,9 +1,11 @@
 import BotonModificarTurno from "../components/FrontTurnos/BotonModificarTurno";
-import BotonMostrarListadoTurnos from "../components/FrontTurnos/BotonMostrarListadoTurnos";
-import BotonCrearTurno from "../components/FrontTurnos/BotonCrearTurno";
-import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+
+// Inicializar MercadoPago con la Public Key
+initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
 
 function TurnoPage() {
   const { user } = useContext(AuthContext);
@@ -18,8 +20,20 @@ function TurnoPage() {
   const [reservaExitosa, setReservaExitosa] = useState(false);
   const [requierePago, setRequierePago] = useState(false);
   const [esErrorReserva, setEsErrorReserva] = useState(false);
+  const [preferenceId, setPreferenceId] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Revisar si volvimos de Mercado Pago con error
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("pago") === "rechazado") {
+      alert("El pago no pudo completarse. Se ha cancelado la reserva y se restauró el cupo de la clase.");
+      // Limpiar URL
+      navigate("/turnos", { replace: true });
+    }
+  }, [location, navigate]);
 
   const cargarTurnos = async () => {
     try {
@@ -34,6 +48,10 @@ function TurnoPage() {
       alert("Error al cargar los turnos. Asegúrate de que el backend esté ejecutándose.");
     }
   };
+
+  useEffect(() => {
+    cargarTurnos();
+  }, []);
 
   const modificarTurno = (id) => {
     navigate(`/turnos/modificar/${id}`);
@@ -58,12 +76,12 @@ function TurnoPage() {
 
   const abrirModal = async (turno) => {
     setModalTurno(turno);
-    
+
     if (!user) {
       setUserInfo({ error: "No logueado" });
       return;
     }
-    
+
     if (user.esAdmin) {
       setUserInfo({ esAdmin: true });
       return;
@@ -98,6 +116,7 @@ function TurnoPage() {
     setReservaExitosa(false);
     setRequierePago(false);
     setEsErrorReserva(false);
+    setPreferenceId(null);
   };
 
   const handleReservar = async () => {
@@ -106,14 +125,15 @@ function TurnoPage() {
     setReservaExitosa(false);
     setRequierePago(false);
     setEsErrorReserva(false);
+    setPreferenceId(null);
 
     try {
       const response = await fetch("http://localhost:5266/api/Reservas/reservar-turno", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            email: user.email, 
-            idTurno: modalTurno.id 
+        body: JSON.stringify({
+          email: user.email,
+          idTurno: modalTurno.id
         })
       });
 
@@ -123,9 +143,32 @@ function TurnoPage() {
         setEsErrorReserva(false);
         setMensajeReserva(data.mensaje);
         setReservaExitosa(true);
-        
-        if (data.mensaje === "Reserva casi lista!") {
-            setRequierePago(true);
+
+        if (data.mensaje === "Requiere pago") {
+          setRequierePago(true);
+          setMensajeReserva("Reserva casi lista!");
+          // Pedir al backend que cree la preferencia de Mercado Pago
+          try {
+            const pagoResponse = await fetch("http://localhost:5266/api/pagos/crear-preferencia", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                idTurno: modalTurno.id,
+                email: user.email
+              })
+            });
+
+            if (pagoResponse.ok) {
+              const pagoData = await pagoResponse.json();
+              setPreferenceId(pagoData.preferenceId);
+            } else {
+              const errorData = await pagoResponse.json();
+              setMensajeReserva(`Error MP: ${errorData.message} - ${errorData.error || ''}`);
+            }
+          } catch (err) {
+            console.error("Error al crear preferencia:", err);
+            setMensajeReserva("Error al crear preferencia: " + err.message);
+          }
         }
         // Actualizamos cupo localmente o recargamos
         cargarTurnos();
@@ -145,13 +188,15 @@ function TurnoPage() {
     <div>
       <div className="page-header">
         <h1>Gestión de Turnos</h1>
-        <p>Administra los turnos disponibles en el sistema.</p>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '2rem' }}>
-        {user?.esAdmin && <BotonCrearTurno />}
-        <BotonMostrarListadoTurnos onClick={cargarTurnos} />
-      </div>
+      {user?.esAdmin && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+          <Link to="/turnos/crear">
+            <button className="btn btn-primary">+ Crear Turno</button>
+          </Link>
+        </div>
+      )}
 
       {turnos.length === 0 ? (
         <p>Por el momento no hay turnos disponibles</p>
@@ -207,24 +252,24 @@ function TurnoPage() {
                 {!reservaExitosa ? (
                   <>
                     {modalTurno.cupo > 0 ? (
-                      <button 
-                        onClick={handleReservar} 
+                      <button
+                        onClick={handleReservar}
                         disabled={loadingReserva}
                         className="btn btn-primary"
                         style={{ width: "100%" }}
                       >
                         {loadingReserva ? "Procesando..." : "Reservar turno"}
                       </button>
-                    ) : modalTurno.listaEsperaHabilitada ? (
+                    ) : /* modalTurno.listaEsperaHabilitada ? (
                       <button onClick={() => alert("Función de lista de espera no implementada aún.")} className="btn btn-secondary" style={{ width: "100%" }}>
                         Entrar a lista de espera
                       </button>
-                    ) : (
-                      <div className="alert alert-warning">
-                        Por el momento no hay más cupos para esta actividad
-                      </div>
-                    )}
-                    
+                    ) : */ (
+                        <div className="alert alert-warning">
+                          Por el momento no hay más cupos para esta actividad
+                        </div>
+                      )}
+
                     {mensajeReserva && (
                       <div className={`alert ${esErrorReserva ? 'alert-error' : 'alert-success'}`} style={{ marginTop: "15px" }}>
                         {mensajeReserva}
@@ -236,16 +281,18 @@ function TurnoPage() {
                     <h3 style={{ color: requierePago ? "var(--c-azul-medio)" : "#065f46", marginTop: 0 }}>{mensajeReserva}</h3>
 
                     {requierePago && (
-                        <div style={{ marginTop: "15px" }}>
-                            <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                            <button className="btn btn-primary" style={{ width: "100%", marginTop: "10px" }}>
-                                Proceder al pago
-                            </button>
-                        </div>
+                      <div style={{ marginTop: "15px" }}>
+                        <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
+                        {preferenceId ? (
+                          <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts: { action: 'pay' } }} />
+                        ) : (
+                          <p style={{ color: "var(--text-muted)" }}>Cargando botón de pago...</p>
+                        )}
+                      </div>
                     )}
 
                     <div style={{ marginTop: "20px" }}>
-                        <Link to="/reservas" style={{ color: "var(--primary)", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
+                      <Link to="/reservas" style={{ color: "var(--primary)", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
                     </div>
                   </div>
                 )}

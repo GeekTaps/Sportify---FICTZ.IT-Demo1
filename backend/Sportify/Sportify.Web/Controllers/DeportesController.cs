@@ -9,20 +9,71 @@ using System;
 public class DeportesController : ControllerBase
 {
     private readonly DeporteListadoUseCase listadoUseCase;
+    private readonly DeporteAltaUseCase altaUseCase;
     private readonly DeporteModificacionUseCase modificacionUseCase;
 
-    public DeportesController(DeporteListadoUseCase listadoUseCase, DeporteModificacionUseCase modificacionUseCase)
+    public DeportesController(DeporteListadoUseCase listadoUseCase, DeporteAltaUseCase altaUseCase, DeporteModificacionUseCase modificacionUseCase)
     {
         this.listadoUseCase = listadoUseCase;
+        this.altaUseCase = altaUseCase;
         this.modificacionUseCase = modificacionUseCase;
     }
 
-    [HttpGet]
+    //EJ de otros tipos:
+    //GET     /api/deportes        → listar
+    //GET     /api/deportes/{id}   → obtener uno
+    //POST    /api/deportes        → crear
+    //PUT     /api/deportes/{id}   → actualizar
+    //DELETE  /api/deportes/{id}   → eliminar
+
+    [HttpDelete("{id:guid}")] //post es para eliminar datos en el backend.
+    public async Task<IActionResult> eliminarDeporte(Guid id)
+    {
+        try
+        {
+            DeporteBajaUseCase? bajaUseCase = HttpContext.RequestServices.GetService(typeof(DeporteBajaUseCase)) as DeporteBajaUseCase;
+            await bajaUseCase.Ejecutar(id);
+            return NoContent();
+        }
+        catch (EntidadNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (EntidadAsociadaException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet] //get es para traerte datos del backend. No modifica datos.
     public async Task<IActionResult> ObtenerDeportes()
     {
         var resultado = await listadoUseCase.Ejecutar();
 
         return Ok(resultado);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CrearDeporte([FromBody] Deporte deporte)
+    {
+        if (deporte == null || string.IsNullOrWhiteSpace(deporte.nombre) || string.IsNullOrWhiteSpace(deporte.descripcion))
+        {
+            return BadRequest(new { message = "complete los campos para registrar un deporte" });
+        }
+
+        try
+        {
+            await altaUseCase.Ejecutar(deporte.nombre.Trim(), deporte.descripcion.Trim());
+            return Ok(new { message = "deporte registrado correctamente" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id:guid}")]

@@ -37,7 +37,7 @@ function ReservasPage() {
       const data = await response.json();
       setReservas(data);
       if (data.length === 0) {
-        setMensaje("No hay reservas activas actualmente.");
+        setMensaje("No Cuenta Con Reservas Activas Actualmente");
       }
     } catch (error) {
       console.error("Error al cargar reservas:", error);
@@ -190,11 +190,10 @@ function ReservasPage() {
 
                 {mensajeCancelacion ? (
                   <div
-                    className={`alert ${
-                      mensajeCancelacion.tipo === "success"
+                    className={`alert ${mensajeCancelacion.tipo === "success"
                         ? "alert-success"
                         : "alert-error"
-                    }`}
+                      }`}
                     style={{ marginTop: "1rem" }}
                   >
                     {mensajeCancelacion.texto}
@@ -212,13 +211,11 @@ function ReservasPage() {
                       <>
                         {reservaSeleccionada.horasAnticipacion > 48 ? (
                           <div className="alert alert-success">
-                            En caso de cancelar, se devolverá el valor completo
-                            de la seña.
+                            En caso de cancelar, se devolverá el valor completo de la seña.
                           </div>
                         ) : (
                           <div className="alert alert-warning">
-                            En caso de cancelar, no se devolverá la seña (menos
-                            de 48 hs de anticipación).
+                            En caso de cancelar, no se devolverá la seña.
                           </div>
                         )}
 

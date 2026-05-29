@@ -59,6 +59,7 @@ public async Task validar (Usuario usuario)   //huele re mal este codigo lo se p
         "puta",
         "mierda",
         "idiota",
+        "joder",
         "pelotudo",
         "maricon",
         "tarado",
@@ -96,7 +97,8 @@ public async Task validar (Usuario usuario)   //huele re mal este codigo lo se p
         "jugadordegenshinimpact",
         "jugadordelol",
         "groomer",
-        "mrbeast"
+        "mrbeast",
+        "patorusuescupeleche"
     };
 
     nombre = nombre.ToLower();

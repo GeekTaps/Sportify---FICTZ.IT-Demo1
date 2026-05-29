@@ -14,13 +14,13 @@ public class DeporteAltaUseCase
 
     public async Task Ejecutar(string nombre, string descripcion)
     {
-        if (!await validadorDeporte.validarNombre(nombre, repositorioDeporte)) //valida que el nombre del deporte no sea el de otro deporte antes de crearlo
+        if (await validadorDeporte.validarNombre(nombre, repositorioDeporte)) //valida que el nombre del deporte no sea el de otro deporte antes de crearlo
         {
             await repositorioDeporte.crearDeporte(nombre, descripcion);
         }
         else
         {
-            throw new Exception("Ya Existe Un Deporte Con El Nombre Que Intenta Asignar");
+            throw new Exception("Ya Existe un Deporte Con El Nombre que Intenta Asignar");
         }
     }
 }

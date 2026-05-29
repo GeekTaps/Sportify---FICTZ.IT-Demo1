@@ -67,37 +67,39 @@ public async Task RegistrarUsuario(Usuario usuario)
         throw new ValidacionException($"No se pudo registrar el usuario: {errores}");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
     }
 }
-public async Task ModificarUsuario(string id, Usuario usuario)
+public async Task ModificarUsuario(string id, Usuario dto)
 {
-    UsuarioIdentity? usuarioAModificar =
-        await userManager.FindByIdAsync(id);
+    var usuario = await userManager.FindByIdAsync(id);
 
-    if (usuarioAModificar == null)
-    {
+    if (usuario == null)
         throw new Exception("Usuario no encontrado");
+
+    
+
+
+    if (!string.IsNullOrWhiteSpace(dto.NombreCompleto))
+        usuario.NombreCompleto = dto.NombreCompleto;
+
+    if (!string.IsNullOrWhiteSpace(dto.Edad))
+        usuario.Edad = dto.Edad;
+
+    if (!string.IsNullOrWhiteSpace(dto.Dni))
+        usuario.Dni = dto.Dni;
+
+    if (!string.IsNullOrWhiteSpace(dto.Mail))
+        usuario.Email = dto.Mail;
+
+    if (!string.IsNullOrWhiteSpace(dto.Mail))
+        usuario.UserName = dto.Mail;
+
+    if (!string.IsNullOrWhiteSpace(dto.Contraseña))
+    {
+        var token = await userManager.GeneratePasswordResetTokenAsync(usuario);
+        await userManager.ResetPasswordAsync(usuario, token, dto.Contraseña);
     }
 
-    usuarioAModificar.NombreCompleto =
-        usuario.NombreCompleto;
-
-    usuarioAModificar.Email =
-        usuario.Mail;
-                                                //esto modifica los datos del usuario
-
-    usuarioAModificar.Edad =
-        usuario.Edad;
-
-    usuarioAModificar.Dni =
-        usuario.Dni;
-    string token =                                                  //para cambiar la contraseña usoe ste metodo full nazi 
-    await userManager.GeneratePasswordResetTokenAsync(usuarioAModificar);
-
-    await userManager.ResetPasswordAsync(
-    usuarioAModificar,
-    token,
-    usuario.Contraseña);
-    await userManager.UpdateAsync(usuarioAModificar);
-} 
+    await userManager.UpdateAsync(usuario);
+}
 
     public async Task BajaLogica(string id)     
 {
@@ -113,4 +115,39 @@ public async Task ModificarUsuario(string id, Usuario usuario)
 
     await userManager.UpdateAsync(usuarioABorrar);
 }
+public async Task<Usuario> ObtenerPorId(string id)
+{
+    UsuarioIdentity usuarioIdentity = await userManager.FindByIdAsync(id);
+
+    if (usuarioIdentity == null)
+    {
+        throw new ValidacionException("Usuario no encontrado");
+    }
+
+    return new Usuario(
+        usuarioIdentity.NombreCompleto,
+        usuarioIdentity.Email,
+        usuarioIdentity.Dni,
+        "",
+        usuarioIdentity.Edad
+    );
+}
+public async Task<List<Usuario>> ListarUsuarios()
+{
+    List<UsuarioIdentity> usuariosIdentity =
+        await userManager.Users.ToListAsync();
+
+    List<Usuario> usuarios = usuariosIdentity
+        .Select(u => new Usuario(
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            u.Edad
+        ))
+        .ToList();
+
+    return usuarios;
+}
+
 }

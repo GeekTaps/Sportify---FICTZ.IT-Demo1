@@ -4,14 +4,15 @@ import './App.css'
 import HomePage from './pages/HomePage'
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
+import CrearDeportePage from './pages/CrearDeportePage'
 import TurnoPage from './pages/TurnoPage'
 import CrearModificarTurnoPage from './pages/CrearModificarTurnoPage'
 import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
-
+import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 import ReservasPage from './pages/ReservasPage'
 import LoginPage from './pages/LoginPage'
 
-import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
 
@@ -19,6 +20,16 @@ import logoLetras from './assets/logo_letras_sportify-no-bg.png';
 
 function Navigation() {
     const { user, logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const navLinkClass = ({ isActive }) => (isActive ? "nav-active" : undefined);
+
+    const handleLogout = () => {
+        if (window.confirm("¿Seguro que querés cerrar sesión?")) {
+            logout();
+            navigate("/");
+        }
+    };
 
     return (
         <nav className="navbar">
@@ -29,12 +40,19 @@ function Navigation() {
             </div>
 
             <div className="navbar-links">
-                <NavLink to="/deportes" className={({ isActive }) => isActive ? "nav-active" : undefined}>Deportes</NavLink>
-                <NavLink to="/turnos" className={({ isActive }) => isActive ? "nav-active" : undefined}>Turnos</NavLink>
+                <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
+                <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
+
+                {user?.esAdmin && (
+                    <>
+                        <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
+                        <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
+                    </>
+                )}
 
                 {!user && (
                     <>
-                        <NavLink to="/register" className={({ isActive }) => isActive ? "nav-active" : undefined}>Registro</NavLink>
+                        <NavLink to="/register" className={navLinkClass}>Registro</NavLink>
                         <Link
                             to="/login"
                             className="btn btn-secondary"
@@ -46,7 +64,12 @@ function Navigation() {
                 )}
 
                 {user && !user.esAdmin && (
-                    <NavLink to="/reservas" className={({ isActive }) => isActive ? "nav-active" : undefined}>Mis Reservas</NavLink>
+                    <>
+                        <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
+                        {user.id && (
+                            <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mis Datos</NavLink>
+                        )}
+                    </>
                 )}
 
                 {user && (
@@ -55,7 +78,7 @@ function Navigation() {
                             Hola, {user.nombreCompleto}
                         </span>
                         <button
-                            onClick={logout}
+                            onClick={handleLogout}
                             className="btn btn-outline"
                             style={{
                                 borderColor: 'var(--c-cian-brillante)',
@@ -119,11 +142,13 @@ function App() {
                             <Route path="/register" element={<RegistrarUsuarioPage />} />
                             <Route path="/login" element={<LoginPage />} />
                             <Route path="/deportes" element={<DeportePage />} />
+                            <Route path="/deportes/crear" element={<CrearDeportePage />} />
                             <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
                             <Route path="/turnos" element={<TurnoPage />} />
                             <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                             <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                             <Route path="/reservas" element={<ReservasPage />} />
+                            <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                         </Routes>
                     </main>
 
