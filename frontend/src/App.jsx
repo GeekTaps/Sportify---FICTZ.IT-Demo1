@@ -95,7 +95,6 @@ function Navigation() {
 function App() {
     const [backendMessage, setBackendMessage] = useState('Probando conexión con .NET...');
 
-<<<<<<< HEAD
     useEffect(() => {
         fetch('http://localhost:5266/api/testconnection')
             .then(res => res.json())
@@ -107,12 +106,6 @@ function App() {
                 setBackendMessage('Error al conectar con el backend. Asegurate de que esté corriendo.');
             });
     }, []);
-=======
-    return ( //esto es lo que se muestra en la interfaz.
-         <AuthProvider>
-        <BrowserRouter>
-                <Navigation />
->>>>>>> 9f4cad282819a0ff42e199a623843c0681f8452f
 
     /* 
     // from development branch:

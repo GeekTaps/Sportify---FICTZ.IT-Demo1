@@ -3,7 +3,7 @@ import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDep
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-
+import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
 function DeportePage() {
   const { user } = useContext(AuthContext);
   const [deportes, setDeportes] = useState([]);
@@ -29,14 +29,16 @@ function DeportePage() {
   const modificarDeporte = (id) => {
     navigate(`/deportes/modificar/${id}`);
   };
+  const irACrearDeporte = () => {
 
+    navigate("/deportes/crear");
+
+  };
   const eliminarDeporte = async (id) => {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este deporte?")) {
       return;
     }
-    const irACrearDeporte = () => {
-  navigate("/deportes/crear");
-  };
+    
     try {
       const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
         method: "DELETE",
@@ -56,7 +58,6 @@ function DeportePage() {
       <h1>Bienvenido a la página de deportes!</h1>
       <p>Explora los diferentes deportes disponibles.</p>
 
-<<<<<<< HEAD
       {user?.esAdmin && (
   <button type="button" onClick={irACrearDeporte}>
     Ir a Crear Deporte
@@ -65,8 +66,6 @@ function DeportePage() {
 
       <BotonMostrarListadoDeportes onClick={cargarDeportes} />
 
-=======
->>>>>>> 9f4cad282819a0ff42e199a623843c0681f8452f
       <ul>
         {deportes.map((d) => (
           <li key={d.id} style={{ marginBottom: "12px" }}>
