@@ -1,14 +1,16 @@
 function RegisterForm({
   nombreCompleto,
   setNombreCompleto,
-  edad,
-  setEdad,
+  fechaNacimiento,
+setFechaNacimiento,
   dni,
   setDni,
   email,
   setEmail,
   password,
   setPassword,
+  confirmPassword,
+  setConfirmPassword,
   onSubmit,
   loading,
   error,
@@ -27,17 +29,15 @@ function RegisterForm({
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="reg-edad">Edad</label>
-        <input
-          id="reg-edad"
-          type="number"
-          placeholder="25"
-          value={edad}
-          onChange={(e) => setEdad(e.target.value)}
-          min="1"
-        />
-      </div>
+     <div className="form-group">
+  <label htmlFor="reg-fechaNacimiento">Fecha de nacimiento</label>
+  <input
+    id="reg-fechaNacimiento"
+    type="date"
+    value={fechaNacimiento}
+    onChange={(e) => setFechaNacimiento(e.target.value)}
+  />
+</div>
 
       <div className="form-group">
         <label htmlFor="reg-dni">DNI</label>
@@ -69,6 +69,17 @@ function RegisterForm({
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="reg-confirmPassword">Confirmar contraseña</label>
+        <input
+          id="reg-confirmPassword"
+          type="password"
+          placeholder="••••••••"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
 

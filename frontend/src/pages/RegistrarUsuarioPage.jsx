@@ -9,22 +9,58 @@ function RegistrarUsuarioPage() {
   const navigate = useNavigate();
 
   const [nombreCompleto, setNombreCompleto] = useState("");
-  const [edad, setEdad] = useState("");
+
   const [dni, setDni] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+const [fechaNacimiento, setFechaNacimiento] = useState("");
 
+const calcularEdad = (fecha) => {
+  const hoy = new Date();
+  const nacimiento = new Date(fecha);
+
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+  if (
+    hoy.getMonth() < nacimiento.getMonth() ||
+    (hoy.getMonth() === nacimiento.getMonth() &&
+      hoy.getDate() < nacimiento.getDate())
+  ) {
+    edad--;
+  }
+
+  return edad.toString();
+};
   const handleRegister = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!nombreCompleto.trim() || !edad.trim() || !dni.trim() || !email.trim() || !password.trim()) {
+    const requiredFields = [
+      nombreCompleto,
+      fechaNacimiento,
+      dni,
+      email,
+      password,
+      confirmPassword,
+    ];
+
+    const hasEmptyField = requiredFields.some(
+      (field) => !field?.toString().trim()
+    );
+
+    if (hasEmptyField) {
       setError("Debes completar todos los campos.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden.");
       return;
     }
 
@@ -32,12 +68,12 @@ function RegistrarUsuarioPage() {
 
     try {
       await apiClient.post("/usuarios/register", {
-        nombreCompleto,
-        edad,
-        dni,
-        email,
-        password,
-      });
+  nombreCompleto,
+  fechaNacimiento,
+  dni,
+  email,
+  password,
+});
 
       setSuccess("Usuario registrado correctamente");
       setTimeout(() => navigate("/"), 1000);
@@ -71,15 +107,15 @@ function RegistrarUsuarioPage() {
           <RegisterForm
             nombreCompleto={nombreCompleto}
             setNombreCompleto={setNombreCompleto}
-            edad={edad}
-            setEdad={setEdad}
+           fechaNacimiento={fechaNacimiento}
+            setFechaNacimiento={setFechaNacimiento}
             dni={dni}
             setDni={setDni}
             email={email}
             setEmail={setEmail}
             password={password}
-            setPassword={setPassword}
-            onSubmit={handleRegister}
+            setPassword={setPassword}            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}            onSubmit={handleRegister}
             loading={loading}
             error={error}
             success={success}

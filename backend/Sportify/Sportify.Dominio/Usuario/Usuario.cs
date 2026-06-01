@@ -12,16 +12,18 @@ public string NombreCompleto { get; set; } = "";
     //no hay id se setea en userentity lo mismo con el borrado
     public string Mail { get; set; }
     public string Dni { get; set; }
-    public string Contraseña { get; set; }
-    public string Edad { get; set; }
-
-    public Usuario(string nombre, string Mail, string Dni, string Contraseña, string edad)
+    public string PasswordActual { get; set; } = "";
+public string PasswordNueva { get; set; } = "";
+    public DateTime FechaNacimiento { get; set; }
+    
+    public Usuario(string nombre, string Mail, string Dni, string Contraseña, string? passwordNueva, DateTime fechaNacimiento)
     {
         
         this.NombreCompleto = nombre;
         this.Mail = Mail;
         this.Dni= Dni;
-        this.Contraseña= Contraseña;
-        this.Edad= edad;
+        this.PasswordActual = Contraseña;
+        this.PasswordNueva = passwordNueva;
+        this.FechaNacimiento= fechaNacimiento;
     }
 }

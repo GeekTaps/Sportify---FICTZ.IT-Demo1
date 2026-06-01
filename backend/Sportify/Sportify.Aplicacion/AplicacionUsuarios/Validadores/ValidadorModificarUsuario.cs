@@ -12,40 +12,53 @@
         {
             this.repositorioUsuarios=repositorioUsuarios;
         }
-    public async Task validar(Usuario usuario, string idUsuario)
+    public async Task validar(Usuario usuario, Usuario usuarioactual)
         {
+           
+        int edad = DateTime.Today.Year - usuario.FechaNacimiento.Year;
         
-        if (!string.IsNullOrWhiteSpace(usuario.Mail))
-        {
-            if (!usuario.Mail.Contains("@"))
-                throw new ValidacionException("El mail no es válido");
 
-            // Solo validar si el mail cambió, pero como no tenemos el original fácil, al menos vemos si existe
-            // Ojo: si el usuario manda su propio mail de nuevo, esto podría dar error si el repo no filtra su propio ID
-            // Asumiremos que el repositorioUsuarios.BuscarMail busca si EXISTE. 
-            // Para ser correctos, idealmente no debería fallar si es su propio mail, pero dejémoslo como estaba, solo que opcional.
-            if (await repositorioUsuarios.BuscarMail(usuario.Mail))
-            {
-                // TODO: En un sistema real deberíamos verificar que el mail encontrado no sea del mismo usuario.
-                // Como workaround simple para este proyecto, mantengo la regla si manda mail nuevo.
-                throw new ValidacionException("Ese mail ya está registrado");
-            }
-        }
+        
+           if (!string.IsNullOrWhiteSpace(usuario.Mail))
+    {
+        usuario.Mail = usuario.Mail.Trim().ToLower();
+    }
 
-        if (!string.IsNullOrWhiteSpace(usuario.Contraseña))
+    if (!string.IsNullOrWhiteSpace(usuarioactual.Mail))
+    {
+        usuarioactual.Mail = usuarioactual.Mail.Trim().ToLower();
+    }
+
+
+    if (!string.IsNullOrWhiteSpace(usuario.Mail))
+{
+    if (!usuario.Mail.Contains("@"))
+        throw new ValidacionException("El mail no es válido");
+
+    bool existe = await repositorioUsuarios.BuscarMail(usuario.Mail);
+
+    // SOLO si el mail cambió
+    if (existe && usuario.Mail != usuarioactual.Mail)   
+    {
+        throw new ValidacionException("Ese mail ya está registrado");
+    }
+}
+
+        if (!string.IsNullOrWhiteSpace(usuario.PasswordNueva))
         {
-            if (usuario.Contraseña.Length < 6)
+            if (usuario.PasswordNueva.Length < 6)
                 throw new ValidacionException("La contraseña debe tener al menos 6 caracteres");
         }
 
-        if (!string.IsNullOrWhiteSpace(usuario.Edad))
+       if (usuario.FechaNacimiento.Date > DateTime.Today.AddYears(-edad))
         {
-            if (!int.TryParse(usuario.Edad, out int edad))
-                throw new ValidacionException("La edad ingresada no es válida");
-            
-            if (edad <= 17)
-                throw new ValidacionException("Debes ser mayor de 18 años");
+         edad--;
         }
+        if (edad < 18)
+    throw new ValidacionException("Debes ser mayor de 18 años");
+
+            
+            
 
         if (!string.IsNullOrWhiteSpace(usuario.Dni))
         {

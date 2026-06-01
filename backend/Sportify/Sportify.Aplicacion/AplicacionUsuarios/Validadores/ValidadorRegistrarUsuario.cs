@@ -15,23 +15,25 @@ public ValidadorRegistrarUsuario ( IRepositorioUsuarios repositorioUsuarios)
     }
 public async Task validar (Usuario usuario)   //huele re mal este codigo lo se pero ni a palo le aplico refactorin suckeame un egg
     {
+        int edad = DateTime.Today.Year - usuario.FechaNacimiento.Year;
     if (string.IsNullOrWhiteSpace(usuario.Mail) || !usuario.Mail.Contains("@"))
         throw new ValidacionException("El mail no es válido");
 
     if (await repositorioUsuarios.BuscarMail(usuario.Mail))
         throw new ValidacionException("Ese mail ya está registrado");
 
-    if (string.IsNullOrWhiteSpace(usuario.Contraseña))
+    if (string.IsNullOrWhiteSpace(usuario.PasswordNueva))
         throw new ValidacionException("La contraseña no puede estar vacía");
 
-    if (usuario.Contraseña.Length < 6)
+    if (usuario.PasswordNueva.Length < 6)
         throw new ValidacionException("La contraseña debe tener al menos 6 caracteres");
 
-    if (string.IsNullOrWhiteSpace(usuario.Edad))
-        throw new ValidacionException("La edad ingresada no es válida");
-
-    if (!int.TryParse(usuario.Edad, out int edad))
-        throw new ValidacionException("La edad ingresada no es válida");    
+    if (usuario.FechaNacimiento.Date > DateTime.Today.AddYears(-edad))
+        {
+         edad--;
+        }
+        if (edad < 18)
+    throw new ValidacionException("Debes ser mayor de 18 años");
 
     if (string.IsNullOrWhiteSpace(usuario.Dni))
         throw new ValidacionException("El DNI Ingresado no es válido");
@@ -39,8 +41,6 @@ public async Task validar (Usuario usuario)   //huele re mal este codigo lo se p
     if ( !int.TryParse(usuario.Dni, out int dni))
         throw new ValidacionException("El DNI Ingresado no es válido");    
 
-    if (edad <= 17)
-        throw new ValidacionException("Debes ser mayor de 18 años");
 
     if (!validarNombre(usuario.NombreCompleto))
         throw new ValidacionException("El nombre contiene palabras prohibidas");

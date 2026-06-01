@@ -67,7 +67,7 @@ function Navigation() {
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
                         {user.id && (
-                            <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mis Datos</NavLink>
+                            <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mi Perfil</NavLink>
                         )}
                     </>
                 )}
@@ -103,7 +103,7 @@ function Footer() {
                 <img src={logoLetras} alt="Sportify" className="footer-logo" />
                 <p className="footer-tagline">Tu plataforma de deportes y reservas</p>
                 <hr className="footer-divider" />
-                <p className="footer-copy">© 2025 Sportify · FICTZ.IT Demo 1</p>
+                <p className="footer-copy">© 2026 Sportify · FICTZ.IT Demo 1</p>
             </div>
         </footer>
     );

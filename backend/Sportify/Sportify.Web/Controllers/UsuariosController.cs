@@ -26,12 +26,13 @@ public async Task<IActionResult> Register([FromBody] RegistrarUsuarioDTO dto)
     try
     {
         Usuario usuario = new Usuario(
-            dto.NombreCompleto,
-            dto.Email,
-            dto.Dni,
-            dto.Password,
-            dto.Edad
-        );
+    dto.NombreCompleto,
+    dto.Email,
+    dto.Dni,
+    "",
+    dto.Password,
+    dto.FechaNacimiento
+);
 
         await registrarUsuarioUseCase.Ejecutar(usuario);
 
