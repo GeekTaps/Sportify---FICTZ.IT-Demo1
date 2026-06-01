@@ -113,6 +113,26 @@ namespace Sportify.Web.Controllers
             }
         }
 
+        // GET: api/Reservas/usuario/{id}
+        // Endpoint que devuelve la lista de reservas de un usuario por su ID de Identity.
+        [HttpGet("usuario/{id:guid}")]
+        public async Task<IActionResult> ListarReservasUsuarioPorId(Guid id)
+        {
+            try
+            {
+                var reservas = await _reservaListadoUseCase.Ejecutar(id);
+                return Ok(reservas);
+            }
+            catch (ListadoVacioException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
         // GET: api/Reservas/{id}
         // Endpoint que busca y devuelve una única reserva buscando por su ID de reserva.
         [HttpGet("{id:guid}")]

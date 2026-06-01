@@ -21,7 +21,7 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/email/${user.email}`
+        `http://localhost:5266/api/Reservas/usuario/${user.id}`
       );
 
       if (!response.ok) {
@@ -95,6 +95,7 @@ function ReservasPage() {
 
       if (response.ok) {
         setMensajeCancelacion({ tipo: "success", texto: data.mensaje });
+        await cargarReservas();
       } else {
         setMensajeCancelacion({
           tipo: "error",
