@@ -7,6 +7,7 @@ using Sportify.Infraestructura.Repositorios;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.AplicacionReservas;
+using Sportify.Aplicacion.AplicacionPagos;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IRepositorioDeporte, RepositorioDeportes>();
 builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
+builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
@@ -45,6 +47,7 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 
 //Scoped de Usuarios 
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
+builder.Services.AddScoped<RegistrarPagoUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();

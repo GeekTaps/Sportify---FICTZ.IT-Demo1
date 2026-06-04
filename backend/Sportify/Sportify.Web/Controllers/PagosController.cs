@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionReservas;
+using Sportify.Aplicacion.AplicacionPagos;
+using Sportify.Dominio.Pagos;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
 
@@ -21,6 +23,7 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioTurno _repositorioTurno;
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
+        private readonly RegistrarPagoUseCase _registrarPagoUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public PagosController(
@@ -28,12 +31,14 @@ namespace Sportify.Web.Controllers
             IRepositorioTurno repositorioTurno,
             IRepositorioReserva repositorioReserva,
             ReservaAltaUseCase reservaAltaUseCase,
+            RegistrarPagoUseCase registrarPagoUseCase,
             UserManager<UsuarioIdentity> userManager)
         {
             _configuration = configuration;
             _repositorioTurno = repositorioTurno;
             _repositorioReserva = repositorioReserva;
             _reservaAltaUseCase = reservaAltaUseCase;
+            _registrarPagoUseCase = registrarPagoUseCase;
             _userManager = userManager;
             
             // Inicializar MercadoPago
@@ -91,6 +96,43 @@ namespace Sportify.Web.Controllers
             }
         }
 
+        [HttpPost("registrar")]
+        public async Task<IActionResult> RegistrarPago([FromBody] RegistrarPagoRequest request)
+        {
+            try
+            {
+                if (request.IdUsuario == Guid.Empty || request.IdReserva == Guid.Empty)
+                {
+                    return BadRequest(new { message = "Debe seleccionar un usuario y una reserva válidos." });
+                }
+
+                var reserva = await _repositorioReserva.buscarReserva(request.IdReserva);
+                if (reserva == null)
+                {
+                    return NotFound(new { message = "Reserva no encontrada." });
+                }
+
+                if (reserva.idUsuario != request.IdUsuario)
+                {
+                    return BadRequest(new { message = "El usuario seleccionado no posee esa reserva." });
+                }
+
+                if (reserva.paga)
+                {
+                    return BadRequest(new { message = "esta reserva ya fue pagada" });
+                }
+
+                var pago = new Pago(reserva.id, request.IdUsuario, (decimal)reserva.monto);
+                await _registrarPagoUseCase.Ejecutar(pago);
+
+                return Ok(new { message = "Pago registrado correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno al registrar el pago.", detail = ex.Message });
+            }
+        }
+
         [HttpGet("retorno")]
         public async Task<IActionResult> Retorno(string status, Guid idTurno, string email)
         {
@@ -134,5 +176,11 @@ namespace Sportify.Web.Controllers
     {
         public Guid IdTurno { get; set; }
         public string Email { get; set; }
+    }
+
+    public class RegistrarPagoRequest
+    {
+        public Guid IdUsuario { get; set; }
+        public Guid IdReserva { get; set; }
     }
 }
