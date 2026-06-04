@@ -11,12 +11,14 @@ public class DeportesController : ControllerBase
     private readonly DeporteListadoUseCase listadoUseCase;
     private readonly DeporteAltaUseCase altaUseCase;
     private readonly DeporteModificacionUseCase modificacionUseCase;
+    private readonly IRepositorioDeporte repositorioDeporte;
 
-    public DeportesController(DeporteListadoUseCase listadoUseCase, DeporteAltaUseCase altaUseCase, DeporteModificacionUseCase modificacionUseCase)
+    public DeportesController(DeporteListadoUseCase listadoUseCase, DeporteAltaUseCase altaUseCase, DeporteModificacionUseCase modificacionUseCase, IRepositorioDeporte repositorioDeporte)
     {
         this.listadoUseCase = listadoUseCase;
         this.altaUseCase = altaUseCase;
         this.modificacionUseCase = modificacionUseCase;
+        this.repositorioDeporte = repositorioDeporte;
     }
 
     //EJ de otros tipos:
@@ -76,17 +78,35 @@ public class DeportesController : ControllerBase
         }
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> ObtenerDeporte(Guid id)
+    {
+        try
+        {
+            var deporte = await repositorioDeporte.obtenerDeportePorId(id);
+            if (deporte == null)
+            {
+                return NotFound(new { message = "Deporte no encontrado." });
+            }
+            return Ok(deporte);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> ModificarDeporte(Guid id, [FromBody] Deporte deporte)
     {
-        if (deporte == null || string.IsNullOrWhiteSpace(deporte.nombre) || string.IsNullOrWhiteSpace(deporte.descripcion))
+        if (deporte == null || string.IsNullOrWhiteSpace(deporte.descripcion))
         {
-            return BadRequest(new { message = "Nombre y descripción son obligatorios." });
+            return BadRequest(new { message = "La descripción es obligatoria." });
         }
 
         try
         {
-            await modificacionUseCase.Ejecutar(id, deporte.nombre.Trim(), deporte.descripcion.Trim());
+            await modificacionUseCase.Ejecutar(id, deporte.descripcion.Trim());
             return NoContent();
         }
         catch (EntidadNotFoundException ex)

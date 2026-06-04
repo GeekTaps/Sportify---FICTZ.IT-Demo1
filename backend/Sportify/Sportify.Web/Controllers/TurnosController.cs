@@ -3,6 +3,7 @@ using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion.Excepciones;
 using System;
+using System.Linq;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -39,8 +40,15 @@ public class TurnosController : ControllerBase
     {
         try
         {
+            await repositorioTurno.actualizarMostrarEnHome();
             var resultado = await listadoUseCase.Ejecutar();
-            return Ok(resultado);
+
+            var ahora = DateTime.Now;
+            var filtrados = resultado
+                .Where(t => t.mostrarEnHome && (t.Fecha.Date.Add(t.horaInicio.ToTimeSpan()) > ahora))
+                .ToList();
+
+            return Ok(filtrados);
         }
         catch (Exception ex)
         {

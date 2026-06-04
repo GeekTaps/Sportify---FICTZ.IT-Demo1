@@ -64,4 +64,19 @@ public class RepositorioTurno : IRepositorioTurno
         }
         return false;
     }
+
+    public async Task actualizarMostrarEnHome()
+    {
+        var turnos = await archivo.Turnos.Where(t => t.mostrarEnHome).ToListAsync(); //obtiene todos los turnos que se muestran en home
+        foreach (var turno in turnos)
+        {
+            // Construir la fecha/hora de fin del turno para compararla con el momento actual
+            var fechaFinTurno = turno.Fecha.Date.Add(turno.horaFin.ToTimeSpan());
+            if (fechaFinTurno <= DateTime.Now) // si el turno ya finalizó
+            {
+                turno.mostrarEnHome = false;
+            }
+        }
+        await archivo.SaveChangesAsync();
+    }
 }

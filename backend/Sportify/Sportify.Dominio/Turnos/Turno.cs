@@ -13,4 +13,6 @@ public class Turno
     public double Precio { get; set; } = 2000;
     public bool ListaEsperaHabilitada { get; set; } = false;
 
+    public bool mostrarEnHome { get; set; } = true; //indica si el turno se muestra en la pagina principal (home) o no, por defecto se muestra en home.
+
 }

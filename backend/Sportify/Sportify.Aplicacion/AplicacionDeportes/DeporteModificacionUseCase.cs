@@ -14,20 +14,11 @@ public class DeporteModificacionUseCase
         this.validadorDeporte = validadorDeporte;
     }
 
-    public async Task Ejecutar(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modifica los datos de un deporte existente
+    public async Task Ejecutar(Guid idDeporte, string nuevaDescripcion) //modifica solo la descripción de un deporte existente
     {
         if (await validadorDeporte.validarId(idDeporte, repositorioDeporte)) //valida que el deporte con el ID proporcionado exista antes de modificarlo
         {
-            // Comprobar si existe otro deporte con el mismo nombre
-            if (await validadorDeporte.validarNombre(nuevoNombre, idDeporte, repositorioDeporte))
-            {
-                await repositorioDeporte.modificarDeporte(idDeporte, nuevoNombre, nuevaDescripcion);
-            }
-            else
-            {
-                throw new Exception("Ya Existe el Nombre que Intenta Asignar");
-            }
-
+            await repositorioDeporte.modificarDeporte(idDeporte, nuevaDescripcion);
         }
         else
         {
