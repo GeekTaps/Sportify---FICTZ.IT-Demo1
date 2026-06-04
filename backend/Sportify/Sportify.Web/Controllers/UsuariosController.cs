@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Dominio.Usuario;
 using Sportify.Aplicacion.Excepciones;
+using System.Linq;
 namespace Sportify.Web.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
@@ -18,6 +19,20 @@ public class UsuariosController : ControllerBase
     {
         this.registrarUsuarioUseCase = registrarUsuarioUseCase;
         this.userManager = userManager;
+    }
+
+    [HttpGet]
+    public IActionResult ListarUsuarios()
+    {
+        var usuarios = userManager.Users.Select(user => new
+        {
+            id = user.Id,
+            email = user.Email,
+            nombreCompleto = user.NombreCompleto,
+            esAdmin = user.EsAdmin
+        }).ToList();
+
+        return Ok(usuarios);
     }
 
 [HttpPost("register")]

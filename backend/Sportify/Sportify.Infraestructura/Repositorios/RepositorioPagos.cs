@@ -11,6 +11,11 @@ namespace Sportify.Aplicacion.AplicacionPagos;
 public class RepositorioPagos : IRepositorioPago
 {
     private readonly ApplicationDbContext archivo;
+
+    public RepositorioPagos(ApplicationDbContext archivo)
+    {
+        this.archivo = archivo;
+    }
     
     public void realizarSeña(Pago pagoRealizado)
     {
