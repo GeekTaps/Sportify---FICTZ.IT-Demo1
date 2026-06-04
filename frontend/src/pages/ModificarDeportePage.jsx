@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ModificarDeporteForm from "../components/FrontDeportes/ModificarDeporteForm";
 
@@ -10,14 +10,46 @@ function ModificarDeportePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState("");
+
+  useEffect(() => {
+    async function cargarDeporte() {
+      setFetchError("");
+
+      try {
+        const response = await fetch(`http://localhost:5266/api/deportes/${id}`);
+        if (!response.ok) {
+          const body = await response.json().catch(() => null);
+          setFetchError(body?.message ?? "No se pudo cargar el deporte.");
+          return;
+        }
+
+        const data = await response.json();
+        setNombre(data.nombre ?? "");
+        setDescripcion(data.descripcion ?? "");
+      } catch (err) {
+        console.error(err);
+        setFetchError("Error al cargar el deporte. Intenta nuevamente.");
+      }
+    }
+
+    if (id) {
+      cargarDeporte();
+    }
+  }, [id]);
 
   const handleModificar = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!nombre.trim() || !descripcion.trim()) {
-      setError("Debes completar nombre y descripción antes de modificar");
+    if (fetchError) {
+      setError("No se puede modificar hasta que se cargue el deporte correctamente.");
+      return;
+    }
+
+    if (!descripcion.trim()) {
+      setError("Debes completar la descripción antes de modificar.");
       return;
     }
 
@@ -52,8 +84,10 @@ function ModificarDeportePage() {
     <div>
       <div className="page-header" style={{ textAlign: "left" }}>
         <h1>Modificar Deporte</h1>
-        <p>Ingresá el nuevo nombre y descripción del deporte.</p>
+        <p>Solo se puede cambiar la descripción del deporte. El nombre no es editable.</p>
       </div>
+
+      {fetchError && <div className="alert alert-error">{fetchError}</div>}
 
       <ModificarDeporteForm
         nombre={nombre}

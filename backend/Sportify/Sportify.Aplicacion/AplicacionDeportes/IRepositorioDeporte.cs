@@ -20,5 +20,7 @@ public interface IRepositorioDeporte{
     // Devuelve el deporte con el nombre dado o null si no existe.
     public Task<Deporte?> ObtenerPorNombre(string nombreDeporte);
 
-    public Task<bool> modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion);
+    public Task<Deporte?> obtenerDeportePorId(Guid idDeporte);
+
+    public Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion);
 }
