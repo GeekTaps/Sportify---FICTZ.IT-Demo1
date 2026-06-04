@@ -11,6 +11,7 @@ import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
 import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 import ReservasPage from './pages/ReservasPage'
 import PagosRegistrarPage from './pages/PagosRegistrarPage'
+import MisPagosPage from './pages/MisPagosPage'
 import LoginPage from './pages/LoginPage'
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
@@ -68,6 +69,7 @@ function Navigation() {
                 {user && !user.esAdmin && (
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
+                        <NavLink to="/mis-pagos" className={navLinkClass}>Mis Pagos</NavLink>
                         {user.id && (
                             <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mi Perfil</NavLink>
                         )}
@@ -130,6 +132,7 @@ function App() {
                             <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                             <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                             <Route path="/pagos/registrar" element={<PagosRegistrarPage />} />
+                            <Route path="/mis-pagos" element={<MisPagosPage />} />
                             <Route path="/reservas" element={<ReservasPage />} />
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                         </Routes>

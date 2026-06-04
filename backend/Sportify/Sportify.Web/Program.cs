@@ -48,6 +48,7 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 //Scoped de Usuarios 
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarPagoUseCase>();
+builder.Services.AddScoped<ListarPagosUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();
