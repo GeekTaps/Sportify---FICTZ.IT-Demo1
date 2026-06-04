@@ -11,7 +11,7 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260527180646_InitialCreate")]
+    [Migration("20260604173613_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -167,6 +167,59 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Deportes");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Pagos.Pago", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idReserva")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("monto")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Pagos");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.Reservas.Reserva", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idTurno")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("monto")
+                        .HasColumnType("REAL");
+
+                    b.Property<bool>("paga")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("titulo")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Reservas");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Turnos.Turno", b =>
                 {
                     b.Property<Guid>("Id")
@@ -179,6 +232,12 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("IdDeporte")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("ListaEsperaHabilitada")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Precio")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("cupo")
                         .HasColumnType("INTEGER");
 
@@ -187,6 +246,9 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<TimeOnly>("horaInicio")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("mostrarEnHome")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("nombreTurno")
                         .IsRequired()
@@ -212,15 +274,17 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<bool>("Borrado")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CancelacionesMes")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Dni")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Creditos")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Edad")
+                    b.Property<string>("Dni")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -230,6 +294,12 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -260,6 +330,9 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Suspendido")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("INTEGER");

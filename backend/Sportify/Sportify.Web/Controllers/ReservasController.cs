@@ -231,6 +231,13 @@ namespace Sportify.Web.Controllers
                     return NotFound(new { mensaje = "Turno no encontrado." });
                 }
 
+                // No permitir reservar turnos que ya pasaron
+                var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                if (fechaTurno <= DateTime.Now)
+                {
+                    return BadRequest(new { mensaje = "No se puede reservar un turno que ya pasó." });
+                }
+
                 // Verificar cupo
                 if (turno.cupo <= 0)
                 {

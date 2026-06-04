@@ -244,6 +244,9 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<TimeOnly>("horaInicio")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("mostrarEnHome")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("nombreTurno")
                         .IsRequired()
                         .HasColumnType("TEXT");

@@ -31,9 +31,13 @@ namespace Sportify.Infraestructura.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
-                    Edad = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Dni = table.Column<string>(type: "TEXT", nullable: false),
                     Borrado = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Suspendido = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CancelacionesMes = table.Column<int>(type: "INTEGER", nullable: false),
+                    Creditos = table.Column<int>(type: "INTEGER", nullable: false),
+                    EsAdmin = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -68,6 +72,38 @@ namespace Sportify.Infraestructura.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pagos",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idReserva = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
+                    monto = table.Column<decimal>(type: "TEXT", nullable: false),
+                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pagos", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reservas",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idTurno = table.Column<Guid>(type: "TEXT", nullable: false),
+                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    paga = table.Column<bool>(type: "INTEGER", nullable: false),
+                    monto = table.Column<double>(type: "REAL", nullable: false),
+                    titulo = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservas", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Turnos",
                 columns: table => new
                 {
@@ -78,7 +114,10 @@ namespace Sportify.Infraestructura.Migrations
                     nombreTurno = table.Column<string>(type: "TEXT", nullable: false),
                     nommbreProfesor = table.Column<string>(type: "TEXT", nullable: false),
                     horaInicio = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    horaFin = table.Column<TimeOnly>(type: "TEXT", nullable: false)
+                    horaFin = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    Precio = table.Column<double>(type: "REAL", nullable: false),
+                    ListaEsperaHabilitada = table.Column<bool>(type: "INTEGER", nullable: false),
+                    mostrarEnHome = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -249,6 +288,12 @@ namespace Sportify.Infraestructura.Migrations
 
             migrationBuilder.DropTable(
                 name: "Deportes");
+
+            migrationBuilder.DropTable(
+                name: "Pagos");
+
+            migrationBuilder.DropTable(
+                name: "Reservas");
 
             migrationBuilder.DropTable(
                 name: "Turnos");
