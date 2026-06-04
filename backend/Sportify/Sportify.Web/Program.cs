@@ -97,6 +97,9 @@ var app = builder.Build();
 // Inicializa la base de datos SQLite (aplica migraciones al arrancar).
 RepositoriosSQLites.Inicializar(app.Services);
 
+// Sembrar cuentas de administrador por defecto
+await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
