@@ -59,7 +59,7 @@ function ReservasPage() {
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
-
+    
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`
