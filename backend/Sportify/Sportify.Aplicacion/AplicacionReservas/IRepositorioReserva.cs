@@ -10,4 +10,5 @@ public interface IRepositorioReserva{
     public Task<bool> existeReserva(Guid idReserva);
     public Task<List<Reserva>> listarReservasUsuario(Guid idUsuario);
     public Task<Reserva> buscarReserva(Guid idReserva);
+    public Task<int> ContarReservasPorTurno(Guid idTurno);
 }

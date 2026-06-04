@@ -67,4 +67,8 @@ public class RepositorioReserva : IRepositorioReserva
         return await archivo.Reservas.FirstOrDefaultAsync(r => r.id == idReserva);
     }
 
+    public async Task<int> ContarReservasPorTurno(Guid idTurno)
+    {
+        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno);
+    }
 }
