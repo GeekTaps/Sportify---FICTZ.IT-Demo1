@@ -55,7 +55,10 @@ public class RepositorioReserva : IRepositorioReserva
 
     public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
     {   // si no encuentra nada devuelve lista vacía
-        return await archivo.Reservas.Where(r => r.idUsuario == idUsuario).ToListAsync();
+        return await archivo.Reservas.Where(
+            r => r.idUsuario == idUsuario
+            && r.fecha >= DateTime.Now
+        ).ToListAsync();
 
     }
 
