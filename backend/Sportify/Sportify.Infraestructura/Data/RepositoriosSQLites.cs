@@ -19,8 +19,13 @@ public static class RepositoriosSQLites
         try
         {
             var db = services.GetRequiredService<ApplicationDbContext>();
+            /*
             // Aplica migraciones pendientes. Si preferís EnsureCreated(), cambiar aquí.
             db.Database.Migrate();
+            */
+            // Utilizamos EnsureCreated en lugar de Migrate porque el historial de migraciones
+            // a veces no sincroniza bien en dev con SQLite.
+            db.Database.EnsureCreated();
         }
         catch (InvalidOperationException ex) when (ex.Message?.IndexOf("pending changes", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                                    ex.Message?.IndexOf("PendingModelChangesWarning", StringComparison.OrdinalIgnoreCase) >= 0)

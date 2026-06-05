@@ -314,6 +314,7 @@ namespace Sportify.Web.Controllers
             {
                 var reserva = await _repositorioReserva.buscarReserva(id);
                 if (reserva == null) return NotFound(new { mensaje = "Reserva no encontrada." });
+                if (reserva.eliminada) return BadRequest(new { mensaje = "La reserva ya ha sido cancelada previamente." });
 
                 var turnoList = await _repositorioTurno.ListarTurnos();
                 var turno = turnoList.FirstOrDefault(t => t.Id == reserva.idTurno);

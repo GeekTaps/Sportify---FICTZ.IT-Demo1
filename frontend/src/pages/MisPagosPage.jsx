@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { apiClient } from "../api/api-client";
 
@@ -9,6 +9,7 @@ function MisPagosPage() {
   const [tipoMensaje, setTipoMensaje] = useState("warning");
   const [cargando, setCargando] = useState(false);
   const [consultado, setConsultado] = useState(false);
+  const [primeraCarga, setPrimeraCarga] = useState(true);
 
   const handleListarPagos = async () => {
     if (!user?.id) return;
@@ -37,6 +38,13 @@ function MisPagosPage() {
     }
   };
 
+  useEffect(() => {
+    if (user && primeraCarga) {
+      handleListarPagos();
+      setPrimeraCarga(false);
+    }
+  }, [user, primeraCarga]);
+
   if (!user) {
     return (
       <div className="page-header">
@@ -53,17 +61,6 @@ function MisPagosPage() {
         <p>Revisá los pagos que realizaste anteriormente.</p>
       </div>
 
-      <div className="form-card" style={{ maxWidth: 760, margin: "0 auto 1.5rem" }}>
-        <button
-          className="btn btn-primary"
-          onClick={handleListarPagos}
-          disabled={cargando}
-          style={{ minWidth: 180 }}
-        >
-          {cargando ? "Listando pagos..." : "Listar mis pagos"}
-        </button>
-      </div>
-
       {mensaje && (
         <div className={`alert ${tipoMensaje === "success" ? "alert-success" : tipoMensaje === "error" ? "alert-error" : "alert-warning"}`}>
           {mensaje}
@@ -78,7 +75,7 @@ function MisPagosPage() {
                 <div className="reserva-card-info">
                   <h3>Pago #{p.id.substring(0, 8)}</h3>
                   <p>
-                    <strong>Reserva:</strong> {p.idReserva}
+                    <strong>Reserva:</strong> {p.tituloReserva || "Sin título"}
                   </p>
                   <p>
                     <strong>Monto:</strong> ${p.monto}

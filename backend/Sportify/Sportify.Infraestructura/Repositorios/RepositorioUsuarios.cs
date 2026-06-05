@@ -116,12 +116,11 @@ public async Task ModificarUsuario(string id, Usuario dto)
 
     public async Task BajaLogica(string id)     
 {
-    UsuarioIdentity? usuarioABorrar =   //busco usuariopor id
-        await userManager.FindByIdAsync(id);
+    UsuarioIdentity? usuarioABorrar = await userManager.FindByIdAsync(id);
 
     if (usuarioABorrar == null)
     {
-        throw new Exception("Usuario no encontrado");
+        throw new ValidacionException("Usuario no encontrado");
     }
 
     usuarioABorrar.Borrado = true;          //borrado logico anashe

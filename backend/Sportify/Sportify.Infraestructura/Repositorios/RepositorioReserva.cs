@@ -30,11 +30,11 @@ public class RepositorioReserva : IRepositorioReserva
     public async Task<bool> eliminarReserva(Guid idReserva)
     {
         Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null)
+        if (reserva == null || reserva.eliminada)
         {
           return false;
         }
-        archivo.Reservas.Remove(reserva);
+        reserva.eliminarLogicamente();
         await archivo.SaveChangesAsync();
         return true;
     }
@@ -44,7 +44,7 @@ public class RepositorioReserva : IRepositorioReserva
     public async Task<bool> existeReserva(Guid idReserva)
     {
         Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null)
+        if (reserva == null || reserva.eliminada)
         {
           return false;
         }
@@ -56,9 +56,10 @@ public class RepositorioReserva : IRepositorioReserva
     public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
     {
         // Unimos las Reservas con los Turnos para filtrar aquellas cuyo turno aún no haya pasado
+        // y que no estén eliminadas lógicamente
         var query = from r in archivo.Reservas
                     join t in archivo.Turnos on r.idTurno equals t.Id
-                    where r.idUsuario == idUsuario && t.Fecha >= DateTime.Now.Date
+                    where r.idUsuario == idUsuario && !r.eliminada && t.Fecha >= DateTime.Now.Date
                     select r;
 
         return await query.ToListAsync();
@@ -74,6 +75,6 @@ public class RepositorioReserva : IRepositorioReserva
 
     public async Task<int> ContarReservasPorTurno(Guid idTurno)
     {
-        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno);
+        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno && !r.eliminada);
     }
 }

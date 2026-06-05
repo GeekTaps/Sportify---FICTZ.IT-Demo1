@@ -105,7 +105,23 @@ namespace Sportify.Web.Controllers
             try
             {
                 var pagos = await _listarPagosUsuarioUseCase.Ejecutar(id);
-                return Ok(pagos);
+                var resultado = new List<object>();
+
+                foreach (var pago in pagos)
+                {
+                    var reserva = await _repositorioReserva.buscarReserva(pago.idReserva);
+                    var tituloReserva = reserva != null ? reserva.titulo : "Reserva Eliminada";
+
+                    resultado.Add(new
+                    {
+                        id = pago.id,
+                        monto = pago.monto,
+                        fecha = pago.fecha,
+                        tituloReserva = tituloReserva
+                    });
+                }
+                
+                return Ok(resultado);
             }
             catch (Exception ex)
             {

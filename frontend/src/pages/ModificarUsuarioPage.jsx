@@ -31,7 +31,6 @@ function ModificarUsuarioPage() {
 
   useEffect(() => {
     if (!userId) {
-      setError("No se encontró el usuario.");
       setUserLoading(false);
       return;
     }
