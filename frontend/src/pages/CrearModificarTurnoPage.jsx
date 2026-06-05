@@ -19,6 +19,7 @@ function CrearModificarTurnoPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [inscriptosCount, setInscriptosCount] = useState(0);
 
   useEffect(() => {
     const cargarDeportes = async () => {
@@ -43,7 +44,11 @@ function CrearModificarTurnoPage() {
             const dateObj = new Date(data.fecha);
             setFechaInicio(dateObj.toISOString().split("T")[0]);
           }
-          setCupo(data.cupo);
+          const maximo = data.cupoMaximo || data.cupo || 0;
+          const restante = data.cupo || 0;
+          setInscriptosCount(maximo - restante);
+          
+          setCupo(maximo);
           setIdDeporte(data.idDeporte);
           setNombreTurno(data.nombreTurno || "");
           setNommbreProfesor(data.nommbreProfesor || "");
@@ -170,6 +175,7 @@ function CrearModificarTurnoPage() {
         error={error}
         success={success}
         isModifying={isModifying}
+        inscriptosCount={inscriptosCount}
       />
 
       <button

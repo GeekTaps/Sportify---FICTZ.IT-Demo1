@@ -21,6 +21,7 @@ function CrearModificarTurnoForm({
   error,
   success,
   isModifying = false,
+  inscriptosCount = 0,
 }) {
   const minFecha = (() => {
     const hoy = new Date();
@@ -89,7 +90,7 @@ function CrearModificarTurnoForm({
           value={cupo}
           onChange={(e) => setCupo(e.target.value)}
           required
-          min="1"
+          min={isModifying ? inscriptosCount : 1}
         />
       </div>
 

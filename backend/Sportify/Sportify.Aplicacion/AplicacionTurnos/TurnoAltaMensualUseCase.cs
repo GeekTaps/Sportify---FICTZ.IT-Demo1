@@ -117,6 +117,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                     horaInicio = horaInicio,
                     horaFin = horaFin,
                     cupo = cupo,
+                    cupoMaximo = cupo,
                     Precio = precio,
                     nombreTurno = $"{deporteObj.nombre} - {fechaConHora:dd/MM/yy} - {horaInicio:HH:mm}hs",
                     nommbreProfesor = nombreProfesor,

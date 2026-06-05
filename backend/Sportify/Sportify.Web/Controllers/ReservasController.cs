@@ -206,6 +206,21 @@ namespace Sportify.Web.Controllers
             }
         }
 
+        // GET: api/Reservas/turno/{id}/inscriptos
+        [HttpGet("turno/{id:guid}/inscriptos")]
+        public async Task<IActionResult> ObtenerInscriptosPorTurno(Guid id)
+        {
+            try
+            {
+                int count = await _repositorioReserva.ContarReservasPorTurno(id);
+                return Ok(new { count = count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
         [HttpPost("reservar-turno")]
         public async Task<IActionResult> ReservarTurno([FromBody] ReservarTurnoRequest request)
         {
