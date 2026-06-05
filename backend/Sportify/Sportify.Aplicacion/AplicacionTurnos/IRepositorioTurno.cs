@@ -10,6 +10,6 @@ public interface IRepositorioTurno
     Task<bool> existeTurnoAsociadoAlDeporte(Guid idDeporte); //firma del metodo para verificar si un deporte tiene turnos asociados
     Task<List<Turno>> ListarTurnos();
     Task<bool> EncontrarRepetido(Turno nuevoTurno); //firma del metodo para verificar si hay un turno repetido (mismo deporte, fecha, hora de inicio y hora de fin)
-    Task<bool> BajaTurno(Guid idTurno);
-    Task actualizarMostrarEnHome(); //firma del metodo para actualizar el campo mostrarEnHome de los turnos, se ejecuta cada vez que se obtiene el listado de turnos, para mostrar solo los turnos que corresponden en la pagina principal (home)
+    Task<bool> BajaTurno(Guid idTurno); //firma del metodo para eliminar un turno por su id
+    Task actualizarMostrarEnHome(); //firma del metodo para actualizar el campo mostrarEnHome de los turnos, estableciendo en false aquellos turnos cuya fecha y hora de inicio ya hayan pasado
 }  

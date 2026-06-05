@@ -44,6 +44,7 @@ function CrearModificarTurnoForm({
           value={idDeporte}
           onChange={(e) => setIdDeporte(e.target.value)}
           required
+          disabled={isModifying}
         >
           <option value="">Seleccioná un deporte</option>
           {deportes.map((deporte) => (
@@ -63,6 +64,7 @@ function CrearModificarTurnoForm({
           onChange={(e) => setFechaInicio(e.target.value)}
           required
           min={minFecha}
+          disabled={isModifying}
         />
       </div>
 
@@ -75,6 +77,7 @@ function CrearModificarTurnoForm({
           onChange={(e) => setHoraInicio(e.target.value)}
           required
           min={minHora}
+          disabled={isModifying}
         />
       </div>
 
