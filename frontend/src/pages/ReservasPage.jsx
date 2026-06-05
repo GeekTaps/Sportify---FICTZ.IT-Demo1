@@ -223,21 +223,29 @@ function ReservasPage() {
                       </div>
                     ) : (
                       <>
-                        {reservaSeleccionada.horasAnticipacion > 48 ? (
-                          <div className="alert alert-success">
-                            En caso de cancelar, se devolverá el valor completo de la seña.
+                        {reservaSeleccionada.horasAnticipacion < 0 ? (
+                          <div className="alert alert-warning">
+                            Esta reserva ya pasó. No es posible cancelarla.
                           </div>
                         ) : (
-                          <div className="alert alert-warning">
-                            En caso de cancelar, no se devolverá la seña.
-                          </div>
-                        )}
+                          <>
+                            {reservaSeleccionada.horasAnticipacion > 48 ? (
+                              <div className="alert alert-success">
+                                En caso de cancelar, se devolverá el valor completo de la seña.
+                              </div>
+                            ) : (
+                              <div className="alert alert-warning">
+                                En caso de cancelar, no se devolverá la seña.
+                              </div>
+                            )}
 
-                        {reservaSeleccionada.cancelacionesMes >= 2 && (
-                          <div className="alert alert-error">
-                            Ya contás con dos cancelaciones este mes. En caso de
-                            cancelar, tu cuenta será suspendida.
-                          </div>
+                            {reservaSeleccionada.cancelacionesMes >= 2 && (
+                              <div className="alert alert-error">
+                                Ya contás con dos cancelaciones este mes. En caso de
+                                cancelar, tu cuenta será suspendida.
+                              </div>
+                            )}
+                          </>
                         )}
                       </>
                     )}
@@ -259,7 +267,7 @@ function ReservasPage() {
                   >
                     Cerrar
                   </button>
-                  {!mensajeCancelacion && (
+                  {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
                     <button
                       onClick={() =>
                         handleCancelarReserva(reservaSeleccionada.idReserva)

@@ -266,6 +266,20 @@ namespace Sportify.Web.Controllers
                     return BadRequest(new { mensaje = "Ya reservaste este turno." });
                 }
 
+                // Verificar superposición de fecha y hora con otro turno distinto
+                var reservaSuperpuesta = reservasUsuario.FirstOrDefault(r => 
+                {
+                    var t = turnoList.FirstOrDefault(x => x.Id == r.idTurno);
+                    if (t == null) return false;
+                    // Mismo día y misma hora de inicio
+                    return t.Fecha.Date == turno.Fecha.Date && t.horaInicio == turno.horaInicio;
+                });
+
+                if (reservaSuperpuesta != null)
+                {
+                    return BadRequest(new { mensaje = "Ya tenés un turno reservado en esa fecha y horario" });
+                }
+
                 if (turno.Precio > 0 && user.Creditos == 0)
                 {
                     return Ok(new { mensaje = "Requiere pago" });
@@ -324,6 +338,11 @@ namespace Sportify.Web.Controllers
 
                 // Calcular horas de antelación
                 var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                if (fechaTurno <= DateTime.Now)
+                {
+                    return BadRequest(new { mensaje = "No se puede cancelar una reserva de un turno que ya pasó." });
+                }
+
                 var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
 
                 bool estabaSuspendido = user.Suspendido;

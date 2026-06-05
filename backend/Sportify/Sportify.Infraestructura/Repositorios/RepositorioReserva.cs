@@ -55,11 +55,8 @@ public class RepositorioReserva : IRepositorioReserva
 
     public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
     {
-        // Unimos las Reservas con los Turnos para filtrar aquellas cuyo turno aún no haya pasado
-        // y que no estén eliminadas lógicamente
         var query = from r in archivo.Reservas
-                    join t in archivo.Turnos on r.idTurno equals t.Id
-                    where r.idUsuario == idUsuario && !r.eliminada && t.Fecha >= DateTime.Now.Date
+                    where r.idUsuario == idUsuario && !r.eliminada
                     select r;
 
         return await query.ToListAsync();
