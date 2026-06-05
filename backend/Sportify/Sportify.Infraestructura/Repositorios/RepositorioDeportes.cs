@@ -45,15 +45,19 @@ public class RepositorioDeportes : IRepositorioDeporte
     {
         return await archivo.Deportes.FirstOrDefaultAsync(d => d.nombre == nombreDeporte);
     }
+
+    public async Task<Deporte?> obtenerDeportePorId(Guid idDeporte)
+    {
+        return await archivo.Deportes.FindAsync(idDeporte);
+    }
     
-    public async Task<bool> modificarDeporte(Guid idDeporte, string nuevoNombre, string nuevaDescripcion) //modificar el deporte encontrado por id, cambiando su nombre y descripcion unicamente
+    public async Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion) //modificar la descripción del deporte encontrado por id
     {
         Deporte? deporte = await archivo.Deportes.FindAsync(idDeporte);
         if (deporte == null)
         {
             return false;
         }
-        deporte.nombre = nuevoNombre;
         deporte.descripcion = nuevaDescripcion;
         await archivo.SaveChangesAsync();
         return true;

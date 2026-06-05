@@ -54,9 +54,14 @@ public class RepositorioReserva : IRepositorioReserva
     // *-*-*-*-*-*-*-*-*-* BUSCAR POR USUARIO *-*-*-*-*-*-*-*-*-*
 
     public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
-    {   // si no encuentra nada devuelve lista vacía
-        return await archivo.Reservas.Where(r => r.idUsuario == idUsuario).ToListAsync();
+    {
+        // Unimos las Reservas con los Turnos para filtrar aquellas cuyo turno aún no haya pasado
+        var query = from r in archivo.Reservas
+                    join t in archivo.Turnos on r.idTurno equals t.Id
+                    where r.idUsuario == idUsuario && t.Fecha >= DateTime.Now.Date
+                    select r;
 
+        return await query.ToListAsync();
     }
 
     // *-*-*-*-*-*-*-*-*-* BUSCAR *-*-*-*-*-*-*-*-*-*
@@ -67,4 +72,8 @@ public class RepositorioReserva : IRepositorioReserva
         return await archivo.Reservas.FirstOrDefaultAsync(r => r.id == idReserva);
     }
 
+    public async Task<int> ContarReservasPorTurno(Guid idTurno)
+    {
+        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno);
+    }
 }

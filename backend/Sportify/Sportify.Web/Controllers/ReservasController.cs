@@ -206,6 +206,21 @@ namespace Sportify.Web.Controllers
             }
         }
 
+        // GET: api/Reservas/turno/{id}/inscriptos
+        [HttpGet("turno/{id:guid}/inscriptos")]
+        public async Task<IActionResult> ObtenerInscriptosPorTurno(Guid id)
+        {
+            try
+            {
+                int count = await _repositorioReserva.ContarReservasPorTurno(id);
+                return Ok(new { count = count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
         [HttpPost("reservar-turno")]
         public async Task<IActionResult> ReservarTurno([FromBody] ReservarTurnoRequest request)
         {
@@ -229,6 +244,13 @@ namespace Sportify.Web.Controllers
                 if (turno == null)
                 {
                     return NotFound(new { mensaje = "Turno no encontrado." });
+                }
+
+                // No permitir reservar turnos que ya pasaron
+                var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                if (fechaTurno <= DateTime.Now)
+                {
+                    return BadRequest(new { mensaje = "No se puede reservar un turno que ya pasó." });
                 }
 
                 // Verificar cupo
@@ -305,6 +327,7 @@ namespace Sportify.Web.Controllers
 
                 bool estabaSuspendido = user.Suspendido;
                 string mensajeBase = "Reserva cancelada exitosamente.";
+                string advertencia = null;
                 
                 if (!estabaSuspendido)
                 {
@@ -319,7 +342,7 @@ namespace Sportify.Web.Controllers
                 if (!estabaSuspendido && user.CancelacionesMes >= 3)
                 {
                     user.Suspendido = true;
-                    mensajeBase += " Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
+                    advertencia = "Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
                 }
 
                 await _userManager.UpdateAsync(user);
@@ -331,7 +354,7 @@ namespace Sportify.Web.Controllers
                 // Eliminar reserva
                 await _reservaBajaUseCase.Ejecutar(id);
 
-                return Ok(new { mensaje = mensajeBase });
+                return Ok(new { mensaje = mensajeBase, advertencia = advertencia });
             }
             catch (Exception ex)
             {
