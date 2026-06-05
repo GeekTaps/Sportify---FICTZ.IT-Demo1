@@ -11,8 +11,8 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260604173200_AddCupoMaximo")]
-    partial class AddCupoMaximo
+    [Migration("20260605011257_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,6 +249,9 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<TimeOnly>("horaInicio")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("mostrarEnHome")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("nombreTurno")
                         .IsRequired()

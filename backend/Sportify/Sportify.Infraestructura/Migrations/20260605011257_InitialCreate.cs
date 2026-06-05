@@ -110,6 +110,7 @@ namespace Sportify.Infraestructura.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
                     cupo = table.Column<int>(type: "INTEGER", nullable: false),
+                    cupoMaximo = table.Column<int>(type: "INTEGER", nullable: false),
                     IdDeporte = table.Column<Guid>(type: "TEXT", nullable: false),
                     nombreTurno = table.Column<string>(type: "TEXT", nullable: false),
                     nommbreProfesor = table.Column<string>(type: "TEXT", nullable: false),

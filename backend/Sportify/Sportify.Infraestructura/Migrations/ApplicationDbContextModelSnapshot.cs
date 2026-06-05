@@ -238,6 +238,9 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<int>("cupo")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("cupoMaximo")
+                        .HasColumnType("INTEGER");
+
                     b.Property<TimeOnly>("horaFin")
                         .HasColumnType("TEXT");
 
