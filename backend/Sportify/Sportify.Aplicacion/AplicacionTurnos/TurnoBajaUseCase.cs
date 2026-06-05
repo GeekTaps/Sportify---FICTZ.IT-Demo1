@@ -27,7 +27,7 @@ public class TurnoBajaUseCase
         var reservasCount = await repositorioReserva.ContarReservasPorTurno(idTurno);
         if (reservasCount > 0)
         {
-            throw new EntidadAsociadaException("No se puede eliminar el turno porque tiene reservas asociadas.");
+            throw new EntidadAsociadaException("No se pudo eliminar el turno. Tiene reservas pendientes");
         }
 
         await repositorioTurno.BajaTurno(idTurno);
