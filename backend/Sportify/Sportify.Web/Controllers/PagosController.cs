@@ -105,6 +105,10 @@ namespace Sportify.Web.Controllers
             try
             {
                 var pagos = await _listarPagosUsuarioUseCase.Ejecutar(id);
+                if (pagos == null || !pagos.Any())
+                {
+                    return NotFound(new { message = "El usuario seleccionado no posee reservas." });
+                }
                 var resultado = new List<object>();
 
                 foreach (var pago in pagos)
@@ -125,7 +129,7 @@ namespace Sportify.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno al listar los pagos.", detail = ex.Message });
+                return StatusCode(500, new { message = "El usuario seleccionado no posee reservas.", error = ex.Message });
             }
         }
 

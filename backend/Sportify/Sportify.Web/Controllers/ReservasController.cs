@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Dominio.Reservas;
 using Sportify.Aplicacion;
+using Sportify.Aplicacion.Excepciones;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -121,6 +122,9 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _reservaListadoUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
                 return Ok(reservas);
             }
             catch (ListadoVacioException ex)
@@ -129,7 +133,7 @@ namespace Sportify.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
             }
         }
 
