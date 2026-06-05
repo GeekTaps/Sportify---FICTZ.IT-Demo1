@@ -68,10 +68,11 @@ function Navigation() {
                 {user && !user.esAdmin && (
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
-                        {user.id && (
-                            <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mi Perfil</NavLink>
-                        )}
+                        
                     </>
+                )}
+                {user && (
+                    <NavLink to="/modificarUsuario" className={navLinkClass}>Mi Perfil</NavLink>
                 )}
 
                 {user && (
@@ -131,6 +132,7 @@ function App() {
                             <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                             <Route path="/pagos/registrar" element={<PagosRegistrarPage />} />
                             <Route path="/reservas" element={<ReservasPage />} />
+                            <Route path="/modificarUsuario" element={<ModificarUsuarioPage />} />
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                         </Routes>
                     </main>
