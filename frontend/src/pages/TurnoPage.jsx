@@ -144,6 +144,7 @@ function TurnoPage() {
   };
 
   const handleReservar = async () => {
+    if (!window.confirm("¿Estás seguro que querés reservar este turno?")) return;
     setLoadingReserva(true);
     setMensajeReserva("");
     setReservaExitosa(false);
@@ -275,6 +276,11 @@ function TurnoPage() {
             ) : (
               // Usuario Activo
               <div>
+                {userInfo?.creditos > 0 && !reservaExitosa && (
+                  <div className="alert alert-success" style={{ marginBottom: "15px" }}>
+                    Tenés créditos disponibles para reservar
+                  </div>
+                )}
                 {!reservaExitosa ? (
                   <>
                     {modalTurno.cupo > 0 ? (
