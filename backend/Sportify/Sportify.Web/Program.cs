@@ -61,6 +61,7 @@ builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
 builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
+builder.Services.AddScoped<TurnoBajaUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 
 //Scoped de Reservas

@@ -327,6 +327,7 @@ namespace Sportify.Web.Controllers
 
                 bool estabaSuspendido = user.Suspendido;
                 string mensajeBase = "Reserva cancelada exitosamente.";
+                string advertencia = null;
                 
                 if (!estabaSuspendido)
                 {
@@ -341,7 +342,7 @@ namespace Sportify.Web.Controllers
                 if (!estabaSuspendido && user.CancelacionesMes >= 3)
                 {
                     user.Suspendido = true;
-                    mensajeBase += " Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
+                    advertencia = "Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
                 }
 
                 await _userManager.UpdateAsync(user);
@@ -353,7 +354,7 @@ namespace Sportify.Web.Controllers
                 // Eliminar reserva
                 await _reservaBajaUseCase.Ejecutar(id);
 
-                return Ok(new { mensaje = mensajeBase });
+                return Ok(new { mensaje = mensajeBase, advertencia = advertencia });
             }
             catch (Exception ex)
             {

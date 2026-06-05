@@ -85,6 +85,9 @@ function ReservasPage() {
   };
 
   const handleCancelarReserva = async (idReserva) => {
+    if (!window.confirm("¿Estás seguro de que deseas cancelar esta reserva?")) {
+      return;
+    }
     setCancelando(true);
     try {
       const response = await fetch(
@@ -94,7 +97,11 @@ function ReservasPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMensajeCancelacion({ tipo: "success", texto: data.mensaje });
+        setMensajeCancelacion({ 
+          tipo: "success", 
+          texto: data.mensaje,
+          advertencia: data.advertencia
+        });
         await cargarReservas();
       } else {
         setMensajeCancelacion({
@@ -190,14 +197,20 @@ function ReservasPage() {
                 </p>
 
                 {mensajeCancelacion ? (
-                  <div
-                    className={`alert ${mensajeCancelacion.tipo === "success"
-                        ? "alert-success"
-                        : "alert-error"
-                      }`}
-                    style={{ marginTop: "1rem" }}
-                  >
-                    {mensajeCancelacion.texto}
+                  <div style={{ marginTop: "1rem" }}>
+                    <div
+                      className={`alert ${mensajeCancelacion.tipo === "success"
+                          ? "alert-success"
+                          : "alert-error"
+                        }`}
+                    >
+                      {mensajeCancelacion.texto}
+                    </div>
+                    {mensajeCancelacion.advertencia && (
+                      <div className="alert alert-error" style={{ marginTop: "0.5rem" }}>
+                        {mensajeCancelacion.advertencia}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <>

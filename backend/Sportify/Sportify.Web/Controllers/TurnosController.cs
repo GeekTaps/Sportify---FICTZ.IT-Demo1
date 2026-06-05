@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Dominio.Turnos;
+using Sportify.Aplicacion;
 using Sportify.Aplicacion.Excepciones;
 using System;
 using System.Linq;
@@ -212,19 +213,20 @@ public class TurnosController : ControllerBase
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> EliminarTurno(Guid id)
+        public async Task<IActionResult> EliminarTurno(Guid id, [FromServices] TurnoBajaUseCase bajaUseCase)
         {
             try
             {
-                var eliminado = await repositorioTurno.BajaTurno(id);
-                if (eliminado)
-                {
-                    return Ok(new { message = "Turno eliminado con éxito" });
-                }
-                else
-                {
-                    return NotFound(new { message = "Turno no encontrado." });
-                }
+                await bajaUseCase.Ejecutar(id);
+                return Ok(new { message = "Turno eliminado con éxito" });
+            }
+            catch (EntidadNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (EntidadAsociadaException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
