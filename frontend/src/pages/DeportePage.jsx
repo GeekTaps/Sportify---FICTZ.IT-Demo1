@@ -7,6 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 function DeportePage() {
   const { user } = useContext(AuthContext);
   const [deportes, setDeportes] = useState([]);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const cargarDeportes = async () => {
@@ -34,17 +35,20 @@ function DeportePage() {
     if (!window.confirm("¿Estás seguro de que deseas eliminar este deporte?")) {
       return;
     }
+    setError("");
 
     try {
       const response = await fetch(`http://localhost:5266/api/deportes/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || `Error HTTP ${response.status}`);
       }
       setDeportes(deportes.filter((d) => d.id !== id));
-    } catch (error) {
-      console.error("Error al eliminar deporte:", error);
+    } catch (err) {
+      console.error("Error al eliminar deporte:", err);
+      setError(err.message);
     }
   };
 
@@ -53,6 +57,8 @@ function DeportePage() {
       <div className="page-header">
         <h1>Deportes Disponibles</h1>
       </div>
+
+      {error && <div className="alert alert-error" style={{ marginBottom: "1rem" }}>{error}</div>}
 
       {user?.esAdmin && (
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>

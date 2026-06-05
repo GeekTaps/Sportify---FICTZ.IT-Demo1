@@ -24,6 +24,7 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly RegistrarPagoUseCase _registrarPagoUseCase;
+        private readonly ListarPagosUsuarioUseCase _listarPagosUsuarioUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public PagosController(
@@ -32,6 +33,7 @@ namespace Sportify.Web.Controllers
             IRepositorioReserva repositorioReserva,
             ReservaAltaUseCase reservaAltaUseCase,
             RegistrarPagoUseCase registrarPagoUseCase,
+            ListarPagosUsuarioUseCase listarPagosUsuarioUseCase,
             UserManager<UsuarioIdentity> userManager)
         {
             _configuration = configuration;
@@ -39,6 +41,7 @@ namespace Sportify.Web.Controllers
             _repositorioReserva = repositorioReserva;
             _reservaAltaUseCase = reservaAltaUseCase;
             _registrarPagoUseCase = registrarPagoUseCase;
+            _listarPagosUsuarioUseCase = listarPagosUsuarioUseCase;
             _userManager = userManager;
             
             // Inicializar MercadoPago
@@ -93,6 +96,20 @@ namespace Sportify.Web.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Error al comunicarse con Mercado Pago", error = ex.Message });
+            }
+        }
+
+        [HttpGet("usuario/{id:guid}")]
+        public async Task<IActionResult> ListarPagosUsuario(Guid id)
+        {
+            try
+            {
+                var pagos = await _listarPagosUsuarioUseCase.Ejecutar(id);
+                return Ok(pagos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno al listar los pagos.", detail = ex.Message });
             }
         }
 
