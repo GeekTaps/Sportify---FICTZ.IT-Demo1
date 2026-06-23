@@ -107,7 +107,7 @@ namespace Sportify.Web.Controllers
                 var pagos = await _listarPagosUsuarioUseCase.Ejecutar(id);
                 if (pagos == null || !pagos.Any())
                 {
-                    return NotFound(new { message = "El usuario seleccionado no posee reservas." });
+                    return NotFound(new { message = "No hay pagos registrados" });
                 }
                 var resultado = new List<object>();
 
@@ -129,7 +129,7 @@ namespace Sportify.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "El usuario seleccionado no posee reservas.", error = ex.Message });
+                return StatusCode(500, new { message = "No hay pagos registrados", error = ex.Message });
             }
         }
 

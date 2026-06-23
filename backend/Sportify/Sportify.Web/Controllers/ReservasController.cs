@@ -123,7 +123,7 @@ namespace Sportify.Web.Controllers
             {
                 var reservas = await _reservaListadoUseCase.Ejecutar(id);
                 if (reservas == null || reservas.Count == 0) {
-                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                    throw new ListadoVacioException("No poseés reservas");
                 }
                 return Ok(reservas);
             }
@@ -133,7 +133,7 @@ namespace Sportify.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
+                return StatusCode(500, new { mensaje = "No poseés reservas", detalle = ex.Message });
             }
         }
 
