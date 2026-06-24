@@ -13,6 +13,8 @@ import ReservasPage from './pages/ReservasPage'
 import PagosRegistrarPage from './pages/PagosRegistrarPage'
 import MisPagosPage from './pages/MisPagosPage'
 import LoginPage from './pages/LoginPage'
+import VisualizarPagos from './pages/VisualizarPagos'
+import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -50,6 +52,7 @@ function Navigation() {
                         <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+                        <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                     </>
                 )}
 
@@ -136,6 +139,8 @@ function App() {
                             <Route path="/reservas" element={<ReservasPage />} />
                             <Route path="/modificarUsuario" element={<ModificarUsuarioPage />} />
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
+                            <Route path="/pagos/visualizar" element={<VisualizarPagos />} />
+                            <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
                         </Routes>
                     </main>
 
