@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Dominio.Reservas;
 using Sportify.Aplicacion;
+using Sportify.Aplicacion.Excepciones;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -121,6 +122,9 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _reservaListadoUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
                 return Ok(reservas);
             }
             catch (ListadoVacioException ex)
@@ -129,7 +133,7 @@ namespace Sportify.Web.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
             }
         }
 
@@ -266,6 +270,20 @@ namespace Sportify.Web.Controllers
                     return BadRequest(new { mensaje = "Ya reservaste este turno." });
                 }
 
+                // Verificar superposición de fecha y hora con otro turno distinto
+                var reservaSuperpuesta = reservasUsuario.FirstOrDefault(r => 
+                {
+                    var t = turnoList.FirstOrDefault(x => x.Id == r.idTurno);
+                    if (t == null) return false;
+                    // Mismo día y misma hora de inicio
+                    return t.Fecha.Date == turno.Fecha.Date && t.horaInicio == turno.horaInicio;
+                });
+
+                if (reservaSuperpuesta != null)
+                {
+                    return BadRequest(new { mensaje = "Ya tenés un turno reservado en esa fecha y horario" });
+                }
+
                 if (turno.Precio > 0 && user.Creditos == 0)
                 {
                     return Ok(new { mensaje = "Requiere pago" });
@@ -314,6 +332,7 @@ namespace Sportify.Web.Controllers
             {
                 var reserva = await _repositorioReserva.buscarReserva(id);
                 if (reserva == null) return NotFound(new { mensaje = "Reserva no encontrada." });
+                if (reserva.eliminada) return BadRequest(new { mensaje = "La reserva ya ha sido cancelada previamente." });
 
                 var turnoList = await _repositorioTurno.ListarTurnos();
                 var turno = turnoList.FirstOrDefault(t => t.Id == reserva.idTurno);
@@ -323,10 +342,16 @@ namespace Sportify.Web.Controllers
 
                 // Calcular horas de antelación
                 var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
+                if (fechaTurno <= DateTime.Now)
+                {
+                    return BadRequest(new { mensaje = "No se puede cancelar una reserva de un turno que ya pasó." });
+                }
+
                 var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
 
                 bool estabaSuspendido = user.Suspendido;
                 string mensajeBase = "Reserva cancelada exitosamente.";
+                string advertencia = null;
                 
                 if (!estabaSuspendido)
                 {
@@ -341,7 +366,7 @@ namespace Sportify.Web.Controllers
                 if (!estabaSuspendido && user.CancelacionesMes >= 3)
                 {
                     user.Suspendido = true;
-                    mensajeBase += " Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
+                    advertencia = "Se cancelaron 3 reservas en un mes, tu cuenta fue suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar.";
                 }
 
                 await _userManager.UpdateAsync(user);
@@ -353,7 +378,7 @@ namespace Sportify.Web.Controllers
                 // Eliminar reserva
                 await _reservaBajaUseCase.Ejecutar(id);
 
-                return Ok(new { mensaje = mensajeBase });
+                return Ok(new { mensaje = mensajeBase, advertencia = advertencia });
             }
             catch (Exception ex)
             {

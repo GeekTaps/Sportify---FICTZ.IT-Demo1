@@ -125,7 +125,10 @@
             "groomer",
             "mrbeast",
             "patorusuescupeleche",
-            "tutiotelechea"
+            "tutiotelechea",
+            "trola",
+            "trolo",
+            "judio"
         };
 
         nombre = nombre.ToLower();

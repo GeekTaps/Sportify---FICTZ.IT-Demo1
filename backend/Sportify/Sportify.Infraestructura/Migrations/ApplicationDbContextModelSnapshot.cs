@@ -193,6 +193,9 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("eliminada")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
 

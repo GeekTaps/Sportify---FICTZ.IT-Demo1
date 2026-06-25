@@ -77,7 +77,8 @@ public async Task<IActionResult> GetUserInfo(string email)
     return Ok(new
     {
         email = user.Email,
-        suspendido = user.Suspendido
+        suspendido = user.Suspendido,
+        creditos = user.Creditos
     });
 }
 
@@ -85,9 +86,14 @@ public async Task<IActionResult> GetUserInfo(string email)
 public async Task<IActionResult> Login([FromBody] LoginDTO dto)
 {
     var user = await userManager.FindByEmailAsync(dto.Email);
-    if (user == null || user.Borrado)
+    if (user == null)
     {
         return BadRequest(new { message = "Usuario o contraseña incorrectos" });
+    }
+
+    if (user.Borrado)
+    {
+        return BadRequest(new { message = "Su cuenta ha sido eliminada" });
     }
 
     var isPasswordValid = await userManager.CheckPasswordAsync(user, dto.Password);

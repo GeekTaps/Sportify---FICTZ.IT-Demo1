@@ -48,6 +48,7 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 //Scoped de Usuarios 
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarPagoUseCase>();
+builder.Services.AddScoped<ListarPagosUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();
@@ -61,6 +62,7 @@ builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
 builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
+builder.Services.AddScoped<TurnoBajaUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 
 //Scoped de Reservas
@@ -96,6 +98,9 @@ var app = builder.Build();
 
 // Inicializa la base de datos SQLite (aplica migraciones al arrancar).
 RepositoriosSQLites.Inicializar(app.Services);
+
+// Sembrar cuentas de administrador por defecto
+await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

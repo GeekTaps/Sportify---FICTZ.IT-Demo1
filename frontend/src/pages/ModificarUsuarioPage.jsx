@@ -17,6 +17,11 @@ function ModificarUsuarioPage() {
   const [passwordNueva, setPasswordNueva] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
 
+  const [originalNombreCompleto, setOriginalNombreCompleto] = useState("");
+  const [originalFechaNacimiento, setOriginalFechaNacimiento] = useState("");
+  const [originalDni, setOriginalDni] = useState("");
+  const [originalEmail, setOriginalEmail] = useState("");
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +31,6 @@ function ModificarUsuarioPage() {
 
   useEffect(() => {
     if (!userId) {
-      setError("No se encontró el usuario.");
       setUserLoading(false);
       return;
     }
@@ -38,12 +42,20 @@ function ModificarUsuarioPage() {
       try {
         const response = await apiClient.get(`/usuarios/${userId}`);
 
-        setNombreCompleto(response.data.nombreCompleto ?? "");
-        setEmail(response.data.email ?? "");
-        setDni(response.data.dni ?? "");
-        setFechaNacimiento(
-          response.data.fechaNacimiento?.split("T")[0] ?? ""
-        );
+        const nombre = response.data.nombreCompleto ?? "";
+        const mail = response.data.email ?? "";
+        const documento = response.data.dni ?? "";
+        const fecha = response.data.fechaNacimiento?.split("T")[0] ?? "";
+
+        setNombreCompleto(nombre);
+        setEmail(mail);
+        setDni(documento);
+        setFechaNacimiento(fecha);
+
+        setOriginalNombreCompleto(nombre);
+        setOriginalEmail(mail);
+        setOriginalDni(documento);
+        setOriginalFechaNacimiento(fecha);
       } catch (err) {
         console.error("ERROR GET USER:", err.response?.data || err);
         setError("No se pudieron cargar los datos del usuario.");
@@ -54,28 +66,30 @@ function ModificarUsuarioPage() {
 
     cargarUsuario();
   }, [userId]);
+
   const handleUpdate = async (event) => {
-  event.preventDefault();
-  setError("");
-  setSuccess("");
+    event.preventDefault();
+    setError("");
+    setSuccess("");
 
-  if (
-    !nombreCompleto.trim() &&
-    !email.trim() &&
-    !dni.trim() &&
-    !fechaNacimiento.trim() &&
-    !passwordNueva.trim()
-  ) {
-    setError("Debes modificar al menos un campo.");
-    return;
-  }
+    const noHayCambios =
+      nombreCompleto === originalNombreCompleto &&
+      email === originalEmail &&
+      dni === originalDni &&
+      fechaNacimiento === originalFechaNacimiento &&
+      !passwordNueva.trim();
 
-  if (passwordNueva !== confirmarPassword) {
-    setError("Las contraseñas no coinciden");
-    return;
-  }
+    if (noHayCambios) {
+      setError("Debes modificar al menos un campo.");
+      return;
+    }
 
-  setLoading(true);
+    if (passwordNueva !== confirmarPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    setLoading(true);
 
   try {
     await apiClient.patch(`/usuarios/${userId}`, {

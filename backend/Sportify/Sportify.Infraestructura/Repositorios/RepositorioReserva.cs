@@ -30,11 +30,11 @@ public class RepositorioReserva : IRepositorioReserva
     public async Task<bool> eliminarReserva(Guid idReserva)
     {
         Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null)
+        if (reserva == null || reserva.eliminada)
         {
           return false;
         }
-        archivo.Reservas.Remove(reserva);
+        reserva.eliminarLogicamente();
         await archivo.SaveChangesAsync();
         return true;
     }
@@ -44,7 +44,7 @@ public class RepositorioReserva : IRepositorioReserva
     public async Task<bool> existeReserva(Guid idReserva)
     {
         Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null)
+        if (reserva == null || reserva.eliminada)
         {
           return false;
         }
@@ -54,9 +54,12 @@ public class RepositorioReserva : IRepositorioReserva
     // *-*-*-*-*-*-*-*-*-* BUSCAR POR USUARIO *-*-*-*-*-*-*-*-*-*
 
     public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
-    {   // si no encuentra nada devuelve lista vacía
-        return await archivo.Reservas.Where(r => r.idUsuario == idUsuario).ToListAsync();
+    {
+        var query = from r in archivo.Reservas
+                    where r.idUsuario == idUsuario && !r.eliminada
+                    select r;
 
+        return await query.ToListAsync();
     }
 
     // *-*-*-*-*-*-*-*-*-* BUSCAR *-*-*-*-*-*-*-*-*-*
@@ -69,6 +72,6 @@ public class RepositorioReserva : IRepositorioReserva
 
     public async Task<int> ContarReservasPorTurno(Guid idTurno)
     {
-        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno);
+        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno && !r.eliminada);
     }
 }

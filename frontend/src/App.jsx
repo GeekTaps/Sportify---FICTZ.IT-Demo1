@@ -11,7 +11,10 @@ import RegistrarUsuarioPage from "./pages/RegistrarUsuarioPage"
 import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 import ReservasPage from './pages/ReservasPage'
 import PagosRegistrarPage from './pages/PagosRegistrarPage'
+import MisPagosPage from './pages/MisPagosPage'
 import LoginPage from './pages/LoginPage'
+import VisualizarPagos from './pages/VisualizarPagos'
+import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -49,6 +52,7 @@ function Navigation() {
                         <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+                        <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                     </>
                 )}
 
@@ -68,10 +72,11 @@ function Navigation() {
                 {user && !user.esAdmin && (
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
-                        {user.id && (
-                            <NavLink to={`/modificarUsuario/${user.id}`} className={navLinkClass}>Mi Perfil</NavLink>
-                        )}
+                        <NavLink to="/mis-pagos" className={navLinkClass}>Mis Pagos</NavLink>
                     </>
+                )}
+                {user && (
+                    <NavLink to="/modificarUsuario" className={navLinkClass}>Mi Perfil</NavLink>
                 )}
 
                 {user && (
@@ -130,8 +135,12 @@ function App() {
                             <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                             <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                             <Route path="/pagos/registrar" element={<PagosRegistrarPage />} />
+                            <Route path="/mis-pagos" element={<MisPagosPage />} />
                             <Route path="/reservas" element={<ReservasPage />} />
+                            <Route path="/modificarUsuario" element={<ModificarUsuarioPage />} />
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
+                            <Route path="/pagos/visualizar" element={<VisualizarPagos />} />
+                            <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
                         </Routes>
                     </main>
 

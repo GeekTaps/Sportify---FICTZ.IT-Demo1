@@ -1,0 +1,30 @@
+.contenedor-pagos{
+
+    width:80%;
+
+    margin:auto;
+
+}
+
+.card-pago{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.card-pago:hover{
+
+    transform:scale(1.02);
+
+}
