@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Infraestructura.Data;
 using Sportify.Infraestructura.Identity;
+
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Infraestructura.Repositorios;
 using Sportify.Aplicacion.AplicacionTurnos;
@@ -72,6 +73,8 @@ builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
 
+//Mails papá
+builder.Services.AddTransient<IServicioEmail, ServicioEmail>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
         builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -189,4 +189,12 @@ public async Task<Usuario> ObtenerPorMail(string mail)
 {
     return await userManager.FindByEmailAsync(mail) != null;
 }
+public  async Task ReactivarAlumno(string mail)
+{
+    UsuarioIdentity? usuarioBuscado =
+        await userManager.FindByEmailAsync(mail);
+    usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
+
+    
+}
 }
