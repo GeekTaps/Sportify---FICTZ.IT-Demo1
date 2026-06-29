@@ -104,7 +104,11 @@ function LoginPage() {
               {loading ? "Iniciando..." : "Iniciar Sesión"}
             </button>
           </form>
-
+          <div style={{ textAlign: "right", marginTop: "0.5rem" }}>
+        <Link to="/olvide-mi-contrasena" style={{ fontSize: "0.875rem" }}>
+    ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
           <div className="auth-split-form-footer">
             ¿No tenés cuenta?{" "}
             <Link to="/register">Registrate aquí</Link>
