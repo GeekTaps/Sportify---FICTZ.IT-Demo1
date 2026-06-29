@@ -1,4 +1,4 @@
-namespace Application.Interfaces;
+namespace Sportify.Aplicacion.Mails;
 
 public interface IServicioEmail
 

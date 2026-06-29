@@ -1,17 +1,23 @@
 
-using Sportify.Aplicacion;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-
-namespace Sportify.Aplicacion;
+namespace Sportify.Aplicacion.Mails;
 
 public class ServicioEmail : IServicioEmail
 {
-    
+        //Conozcan a ServicioEmail, este es mi amigucho que se encarga de enviar mails
+        //Se estarán preguntando ¿Cómo envio un mail?  la cuestion es sencilla de cojones
+        //si ven en la interfaz de servicio mail, servicio mail tiene UN SOLO Y PUTO METODO (mandar mail)
+        //a ese metodo le pasas como parametro el destinatario (un mail, en lo posible que exista, nosotros no verificamos que exista,
+        //                      ustedes veran como hacen para que el destinatario esté todo ok,
+        //          en mi caso para la recuperacion de contraseña usé DTOs, no se bien por qué cloude me dijo que lo haga yo le hago caso)
+        //cualquier cosa me llaman al wasap o ya que estan me envian un mail jaja entieden? sos re chistoso zega por eso sos nuestro amigo
+
+        
     private readonly ModeloMail _settings;
     private readonly ILogger<ServicioEmail> _logger;
 

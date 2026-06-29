@@ -9,6 +9,9 @@ using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Aplicacion.AplicacionPagos;
+using Sportify.Aplicacion;
+using Sportify.Aplicacion.Mails;
+using Sportify.Infraestructura;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,7 +77,14 @@ builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
 
 //Mails papá
+builder.Services.Configure<ModeloMail>(
+    builder.Configuration.GetSection("ModeloMail"));
 builder.Services.AddTransient<IServicioEmail, ServicioEmail>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -96,6 +106,14 @@ builder.Services
 //------------------------------------------------------------------------------------------
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
 //construye la aplicación. Después de esto ya no se deberían registrar servicios.
 //todos los servicios se registran antes del Build().
 
