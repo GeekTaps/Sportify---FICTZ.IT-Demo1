@@ -12,19 +12,28 @@ public class SuspenderTurnoAdminUseCase
     private readonly IRepositorioPago repositorioPago;
     private readonly IRepositorioUsuarios repositorioUsuario;
 
-    public async Task<IEnumerable<string>> Ejecutar(Guid idTurno) //deveria devolver los mails de los usuarios para mandar el mail de cancelacion
+    public async Task<List<String>> Ejecutar(Guid idTurno) //deveria devolver los mails de los usuarios para mandar el mail de cancelacion
     { //no chequeo si hay reservas en el turno, porque si no hay reservas no hay mails que devolver y listo
         var turno = await repositorioTurno.TraerTurnoPorId(idTurno);
         turno.mostrarEnHome = false;
         await repositorioTurno.ModificarTurno(turno, turno.Id);
         var reservas = await repositorioReserva.ListarReservasPorTurno(idTurno);
 
-        var mails = await Task.WhenAll(reservas.Select(async r => (await repositorioUsuario.ObtenerPorId(r.idUsuario.ToString())).Mail)); //conseguir todos los mails de los usuarios que tienen reservas en el turno suspendido
+        //conseguir todos los mails de los usuarios que tienen reservas en el turno suspendido
+        var mails = new List<string>();
+        foreach (var reserva in reservas)   
+        {
+            var usuario = await repositorioUsuario.ObtenerPorId(reserva.idUsuario.ToString());
+            if (usuario != null)
+            {
+                mails.Add(usuario.Mail);
+            }
+        }
 
         var reservasAbonadas = reservas.Where(r => r.abonado).ToList(); //esto devuelve un credito correspondiente
         reservas = reservas.Where(r => !r.abonado).ToList(); //esto devuelve un reembolso correspondiente
 
-        foreach (var reserva in reservas) //reembolso de reservas no abonadas
+        foreach (var reserva in reservas) //reembolso de reservas no abonadas  
         {
             await repositorioReserva.eliminarReserva(reserva.id);
             var pago = await repositorioPago.listarPagosReserva(reserva.id);
