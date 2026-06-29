@@ -17,6 +17,8 @@ public class TurnoModificacionUseCase (IRepositorioTurno repositorioTurno, IRepo
             var turnoOriginal = turnosExistentes.FirstOrDefault(t => t.Id == idTurno);
             if (turnoOriginal != null)
             {
+                turno.Precio = turnoOriginal.Precio;
+
                 int inscriptos = turnoOriginal.cupoMaximo - turnoOriginal.cupo;
                 // Since the frontend sends the max capacity in 'cupo' property
                 int intendedMax = turno.cupo;

@@ -3,6 +3,8 @@ function ModificarDeporteForm({
   setNombre,
   descripcion,
   setDescripcion,
+  precio,
+  setPrecio,
   onSubmit,
   loading,
   error,
@@ -29,6 +31,19 @@ function ModificarDeporteForm({
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Nueva descripción"
           rows={4}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="precio-deporte">Precio</label>
+        <input
+          id="precio-deporte"
+          type="number"
+          min="0"
+          step="0.01"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+          placeholder="Ej: 2000"
         />
       </div>
 

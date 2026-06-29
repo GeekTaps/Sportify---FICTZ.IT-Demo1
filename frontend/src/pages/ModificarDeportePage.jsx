@@ -7,6 +7,7 @@ function ModificarDeportePage() {
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ function ModificarDeportePage() {
         const data = await response.json();
         setNombre(data.nombre ?? "");
         setDescripcion(data.descripcion ?? "");
+        setPrecio(data.precio ?? "");
       } catch (err) {
         console.error(err);
         setFetchError("Error al cargar el deporte. Intenta nuevamente.");
@@ -53,6 +55,12 @@ function ModificarDeportePage() {
       return;
     }
 
+    const precioNumerico = Number(precio);
+    if (Number.isNaN(precioNumerico) || precioNumerico < 0) {
+      setError("El precio debe ser un número mayor o igual a 0.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -61,7 +69,7 @@ function ModificarDeportePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() }),
+        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim(), precio: precioNumerico }),
       });
 
       if (!response.ok) {
@@ -94,6 +102,8 @@ function ModificarDeportePage() {
         setNombre={setNombre}
         descripcion={descripcion}
         setDescripcion={setDescripcion}
+        precio={precio}
+        setPrecio={setPrecio}
         onSubmit={handleModificar}
         loading={loading}
         error={error}

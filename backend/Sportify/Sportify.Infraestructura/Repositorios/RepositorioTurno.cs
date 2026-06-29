@@ -17,6 +17,16 @@ public class RepositorioTurno : IRepositorioTurno
         this.archivo = archivo;
     }
 
+    public async Task<Turno> TraerTurnoPorId(Guid idTurno)
+    {
+        Turno? turno = await archivo.Turnos.FindAsync(idTurno);
+        if (turno == null)
+        {
+            throw new Exception("Turno no encontrado");
+        }
+        return turno;
+    }
+
     public async Task AltaTurno(Turno nuevoTurno)
     {
         await archivo.Turnos.AddAsync(nuevoTurno); //agrega el nuevo turno a archivo

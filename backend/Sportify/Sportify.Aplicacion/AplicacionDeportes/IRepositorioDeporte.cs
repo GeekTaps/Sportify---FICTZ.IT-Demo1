@@ -6,7 +6,7 @@ using Sportify.Dominio.Deportes;
 
 public interface IRepositorioDeporte{
 
-    public Task<bool> crearDeporte(string nombre, string descripcion);
+    public Task<bool> crearDeporte(string nombre, string descripcion, double precio);
 
     public Task<List<Deporte>> ListarDeportes();
     public Task<bool> eliminarDeporte(Guid idDeporte);
@@ -22,5 +22,5 @@ public interface IRepositorioDeporte{
 
     public Task<Deporte?> obtenerDeportePorId(Guid idDeporte);
 
-    public Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion);
+    public Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion, double nuevoPrecio);
 }

@@ -12,11 +12,11 @@ public class DeporteAltaUseCase
         this.validadorDeporte = validadorDeporte;
     }
 
-    public async Task Ejecutar(string nombre, string descripcion)
+    public async Task Ejecutar(string nombre, string descripcion, double precio)
     {
         if (await validadorDeporte.validarNombre(nombre, repositorioDeporte)) //valida que el nombre del deporte no sea el de otro deporte antes de crearlo
         {
-            await repositorioDeporte.crearDeporte(nombre, descripcion);
+            await repositorioDeporte.crearDeporte(nombre, descripcion, precio);
         }
         else
         {

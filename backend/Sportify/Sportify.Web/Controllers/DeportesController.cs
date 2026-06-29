@@ -67,9 +67,14 @@ public class DeportesController : ControllerBase
             return BadRequest(new { message = "complete los campos para registrar un deporte" });
         }
 
+        if (deporte.precio < 0)
+        {
+            return BadRequest(new { message = "El precio no puede ser negativo." });
+        }
+
         try
         {
-            await altaUseCase.Ejecutar(deporte.nombre.Trim(), deporte.descripcion.Trim());
+            await altaUseCase.Ejecutar(deporte.nombre.Trim(), deporte.descripcion.Trim(), deporte.precio);
             return Ok(new { message = "deporte registrado correctamente" });
         }
         catch (Exception ex)
@@ -104,9 +109,14 @@ public class DeportesController : ControllerBase
             return BadRequest(new { message = "La descripción es obligatoria." });
         }
 
+        if (deporte.precio < 0)
+        {
+            return BadRequest(new { message = "El precio no puede ser negativo." });
+        }
+
         try
         {
-            await modificacionUseCase.Ejecutar(id, deporte.descripcion.Trim());
+            await modificacionUseCase.Ejecutar(id, deporte.descripcion.Trim(), deporte.precio);
             return NoContent();
         }
         catch (EntidadNotFoundException ex)

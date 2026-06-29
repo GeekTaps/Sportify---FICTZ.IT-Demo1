@@ -9,6 +9,7 @@ public class Reserva{
     public Double monto { get; private set; }
     public string titulo { get; private set; }
     public bool eliminada { get; private set; } = false;
+    public bool abonado { get; private set; } = false;
 
 
 
