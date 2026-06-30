@@ -11,13 +11,8 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:backend/Sportify/Sportify.Infraestructura/Migrations/20260605011257_InitialCreate.Designer.cs
-    [Migration("20260605011257_InitialCreate")]
-    partial class InitialCreate
-========
     [Migration("20260605035802_BajaLogicaReserva")]
-    partial class BajaLogicaReserva
->>>>>>>> cbc2bb350291fb8c57ce648b11cadc442495e63d:backend/Sportify/Sportify.Infraestructura/Migrations/20260605035802_BajaLogicaReserva.Designer.cs
+    partial class BajaLogicaReserva : Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

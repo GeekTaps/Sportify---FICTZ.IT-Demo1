@@ -11,13 +11,8 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<<< HEAD:backend/Sportify/Sportify.Infraestructura/Migrations/20260605011257_InitialCreate.Designer.cs
     [Migration("20260605011257_InitialCreate")]
-    partial class InitialCreate
-========
-    [Migration("20260605035802_BajaLogicaReserva")]
-    partial class BajaLogicaReserva
->>>>>>>> cbc2bb350291fb8c57ce648b11cadc442495e63d:backend/Sportify/Sportify.Infraestructura/Migrations/20260605035802_BajaLogicaReserva.Designer.cs
+    partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -201,9 +196,6 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("eliminada")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
 
@@ -247,9 +239,6 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<int>("cupo")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("cupoMaximo")
                         .HasColumnType("INTEGER");
 
                     b.Property<TimeOnly>("horaFin")
