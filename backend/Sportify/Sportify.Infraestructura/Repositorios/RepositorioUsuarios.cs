@@ -116,12 +116,11 @@ public async Task ModificarUsuario(string id, Usuario dto)
 
     public async Task BajaLogica(string id)     
 {
-    UsuarioIdentity? usuarioABorrar =   //busco usuariopor id
-        await userManager.FindByIdAsync(id);
+    UsuarioIdentity? usuarioABorrar = await userManager.FindByIdAsync(id);
 
     if (usuarioABorrar == null)
     {
-        throw new Exception("Usuario no encontrado");
+        throw new ValidacionException("Usuario no encontrado");
     }
 
     usuarioABorrar.Borrado = true;          //borrado logico anashe
@@ -189,5 +188,13 @@ public async Task<Usuario> ObtenerPorMail(string mail)
     public async Task<bool> ExisteMail(string mail)
 {
     return await userManager.FindByEmailAsync(mail) != null;
+}
+public  async Task ReactivarAlumno(string mail)
+{
+    UsuarioIdentity? usuarioBuscado =
+        await userManager.FindByEmailAsync(mail);
+    usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
+
+    
 }
 }

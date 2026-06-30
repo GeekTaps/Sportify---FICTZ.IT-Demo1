@@ -12,7 +12,7 @@ namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260605011257_InitialCreate")]
-    partial class InitialCreate
+    partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,9 +239,6 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<int>("cupo")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("cupoMaximo")
                         .HasColumnType("INTEGER");
 
                     b.Property<TimeOnly>("horaFin")

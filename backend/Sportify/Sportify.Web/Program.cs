@@ -2,12 +2,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Infraestructura.Data;
 using Sportify.Infraestructura.Identity;
+
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Infraestructura.Repositorios;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Aplicacion.AplicacionPagos;
+using Sportify.Aplicacion;
+using Sportify.Aplicacion.Mails;
+using Sportify.Infraestructura;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +52,7 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 //Scoped de Usuarios 
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarPagoUseCase>();
+builder.Services.AddScoped<ListarPagosUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();
@@ -61,6 +66,7 @@ builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
 builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
+builder.Services.AddScoped<TurnoBajaUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 
 //Scoped de Reservas
@@ -69,6 +75,15 @@ builder.Services.AddScoped<ReservaAltaUseCase>();
 builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
+
+//Mails papá
+builder.Services.Configure<ModeloMail>(
+    builder.Configuration.GetSection("ModeloMail"));
+builder.Services.AddTransient<IServicioEmail, ServicioEmail>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
@@ -91,11 +106,22 @@ builder.Services
 //------------------------------------------------------------------------------------------
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
 //construye la aplicación. Después de esto ya no se deberían registrar servicios.
 //todos los servicios se registran antes del Build().
 
 // Inicializa la base de datos SQLite (aplica migraciones al arrancar).
 RepositoriosSQLites.Inicializar(app.Services);
+
+// Sembrar cuentas de administrador por defecto
+await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

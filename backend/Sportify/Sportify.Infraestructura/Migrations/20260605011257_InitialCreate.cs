@@ -1,4 +1,3 @@
-﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -30,14 +29,6 @@ namespace Sportify.Infraestructura.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Dni = table.Column<string>(type: "TEXT", nullable: false),
-                    Borrado = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Suspendido = table.Column<bool>(type: "INTEGER", nullable: false),
-                    CancelacionesMes = table.Column<int>(type: "INTEGER", nullable: false),
-                    Creditos = table.Column<int>(type: "INTEGER", nullable: false),
-                    EsAdmin = table.Column<bool>(type: "INTEGER", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -51,78 +42,19 @@ namespace Sportify.Infraestructura.Migrations
                     TwoFactorEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "TEXT", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
+                    AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false),
+                    NombreCompleto = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Dni = table.Column<string>(type: "TEXT", nullable: false),
+                    Borrado = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Suspendido = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CancelacionesMes = table.Column<int>(type: "INTEGER", nullable: false),
+                    Creditos = table.Column<int>(type: "INTEGER", nullable: false),
+                    EsAdmin = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Deportes",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    nombre = table.Column<string>(type: "TEXT", nullable: false),
-                    descripcion = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Deportes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Pagos",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    idReserva = table.Column<Guid>(type: "TEXT", nullable: false),
-                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
-                    monto = table.Column<decimal>(type: "TEXT", nullable: false),
-                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pagos", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reservas",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
-                    idTurno = table.Column<Guid>(type: "TEXT", nullable: false),
-                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    paga = table.Column<bool>(type: "INTEGER", nullable: false),
-                    monto = table.Column<double>(type: "REAL", nullable: false),
-                    titulo = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reservas", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Turnos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    cupo = table.Column<int>(type: "INTEGER", nullable: false),
-                    cupoMaximo = table.Column<int>(type: "INTEGER", nullable: false),
-                    IdDeporte = table.Column<Guid>(type: "TEXT", nullable: false),
-                    nombreTurno = table.Column<string>(type: "TEXT", nullable: false),
-                    nommbreProfesor = table.Column<string>(type: "TEXT", nullable: false),
-                    horaInicio = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    horaFin = table.Column<TimeOnly>(type: "TEXT", nullable: false),
-                    Precio = table.Column<double>(type: "REAL", nullable: false),
-                    ListaEsperaHabilitada = table.Column<bool>(type: "INTEGER", nullable: false),
-                    mostrarEnHome = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Turnos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,6 +163,72 @@ namespace Sportify.Infraestructura.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Deportes",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    descripcion = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Deportes", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pagos",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    idReserva = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
+                    monto = table.Column<decimal>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pagos", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reservas",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idUsuario = table.Column<Guid>(type: "TEXT", nullable: false),
+                    idTurno = table.Column<Guid>(type: "TEXT", nullable: false),
+                    fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    paga = table.Column<bool>(type: "INTEGER", nullable: false),
+                    monto = table.Column<double>(type: "REAL", nullable: false),
+                    titulo = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservas", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Turnos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    cupo = table.Column<int>(type: "INTEGER", nullable: false),
+                    IdDeporte = table.Column<Guid>(type: "TEXT", nullable: false),
+                    nombreTurno = table.Column<string>(type: "TEXT", nullable: false),
+                    nommbreProfesor = table.Column<string>(type: "TEXT", nullable: false),
+                    horaInicio = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    horaFin = table.Column<TimeOnly>(type: "TEXT", nullable: false),
+                    Precio = table.Column<double>(type: "REAL", nullable: false),
+                    ListaEsperaHabilitada = table.Column<bool>(type: "INTEGER", nullable: false),
+                    mostrarEnHome = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Turnos", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -272,38 +270,17 @@ namespace Sportify.Infraestructura.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
-                name: "Deportes");
-
-            migrationBuilder.DropTable(
-                name: "Pagos");
-
-            migrationBuilder.DropTable(
-                name: "Reservas");
-
-            migrationBuilder.DropTable(
-                name: "Turnos");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+            migrationBuilder.DropTable(name: "AspNetUserTokens");
+            migrationBuilder.DropTable(name: "AspNetUserRoles");
+            migrationBuilder.DropTable(name: "AspNetUserLogins");
+            migrationBuilder.DropTable(name: "AspNetUserClaims");
+            migrationBuilder.DropTable(name: "AspNetRoleClaims");
+            migrationBuilder.DropTable(name: "AspNetUsers");
+            migrationBuilder.DropTable(name: "AspNetRoles");
+            migrationBuilder.DropTable(name: "Reservas");
+            migrationBuilder.DropTable(name: "Turnos");
+            migrationBuilder.DropTable(name: "Pagos");
+            migrationBuilder.DropTable(name: "Deportes");
         }
     }
 }

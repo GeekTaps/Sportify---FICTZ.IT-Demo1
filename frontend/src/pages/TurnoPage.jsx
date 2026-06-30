@@ -22,6 +22,9 @@ function TurnoPage() {
   const [esErrorReserva, setEsErrorReserva] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
 
+  // Estado para error al eliminar turno
+  const [errorEliminar, setErrorEliminar] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -111,19 +114,21 @@ function TurnoPage() {
 
   const handleEliminarTurno = async (idTurno) => {
     if (!window.confirm("¿Seguro que querés eliminar este turno?")) return;
+    setErrorEliminar("");
     try {
       const response = await fetch(`http://localhost:5266/api/turnos/${idTurno}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
-        throw new Error("Error al eliminar");
+        const errorData = await response.json();
+        throw new Error(errorData.message || errorData.mensaje || "Error al eliminar el turno.");
       }
       alert("Turno eliminado con éxito");
       cerrarModal();
       cargarTurnos();
     } catch (err) {
       console.error(err);
-      alert("No se pudo eliminar el turno.");
+      setErrorEliminar(err.message);
     }
   };
 
@@ -135,9 +140,11 @@ function TurnoPage() {
     setRequierePago(false);
     setEsErrorReserva(false);
     setPreferenceId(null);
+    setErrorEliminar("");
   };
 
   const handleReservar = async () => {
+    if (!window.confirm("¿Estás seguro que querés reservar este turno?")) return;
     setLoadingReserva(true);
     setMensajeReserva("");
     setReservaExitosa(false);
@@ -269,6 +276,11 @@ function TurnoPage() {
             ) : (
               // Usuario Activo
               <div>
+                {userInfo?.creditos > 0 && !reservaExitosa && (
+                  <div className="alert alert-success" style={{ marginBottom: "15px" }}>
+                    Tenés créditos disponibles para reservar
+                  </div>
+                )}
                 {!reservaExitosa ? (
                   <>
                     {modalTurno.cupo > 0 ? (
@@ -329,6 +341,11 @@ function TurnoPage() {
                 >
                   Eliminar Turno
                 </button>
+                {errorEliminar && (
+                  <div className="alert alert-error">
+                    {errorEliminar}
+                  </div>
+                )}
               </div>
             )}
 

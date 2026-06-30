@@ -5,6 +5,7 @@ import { apiClient } from "../api/api-client";
 function PagosRegistrarPage() {
   const { user } = useContext(AuthContext);
   const [usuarios, setUsuarios] = useState([]);
+  const [filtroUsuario, setFiltroUsuario] = useState("");
   const [reservas, setReservas] = useState([]);
   const [selectedUsuarioId, setSelectedUsuarioId] = useState("");
   const [selectedReservaId, setSelectedReservaId] = useState("");
@@ -22,7 +23,8 @@ function PagosRegistrarPage() {
     try {
       setCargandoUsuarios(true);
       const response = await apiClient.get("/usuarios");
-      setUsuarios(response.data || []);
+      const clientes = (response.data || []).filter(u => !u.esAdmin);
+      setUsuarios(clientes);
     } catch (error) {
       console.error("Error al cargar usuarios:", error);
       setMensaje("No se pudieron cargar los usuarios. Intenta nuevamente.");
@@ -41,10 +43,13 @@ function PagosRegistrarPage() {
     try {
       setCargandoReservas(true);
       const response = await apiClient.get(`/Reservas/usuario/${usuarioId}`);
-      setReservas(response.data || []);
+
+      const reservasFuturas = response.data || [];
+
+      setReservas(reservasFuturas);
       setSelectedReservaId("");
-      if ((response.data || []).length === 0) {
-        setMensaje("El usuario seleccionado no posee reservas activas.");
+      if (reservasFuturas.length === 0) {
+        setMensaje("El usuario seleccionado no posee reservas");
         setMensajeTipo("warning");
       } else {
         setMensaje("");
@@ -94,7 +99,7 @@ function PagosRegistrarPage() {
         idReserva: selectedReservaId,
       });
 
-      setMensaje(response.data?.message || "Pago registrado correctamente.");
+      setMensaje("Se registró el pago correctamente");
       setMensajeTipo("success");
       cargarReservas(selectedUsuarioId);
     } catch (error) {
@@ -132,13 +137,25 @@ function PagosRegistrarPage() {
       <div className="form-card" style={{ maxWidth: 760, margin: "0 auto" }}>
         <div className="form-group">
           <label>Usuario</label>
+          <input
+            type="text"
+            placeholder="Buscar por nombre o email..."
+            value={filtroUsuario}
+            onChange={(e) => setFiltroUsuario(e.target.value)}
+            style={{ marginBottom: "0.5rem", padding: "0.5rem", width: "100%", borderRadius: "4px", border: "1px solid var(--border)" }}
+          />
           <select value={selectedUsuarioId} onChange={handleUsuarioChange} disabled={cargandoUsuarios}>
             <option value="">-- Seleccioná un usuario --</option>
-            {usuarios.map((usuario) => (
-              <option key={usuario.id} value={usuario.id}>
-                {usuario.email} · {usuario.nombreCompleto} {usuario.esAdmin ? "(Admin)" : ""}
-              </option>
-            ))}
+            {usuarios
+              .filter(u =>
+                (u.nombreCompleto?.toLowerCase() || "").includes(filtroUsuario.toLowerCase()) ||
+                (u.email?.toLowerCase() || "").includes(filtroUsuario.toLowerCase())
+              )
+              .map((usuario) => (
+                <option key={usuario.id} value={usuario.id}>
+                  {usuario.email} · {usuario.nombreCompleto}
+                </option>
+              ))}
           </select>
         </div>
 
@@ -167,15 +184,7 @@ function PagosRegistrarPage() {
         </button>
       </div>
 
-      {selectedReservaId && reservas.length > 0 && (
-        <div style={{ marginTop: "1rem", maxWidth: 760, marginLeft: "auto", marginRight: "auto" }}>
-          {reservas.find((r) => r.id === selectedReservaId)?.paga && (
-            <div className="alert alert-warning">
-              La reserva seleccionada ya fue pagada. Si querés registrar otra reserva, elegí una reserva pendiente.
-            </div>
-          )}
-        </div>
-      )}
+
     </div>
   );
 }
