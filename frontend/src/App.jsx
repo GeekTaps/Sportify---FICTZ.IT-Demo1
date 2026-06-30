@@ -12,6 +12,7 @@ import ModificarUsuarioPage from "./pages/ModificarUsuarioPage"
 import ReservasPage from './pages/ReservasPage'
 import PagosRegistrarPage from './pages/PagosRegistrarPage'
 import LoginPage from './pages/LoginPage'
+import GenerarQr from './pages/GenerarQr'
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -43,6 +44,7 @@ function Navigation() {
             <div className="navbar-links">
                 <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
                 <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
+                <NavLink to="/generar-qr" className={navLinkClass}>Generar QR</NavLink>
 
                 {user?.esAdmin && (
                     <>
@@ -127,6 +129,7 @@ function App() {
                             <Route path="/deportes/crear" element={<CrearDeportePage />} />
                             <Route path="/deportes/modificar/:id" element={<ModificarDeportePage />} />
                             <Route path="/turnos" element={<TurnoPage />} />
+                            <Route path="/generar-qr" element={<GenerarQr />} />
                             <Route path="/turnos/crear" element={<CrearModificarTurnoPage />} />
                             <Route path="/turnos/modificar/:id" element={<CrearModificarTurnoPage />} />
                             <Route path="/pagos/registrar" element={<PagosRegistrarPage />} />

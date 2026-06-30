@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins("http://localhost:7001") // puerto de React al que se conecta
+        policy => policy.WithOrigins("http://localhost:7003") // puerto de React al que se conecta
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
