@@ -1,5 +1,6 @@
     using System;
     using System.Threading.Tasks;
+    using Sportify.Aplicacion.Excepciones;
     using Sportify.Dominio;
     using Sportify.Dominio.Usuario;
 
@@ -17,19 +18,34 @@
 
         }
     //esta parte me dejó muchas dudas
-    public async Task Ejecutar(string idUsuario, Usuario dto)
+    public async Task Ejecutar(string id, Usuario dto)
         {
+            if (!string.IsNullOrWhiteSpace(dto.PasswordNueva))
+            {
+                if (string.IsNullOrWhiteSpace(dto.PasswordActual))
+                    throw new ValidacionException("Para cambiar la contraseña debes ingresar la contraseña actual.");
+
+                bool passwordCorrecta = await repositorioUsuarios.VerificarPasswordActual(id, dto.PasswordActual);
+                if (!passwordCorrecta)
+                    throw new ValidacionException("La contraseña actual no coincide con la contraseña del usuario.");
+            }
+
+            Usuario usuarioActual =
+        await repositorioUsuarios.ObtenerPorId(id);
             await this.validadorModificarUsuario
-                .validar(dto, idUsuario);
+                .validar(dto,usuarioActual);
             
                 await this.repositorioUsuarios
-                    .ModificarUsuario(idUsuario, dto);
+                    .ModificarUsuario(id, dto);
             
         }
-       public async Task<Usuario> ObtenerPorId(string id)
+public async Task<Usuario> ObtenerPorMail(string mail)
+{
+    return await repositorioUsuarios.ObtenerPorMail(mail);
+}
+public async Task<Usuario> ObtenerPorId(string id)
 {
     return await repositorioUsuarios.ObtenerPorId(id);
-} 
-
+}
     }
 

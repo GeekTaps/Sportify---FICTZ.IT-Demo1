@@ -8,6 +8,7 @@ public class Reserva{
     public Boolean paga { get; private set; }
     public Double monto { get; private set; }
     public string titulo { get; private set; }
+    public bool eliminada { get; private set; } = false;
 
 
 
@@ -25,5 +26,10 @@ public class Reserva{
     public void marcarComoPagada()
     {
         this.paga = true;
+    }
+
+    public void eliminarLogicamente()
+    {
+        this.eliminada = true;
     }
 }

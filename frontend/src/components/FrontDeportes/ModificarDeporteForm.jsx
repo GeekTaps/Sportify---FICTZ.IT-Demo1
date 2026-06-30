@@ -11,13 +11,13 @@ function ModificarDeporteForm({
   return (
     <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
       <div className="form-group">
-        <label htmlFor="nombre-deporte">Nombre del deporte</label>
+        <label htmlFor="nombre-deporte">Nombre del deporte (no modificable)</label>
         <input
           id="nombre-deporte"
           type="text"
           value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Nuevo nombre"
+          readOnly
+          placeholder="Nombre del deporte"
         />
       </div>
 

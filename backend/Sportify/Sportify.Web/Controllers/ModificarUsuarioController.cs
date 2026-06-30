@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.Excepciones;
 using Sportify.Dominio.Usuario;
@@ -13,33 +11,33 @@ namespace Sportify.Web.Controllers;
 public class ModificarUsuarioController : ControllerBase
 {
     private readonly modificarUsuarioUseCase actualizarUsuarioUseCase;
-     
+
     public ModificarUsuarioController(modificarUsuarioUseCase actualizarUsuarioUseCase)
     {
         this.actualizarUsuarioUseCase = actualizarUsuarioUseCase;
-      
     }
-[HttpGet("{id}")]
-public async Task<IActionResult> GetUsuario([FromRoute] string id)
-{
-    try
-    {
-        Usuario usuario = await actualizarUsuarioUseCase.ObtenerPorId(id);
 
-        return Ok(new
-        {
-            nombreCompleto = usuario.NombreCompleto,
-            email = usuario.Mail,
-            dni = usuario.Dni,
-            edad = usuario.Edad
-        });
-    }
-    catch (ValidacionException ex)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById([FromRoute] string id)
     {
-        return BadRequest(new { message = ex.Message });
+        try
+        {
+            Usuario usuario = await actualizarUsuarioUseCase.ObtenerPorId(id);
+
+            return Ok(new
+            {
+                nombreCompleto = usuario.NombreCompleto,
+                email = usuario.Mail,
+                dni = usuario.Dni,
+                fechaNacimiento = usuario.FechaNacimiento
+            });
+        }
+        catch (ValidacionException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
-}
- 
+
     [HttpPatch("{id}")]
     public async Task<IActionResult> Update([FromRoute] string id, [FromBody] ModificarUsuarioDTO dto)
     {
@@ -49,22 +47,18 @@ public async Task<IActionResult> GetUsuario([FromRoute] string id)
                 dto.NombreCompleto ?? "",
                 dto.Email ?? "",
                 dto.Dni ?? "",
-                dto.Password ?? "",
-                dto.Edad ?? ""
+                dto.PasswordActual ?? "",
+                dto.PasswordNueva ?? "",
+                dto.FechaNacimiento ?? DateTime.MinValue
             );
 
             await actualizarUsuarioUseCase.Ejecutar(id, usuario);
 
-            return Ok(new
-            {
-                message = "Usuario actualizado correctamente"
-            });
+            return Ok(new { message = "Usuario actualizado correctamente" });
         }
         catch (ValidacionException ex)
         {
             return BadRequest(new { message = ex.Message });
         }
     }
-    
-
 }

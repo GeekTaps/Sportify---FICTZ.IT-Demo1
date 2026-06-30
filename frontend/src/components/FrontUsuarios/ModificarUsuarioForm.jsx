@@ -1,19 +1,27 @@
 function ModificarUsuarioForm({
   nombreCompleto,
   setNombreCompleto,
-  edad,
-  setEdad,
+  fechaNacimiento,
+  setFechaNacimiento,
   dni,
   setDni,
   email,
   setEmail,
-  password,
-  setPassword,
+
+  passwordActual,
+  setPasswordActual,
+
+  passwordNueva,
+  setPasswordNueva,
+
+  confirmarPassword,
+  setConfirmarPassword,
+
   onSubmit,
   loading,
   error,
   success,
-}) {
+})  {
   return (
     <form onSubmit={onSubmit} style={{ maxWidth: "440px" }}>
       <div className="form-group">
@@ -27,17 +35,20 @@ function ModificarUsuarioForm({
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="mod-edad">Edad</label>
-        <input
-          id="mod-edad"
-          type="number"
-          value={edad}
-          onChange={(e) => setEdad(e.target.value)}
-          placeholder="Nueva edad"
-          min="1"
-        />
-      </div>
+<div className="form-group">
+  <label htmlFor="mod-fechaNacimiento">
+    Fecha de nacimiento
+  </label>
+
+  <input
+    id="mod-fechaNacimiento"
+    type="date"
+    value={fechaNacimiento}
+    onChange={(e) =>
+      setFechaNacimiento(e.target.value)
+    }
+  />
+</div>
 
       <div className="form-group">
         <label htmlFor="mod-dni">DNI</label>
@@ -62,13 +73,32 @@ function ModificarUsuarioForm({
       </div>
 
       <div className="form-group">
-        <label htmlFor="mod-password">Contraseña</label>
+        <label htmlFor="mod-passwordActual">Contraseña actual</label>
         <input
-          id="mod-password"
+          id="mod-passwordActual"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Nueva contraseña"
+          value={passwordActual}
+          onChange={(e) => setPasswordActual(e.target.value)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="mod-passwordNueva">Nueva contraseña</label>
+        <input
+          id="mod-passwordNueva"
+          type="password"
+          value={passwordNueva}
+          onChange={(e) => setPasswordNueva(e.target.value)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="mod-confirmarPassword">Confirmar nueva contraseña</label>
+        <input
+          id="mod-confirmarPassword"
+          type="password"
+          value={confirmarPassword}
+          onChange={(e) => setConfirmarPassword(e.target.value)}
         />
       </div>
 

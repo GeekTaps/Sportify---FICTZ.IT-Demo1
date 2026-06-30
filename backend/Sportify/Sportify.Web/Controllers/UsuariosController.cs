@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Dominio.Usuario;
 using Sportify.Aplicacion.Excepciones;
+using System.Linq;
 namespace Sportify.Web.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
@@ -20,18 +21,33 @@ public class UsuariosController : ControllerBase
         this.userManager = userManager;
     }
 
+    [HttpGet]
+    public IActionResult ListarUsuarios()
+    {
+        var usuarios = userManager.Users.Select(user => new
+        {
+            id = user.Id,
+            email = user.Email,
+            nombreCompleto = user.NombreCompleto,
+            esAdmin = user.EsAdmin
+        }).ToList();
+
+        return Ok(usuarios);
+    }
+
 [HttpPost("register")]
 public async Task<IActionResult> Register([FromBody] RegistrarUsuarioDTO dto)
 {
     try
     {
         Usuario usuario = new Usuario(
-            dto.NombreCompleto,
-            dto.Email,
-            dto.Dni,
-            dto.Password,
-            dto.Edad
-        );
+    dto.NombreCompleto,
+    dto.Email,
+    dto.Dni,
+    "",
+    dto.Password,
+    dto.FechaNacimiento
+);
 
         await registrarUsuarioUseCase.Ejecutar(usuario);
 
@@ -61,7 +77,8 @@ public async Task<IActionResult> GetUserInfo(string email)
     return Ok(new
     {
         email = user.Email,
-        suspendido = user.Suspendido
+        suspendido = user.Suspendido,
+        creditos = user.Creditos
     });
 }
 
@@ -69,9 +86,14 @@ public async Task<IActionResult> GetUserInfo(string email)
 public async Task<IActionResult> Login([FromBody] LoginDTO dto)
 {
     var user = await userManager.FindByEmailAsync(dto.Email);
-    if (user == null || user.Borrado)
+    if (user == null)
     {
         return BadRequest(new { message = "Usuario o contraseña incorrectos" });
+    }
+
+    if (user.Borrado)
+    {
+        return BadRequest(new { message = "Su cuenta ha sido eliminada" });
     }
 
     var isPasswordValid = await userManager.CheckPasswordAsync(user, dto.Password);

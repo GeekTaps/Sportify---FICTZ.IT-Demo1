@@ -21,7 +21,7 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/email/${user.email}`
+        `http://localhost:5266/api/Reservas/usuario/${user.id}`
       );
 
       if (!response.ok) {
@@ -85,6 +85,9 @@ function ReservasPage() {
   };
 
   const handleCancelarReserva = async (idReserva) => {
+    if (!window.confirm("¿Estás seguro de que deseas cancelar esta reserva?")) {
+      return;
+    }
     setCancelando(true);
     try {
       const response = await fetch(
@@ -94,7 +97,12 @@ function ReservasPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMensajeCancelacion({ tipo: "success", texto: data.mensaje });
+        setMensajeCancelacion({ 
+          tipo: "success", 
+          texto: data.mensaje,
+          advertencia: data.advertencia
+        });
+        await cargarReservas();
       } else {
         setMensajeCancelacion({
           tipo: "error",
@@ -189,14 +197,20 @@ function ReservasPage() {
                 </p>
 
                 {mensajeCancelacion ? (
-                  <div
-                    className={`alert ${mensajeCancelacion.tipo === "success"
-                        ? "alert-success"
-                        : "alert-error"
-                      }`}
-                    style={{ marginTop: "1rem" }}
-                  >
-                    {mensajeCancelacion.texto}
+                  <div style={{ marginTop: "1rem" }}>
+                    <div
+                      className={`alert ${mensajeCancelacion.tipo === "success"
+                          ? "alert-success"
+                          : "alert-error"
+                        }`}
+                    >
+                      {mensajeCancelacion.texto}
+                    </div>
+                    {mensajeCancelacion.advertencia && (
+                      <div className="alert alert-error" style={{ marginTop: "0.5rem" }}>
+                        {mensajeCancelacion.advertencia}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -209,21 +223,29 @@ function ReservasPage() {
                       </div>
                     ) : (
                       <>
-                        {reservaSeleccionada.horasAnticipacion > 48 ? (
-                          <div className="alert alert-success">
-                            En caso de cancelar, se devolverá el valor completo de la seña.
+                        {reservaSeleccionada.horasAnticipacion < 0 ? (
+                          <div className="alert alert-warning">
+                            Esta reserva ya pasó. No es posible cancelarla.
                           </div>
                         ) : (
-                          <div className="alert alert-warning">
-                            En caso de cancelar, no se devolverá la seña.
-                          </div>
-                        )}
+                          <>
+                            {reservaSeleccionada.horasAnticipacion > 48 ? (
+                              <div className="alert alert-success">
+                                En caso de cancelar, se devolverá el valor completo de la seña.
+                              </div>
+                            ) : (
+                              <div className="alert alert-warning">
+                                En caso de cancelar, no se devolverá la seña.
+                              </div>
+                            )}
 
-                        {reservaSeleccionada.cancelacionesMes >= 2 && (
-                          <div className="alert alert-error">
-                            Ya contás con dos cancelaciones este mes. En caso de
-                            cancelar, tu cuenta será suspendida.
-                          </div>
+                            {reservaSeleccionada.cancelacionesMes >= 2 && (
+                              <div className="alert alert-error">
+                                Ya contás con dos cancelaciones este mes. En caso de
+                                cancelar, tu cuenta será suspendida.
+                              </div>
+                            )}
+                          </>
                         )}
                       </>
                     )}
@@ -245,7 +267,7 @@ function ReservasPage() {
                   >
                     Cerrar
                   </button>
-                  {!mensajeCancelacion && (
+                  {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
                     <button
                       onClick={() =>
                         handleCancelarReserva(reservaSeleccionada.idReserva)

@@ -9,6 +9,7 @@ public class TurnoAltaUseCase(IRepositorioTurno repositorioTurno, IValidadorTurn
 
     public async Task Ejecutar(Turno turno) //ejecuta el caso de uso de crear un turno
     {
+        turno.cupoMaximo = turno.cupo;
         var (valido, mensajeError) = await validadorTurno.validar(turno, repoDeporte); //valida que el turno cumpla con las reglas de negocio antes de crearlo
         if (!valido)
         {

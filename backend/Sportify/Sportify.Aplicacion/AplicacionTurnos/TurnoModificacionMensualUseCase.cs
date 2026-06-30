@@ -99,12 +99,19 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             var turnosSerie = ...
             */
 
-            // Modificar el turno individual
+            int inscriptos = turnoOriginal.cupoMaximo - turnoOriginal.cupo;
+            
+            if (cupo < inscriptos)
+            {
+                throw new ValidacionException($"El cupo máximo no puede ser menor a la cantidad de inscriptos ({inscriptos})");
+            }
+
             turnoOriginal.IdDeporte = idDeporteNuevo;
             turnoOriginal.Fecha = fechaConHoraExacta;
             turnoOriginal.horaInicio = horaInicio;
             turnoOriginal.horaFin = horaFin;
-            turnoOriginal.cupo = cupo;
+            turnoOriginal.cupoMaximo = cupo;
+            turnoOriginal.cupo = cupo - inscriptos;
             turnoOriginal.Precio = precio;
             turnoOriginal.nombreTurno = $"{deporteObj.nombre} - {fechaConHoraExacta:dd/MM/yy} - {horaInicio:HH:mm}hs";
             turnoOriginal.nommbreProfesor = nombreProfesor;

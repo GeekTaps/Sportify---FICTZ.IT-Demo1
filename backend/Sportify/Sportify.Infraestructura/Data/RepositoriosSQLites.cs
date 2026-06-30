@@ -19,8 +19,13 @@ public static class RepositoriosSQLites
         try
         {
             var db = services.GetRequiredService<ApplicationDbContext>();
+            /*
             // Aplica migraciones pendientes. Si preferís EnsureCreated(), cambiar aquí.
             db.Database.Migrate();
+            */
+            // Utilizamos EnsureCreated en lugar de Migrate porque el historial de migraciones
+            // a veces no sincroniza bien en dev con SQLite.
+            db.Database.EnsureCreated();
         }
         catch (InvalidOperationException ex) when (ex.Message?.IndexOf("pending changes", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                                    ex.Message?.IndexOf("PendingModelChangesWarning", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -43,6 +48,44 @@ public static class RepositoriosSQLites
         {
             logger?.LogError(ex, "Error inicializando la base de datos SQLite");
             throw;
+        }
+    }
+
+    public static async Task SeedUsuariosAdmin(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
+
+        string[] emails = { "admin@mail.com", "admin2@mail.com", "admin3@mail.com" };
+        string password = "123456";
+
+        foreach (var email in emails)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                var newUser = new Sportify.Infraestructura.Identity.UsuarioIdentity
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    NombreCompleto = "admin",
+                    Dni = "00000000",
+                    EsAdmin = true
+                };
+
+                await userManager.CreateAsync(newUser, password);
+            }
+            else
+            {
+                // Ensure existing users have admin rights just in case
+                if (!user.EsAdmin)
+                {
+                    user.EsAdmin = true;
+                    await userManager.UpdateAsync(user);
+                }
+            }
         }
     }
 }

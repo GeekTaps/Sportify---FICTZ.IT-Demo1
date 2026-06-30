@@ -25,8 +25,18 @@ function LoginPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Usuario o contraseña incorrectos");
+        const contentType = response.headers.get("Content-Type") || "";
+        let errorMessage = "Usuario o contraseña incorrectos";
+
+        if (contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = errorData?.message || errorMessage;
+        } else {
+          const errorText = await response.text();
+          errorMessage = errorText || errorMessage;
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -94,7 +104,11 @@ function LoginPage() {
               {loading ? "Iniciando..." : "Iniciar Sesión"}
             </button>
           </form>
-
+          <div style={{ textAlign: "right", marginTop: "0.5rem" }}>
+        <Link to="/olvide-mi-contrasena" style={{ fontSize: "0.875rem" }}>
+    ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
           <div className="auth-split-form-footer">
             ¿No tenés cuenta?{" "}
             <Link to="/register">Registrate aquí</Link>

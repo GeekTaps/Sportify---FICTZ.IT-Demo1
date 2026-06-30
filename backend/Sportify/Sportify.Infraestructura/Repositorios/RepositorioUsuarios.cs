@@ -11,6 +11,7 @@ using Sportify.Dominio.Deportes;
 using Sportify.Infraestructura.Identity;
 using Sportify.Dominio.Usuario;
 
+
 //SEAN BIENVENIDOS AL ZEGASITORIO HECHO CON ALGUNA QUE OTRA OJEADA AL DE IANN Y MUCHO AMOR PROPIO
 //LOS INVITO A DEJAR UN CORAZON (<3)
 //
@@ -45,20 +46,20 @@ public async Task<bool> BuscarId(string id)
 }
 public async Task RegistrarUsuario(Usuario usuario)
 {                                                           // hola buenas esto registra un usuario
-    UsuarioIdentity usuarioAAgregar = new UsuarioIdentity
-    {
-        NombreCompleto = usuario.NombreCompleto,
-        UserName = usuario.Mail,
-        Email = usuario.Mail,
-        Edad = usuario.Edad,
-        Dni = usuario.Dni,
-        Borrado = false
-    };
+   UsuarioIdentity usuarioAAgregar = new UsuarioIdentity
+{
+    NombreCompleto = usuario.NombreCompleto,
+    UserName = usuario.Mail,
+    Email = usuario.Mail,
+    FechaNacimiento = usuario.FechaNacimiento,
+    Dni = usuario.Dni,
+    Borrado = false
+};
                                     //gpt me dijo que tengo que hacerlo asi :D
     IdentityResult resultado =
         await userManager.CreateAsync(  //al parecer usermanager hace cosas 
             usuarioAAgregar,
-            usuario.Contraseña
+            usuario.PasswordNueva
         );
 
     if (!resultado.Succeeded)
@@ -70,7 +71,6 @@ public async Task RegistrarUsuario(Usuario usuario)
 public async Task ModificarUsuario(string id, Usuario dto)
 {
     var usuario = await userManager.FindByIdAsync(id);
-
     if (usuario == null)
         throw new Exception("Usuario no encontrado");
 
@@ -80,8 +80,10 @@ public async Task ModificarUsuario(string id, Usuario dto)
     if (!string.IsNullOrWhiteSpace(dto.NombreCompleto))
         usuario.NombreCompleto = dto.NombreCompleto;
 
-    if (!string.IsNullOrWhiteSpace(dto.Edad))
-        usuario.Edad = dto.Edad;
+    if (dto.FechaNacimiento != DateTime.MinValue)
+{
+    usuario.FechaNacimiento = dto.FechaNacimiento;
+}
 
     if (!string.IsNullOrWhiteSpace(dto.Dni))
         usuario.Dni = dto.Dni;
@@ -92,23 +94,33 @@ public async Task ModificarUsuario(string id, Usuario dto)
     if (!string.IsNullOrWhiteSpace(dto.Mail))
         usuario.UserName = dto.Mail;
 
-    if (!string.IsNullOrWhiteSpace(dto.Contraseña))
+    if (!string.IsNullOrWhiteSpace(dto.PasswordNueva))
     {
         var token = await userManager.GeneratePasswordResetTokenAsync(usuario);
-        await userManager.ResetPasswordAsync(usuario, token, dto.Contraseña);
+        await userManager.ResetPasswordAsync(usuario, token, dto.PasswordNueva);
     }
 
     await userManager.UpdateAsync(usuario);
 }
 
+    public async Task<bool> VerificarPasswordActual(string id, string passwordActual)
+    {
+        UsuarioIdentity? usuario = await userManager.FindByIdAsync(id);
+        if (usuario == null)
+        {
+            return false;
+        }
+
+        return await userManager.CheckPasswordAsync(usuario, passwordActual);
+    }
+
     public async Task BajaLogica(string id)     
 {
-    UsuarioIdentity? usuarioABorrar =   //busco usuariopor id
-        await userManager.FindByIdAsync(id);
+    UsuarioIdentity? usuarioABorrar = await userManager.FindByIdAsync(id);
 
     if (usuarioABorrar == null)
     {
-        throw new Exception("Usuario no encontrado");
+        throw new ValidacionException("Usuario no encontrado");
     }
 
     usuarioABorrar.Borrado = true;          //borrado logico anashe
@@ -124,12 +136,13 @@ public async Task<Usuario> ObtenerPorId(string id)
         throw new ValidacionException("Usuario no encontrado");
     }
 
-    return new Usuario(
-        usuarioIdentity.NombreCompleto,
-        usuarioIdentity.Email,
-        usuarioIdentity.Dni,
-        "",
-        usuarioIdentity.Edad
+   return new Usuario(
+    usuarioIdentity.NombreCompleto,
+    usuarioIdentity.Email,
+    usuarioIdentity.Dni,
+    "",
+    "",
+    usuarioIdentity.FechaNacimiento
     );
 }
 public async Task<List<Usuario>> ListarUsuarios()
@@ -139,15 +152,49 @@ public async Task<List<Usuario>> ListarUsuarios()
 
     List<Usuario> usuarios = usuariosIdentity
         .Select(u => new Usuario(
-            u.NombreCompleto,
-            u.Email,
-            u.Dni,
-            "",
-            u.Edad
-        ))
+    u.NombreCompleto,
+    u.Email,
+    u.Dni,
+    "",
+    "",
+    u.FechaNacimiento
+))
         .ToList();
 
     return usuarios;
 }
+public async Task<Usuario> ObtenerPorMail(string mail)
+    {
+        UsuarioIdentity? usuarioIdentity =
+        await userManager.FindByEmailAsync(mail);
 
+    if (usuarioIdentity == null)
+    {
+        throw new ValidacionException("Usuario no encontrado");
+    }
+
+    return new Usuario(
+        usuarioIdentity.NombreCompleto,
+        usuarioIdentity.Email,
+        usuarioIdentity.Dni,
+        "",
+        "",
+        usuarioIdentity.FechaNacimiento
+    );    
+
+
+
+    }
+    public async Task<bool> ExisteMail(string mail)
+{
+    return await userManager.FindByEmailAsync(mail) != null;
+}
+public  async Task ReactivarAlumno(string mail)
+{
+    UsuarioIdentity? usuarioBuscado =
+        await userManager.FindByEmailAsync(mail);
+    usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
+
+    
+}
 }
