@@ -4,6 +4,7 @@ using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Dominio.Pagos;
+using Sportify.Dominio.Reservas;
 
 public class SuspenderTurnoAdminUseCase
 {
@@ -12,43 +13,53 @@ public class SuspenderTurnoAdminUseCase
     private readonly IRepositorioPago repositorioPago;
     private readonly IRepositorioUsuarios repositorioUsuario;
 
-    public async Task<List<String>> Ejecutar(Guid idTurno) //deveria devolver los mails de los usuarios para mandar el mail de cancelacion
-    { //no chequeo si hay reservas en el turno, porque si no hay reservas no hay mails que devolver y listo
+    public SuspenderTurnoAdminUseCase(
+    IRepositorioTurno repositorioTurno,
+    IRepositorioReserva repositorioReserva,
+    IRepositorioPago repositorioPago,
+    IRepositorioUsuarios repositorioUsuario)
+{
+    this.repositorioTurno = repositorioTurno;
+    this.repositorioReserva = repositorioReserva;
+    this.repositorioPago = repositorioPago;
+    this.repositorioUsuario = repositorioUsuario;
+}
+
+    public async Task Ejecutar(Guid idTurno) //deveria devolver los mails de los usuarios para mandar el mail de cancelacion
+    {
         var turno = await repositorioTurno.TraerTurnoPorId(idTurno);
+
+        if (turno == null)
+        { 
+            throw new Exception("Turno no encontrado");
+        }
+
         turno.mostrarEnHome = false;
         await repositorioTurno.ModificarTurno(turno, turno.Id);
+
         var reservas = await repositorioReserva.ListarReservasPorTurno(idTurno);
 
-        //conseguir todos los mails de los usuarios que tienen reservas en el turno suspendido
-        var mails = new List<string>();
-        foreach (var reserva in reservas)   
+        if (reservas == null)
         {
-            var usuario = await repositorioUsuario.ObtenerPorId(reserva.idUsuario.ToString());
-            if (usuario != null)
-            {
-                mails.Add(usuario.Mail);
-            }
+            reservas = new List<Reserva>();
         }
+
 
         var reservasAbonadas = reservas.Where(r => r.abonado).ToList(); //esto devuelve un credito correspondiente
         reservas = reservas.Where(r => !r.abonado).ToList(); //esto devuelve un reembolso correspondiente
 
         foreach (var reserva in reservas) //reembolso de reservas no abonadas  
         {
-            await repositorioReserva.eliminarReserva(reserva.id);
             var pago = await repositorioPago.listarPagosReserva(reserva.id);
             foreach (var p in pago)
             {
                 // realizar un reembolso creando un nuevo pago con monto y abonado = true
                 //medio que realmente no esta haciendo un reembolso pq no me voy a meter con mercado pago, aguante harcodear cosas :D
-                var reembolso = new Pago
-                (
-                    p.idUsuario,
-                    p.idReserva,
-                    p.monto
-                );
+                var reembolso = new Pago(p.idReserva, p.idUsuario, p.monto);
                 await repositorioPago.registrarPago(reembolso);
             }
+
+            await repositorioReserva.eliminarReserva(reserva.id);
         }
 
         foreach (var reserva in reservasAbonadas) //credito de reservas abonadas
@@ -56,8 +67,6 @@ public class SuspenderTurnoAdminUseCase
             await repositorioReserva.eliminarReserva(reserva.id);
             //aca deberia crear un credito correspondiente al deporte del tipo de la reserva cancelada.
         }
-
-        return mails; // Devolver la lista de correos electrónicos
     }
 
 

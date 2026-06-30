@@ -16,7 +16,7 @@ function BotonCancelarTurno({ idTurno })
             style={{
                 padding: "10px 20px",
                 fontSize: "16px",
-                backgroundColor: "#FF9800",
+                backgroundColor: "#ff7205",
                 color: "white",
                 border: "none",
                 borderRadius: "4px",

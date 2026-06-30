@@ -33,4 +33,9 @@ public class Reserva{
     {
         this.eliminada = true;
     }
+
+    public void marcarComoAbonado()
+    {
+        this.abonado = true;
+    }
 }

@@ -33,7 +33,8 @@ function SuspenderTurnoAdmin()
             {
                 state:
                 {
-                    mails
+                    mails,
+                    idTurno
                 }
             });
         }

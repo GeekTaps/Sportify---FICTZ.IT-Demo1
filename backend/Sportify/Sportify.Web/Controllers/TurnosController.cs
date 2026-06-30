@@ -4,6 +4,7 @@ using Sportify.Aplicacion.AplicacionPagos;
 using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Excepciones;
+using Sportify.Aplicacion.AplicacionUsuarios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,12 +81,26 @@ public class TurnosController : ControllerBase
         }
     }
 
-    [HttpGet("deporte/{idTurno:guid}")]
-    public async Task<IActionResult> ObtenerMailsUsuariosPorTurno(Guid idTurno, [FromServices] SuspenderTurnoAdminUseCase suspenderTurnoAdminUseCase)
+    [HttpPost("deporte/{idTurno:guid}")]
+    public async Task<IActionResult> CancelarTurno(Guid idTurno, [FromServices] SuspenderTurnoAdminUseCase suspenderTurnoAdminUseCase)
     {
         try
         {
-            IEnumerable<string> mails = await suspenderTurnoAdminUseCase.Ejecutar(idTurno);
+            await suspenderTurnoAdminUseCase.Ejecutar(idTurno);
+            return Ok(new { message = "Turno cancelado exitosamente." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("deporte/{idTurno:guid}")]
+    public async Task<IActionResult> ObtenerMailsUsuariosPorTurno(Guid idTurno, [FromServices] ListarMailsDeUnTurnoUseCase listarMailsDeUnTurnoUseCase)
+    {
+        try
+        {
+            IEnumerable<string> mails = await listarMailsDeUnTurnoUseCase.Ejecutar(idTurno);
             return Ok(mails);
         }
         catch (Exception ex)
@@ -93,6 +108,7 @@ public class TurnosController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
 
 
     [HttpPost]

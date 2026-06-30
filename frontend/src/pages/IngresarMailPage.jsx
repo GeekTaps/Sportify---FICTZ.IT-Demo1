@@ -1,25 +1,48 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function IngresarMailPage()
 {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    if (!location.state)
+    {
+        return <h2>No hay un turno seleccionado.</h2>;
+    }
 
     const mails = location.state?.mails || [];
+    const idTurno = location.state?.idTurno;
 
     const [texto,setTexto] = useState("");
 
     const enviar = async () =>
     {
-        const response = await fetch(
+        // 1. Cancelar el turno
+        const cancelarResponse = await fetch(
+            `http://localhost:5266/api/turnos/deporte/${idTurno}`,
+            {
+                method: "POST"
+            }
+        );
+
+        if (!cancelarResponse.ok)
+        {
+            alert("No se pudo cancelar el turno.");
+            return;
+        }
+
+        // 2. Enviar los mails
+        const mailResponse = await fetch(
             "http://localhost:5266/api/mails/enviar",
             {
-                method:"POST",
+                method: "POST",
                 headers:
                 {
                     "Content-Type":"application/json"
                 },
-                body:JSON.stringify(
+                body: JSON.stringify(
                 {
                     asunto:"Cancelación de clase",
                     cuerpo:texto,
@@ -27,13 +50,14 @@ function IngresarMailPage()
                 })
             });
 
-        if(response.ok)
+        if(mailResponse.ok)
         {
-            alert("Mails enviados.");
+            alert("Turno cancelado y mails enviados.");
+            navigate("/turnos");
         }
         else
         {
-            alert("Error enviando mails.");
+            alert("El turno se canceló pero ocurrió un error enviando los mails.");
         }
     };
 
