@@ -15,6 +15,9 @@ import MisPagosPage from './pages/MisPagosPage'
 import LoginPage from './pages/LoginPage'
 import VisualizarPagos from './pages/VisualizarPagos'
 import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
+import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
+import ResetearContraseñaPage from './pages/ResetearContraseñaPage';
+
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -141,6 +144,8 @@ function App() {
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                             <Route path="/pagos/visualizar" element={<VisualizarPagos />} />
                             <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
+                            <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
+                            <Route path="/reset-password" element={<ResetearContraseñaPage />} />
                         </Routes>
                     </main>
 
