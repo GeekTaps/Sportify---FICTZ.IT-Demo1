@@ -60,6 +60,10 @@ builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsua
 
 builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
 
+builder.Services.AddScoped<RecuperarCuentaUseCase>();
+
+builder.Services.AddScoped<RegistrarEmpleadoUseCase>();
+
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();

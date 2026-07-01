@@ -17,6 +17,7 @@ import VisualizarPagos from './pages/VisualizarPagos'
 import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
 import ResetearContraseñaPage from './pages/ResetearContraseñaPage';
+import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
 
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
@@ -56,6 +57,7 @@ function Navigation() {
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
+                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                     </>
                 )}
 
@@ -146,6 +148,7 @@ function App() {
                             <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
                             <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
+                            <Route path="/registrarEmpleado" element={<RegistrarEmpleadoPage />} />
                         </Routes>
                     </main>
 
