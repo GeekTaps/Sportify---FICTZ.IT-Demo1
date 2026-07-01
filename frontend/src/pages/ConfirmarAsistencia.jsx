@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 function ConfirmarAsistencia() {
   const { alumnoId, turnoId } = useParams();
   const navigate = useNavigate();
-
+  const [datosAlumno, setDatosAlumno] = useState(null);
   const [datosTurno, setDatosTurno] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [mensajeApi, setMensajeApi] = useState({ tipo: '', texto: '' });
@@ -19,6 +19,11 @@ function ConfirmarAsistencia() {
         
         const data = await res.json();
         setDatosTurno(data);
+
+        const resAlumno = await fetch(`http://localhost:5266/api/Usuarios/${alumnoId}`);
+        if (!resAlumno.ok) throw new Error("No se encontró el alumno.");
+        const dataAlumno = await resAlumno.json();
+        setDatosAlumno(dataAlumno);
       } catch (err) {
         setMensajeApi({ tipo: 'error', texto: err.message });
       } finally {
@@ -35,7 +40,7 @@ function ConfirmarAsistencia() {
       setMensajeApi({ tipo: 'info', texto: 'Modificando estado de asistencia...' });
       
       // 🌟 CORRECCIÓN: Le pegamos al módulo de tu backend encargado de actualizar el booleano
-      const res = await fetch(`http://localhost:7001/api/Asistencias/confirmar-presente`, {
+      const res = await fetch(`http://localhost:5266/api/Asistencias/confirmar-presente`, {
         method: 'PUT', // Usamos PUT o PATCH porque estamos MODIFICANDO una entidad que ya existe
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,18 +75,18 @@ function ConfirmarAsistencia() {
           {/* LADO IZQUIERDO: Info del Alumno que queremos pasar a Presente */}
           <div style={{ flex: '1', minWidth: '300px', background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', borderTop: '4px solid #4299e1' }}>
             <h3 style={{ color: '#2b6cb0', marginTop: 0, marginBottom: '1rem' }}>Datos del Alumno</h3>
-            <p style={{ margin: '0.5rem 0' }}><strong>ID Alumno:</strong></p>
-            <span style={{ fontSize: '0.85rem', color: '#718096', wordBreak: 'break-all' }}>{alumnoId}</span>
+            <p style={{ margin: '0.5rem 0' }}><strong>Nombre y Apellido:</strong> {datosAlumno?.nombreCompleto}</p>
+            <p style={{ margin: '0.5rem 0' }}><strong>DNI:</strong> {datosAlumno?.dni}</p>
+            <p style={{ margin: '0.5rem 0' }}><strong>Email:</strong> {datosAlumno?.email}</p>
+            
           </div>
 
           {/* LADO DERECHO: Info del Turno original */}
           <div style={{ flex: '1', minWidth: '300px', background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', borderTop: '4px solid #48bb78' }}>
             <h3 style={{ color: '#2f855a', marginTop: 0, marginBottom: '1rem' }}>Detalles del Turno</h3>
             {/* Adaptá estas propiedades a los nombres exactos que use tu objeto Turno en C# */}
-            <p style={{ margin: '0.5rem 0' }}><strong>Actividad / Deporte:</strong> {datosTurno?.nombreActividad || datosTurno?.actividad || 'Clase de Gimnasio'}</p>
-            <p style={{ margin: '0.5rem 0' }}><strong>Fecha:</strong> {datosTurno?.fecha}</p>
-            <p style={{ margin: '0.5rem 0' }}><strong>Horario:</strong> {datosTurno?.horario || datosTurno?.horaInicio}</p>
-            <p style={{ margin: '0.5rem 0', fontSize: '0.85rem', color: '#718096' }}><strong>ID Turno:</strong> {turnoId}</p>
+            <p style={{ margin: '0.5rem 0' }}><strong>Actividad / Deporte:</strong> {datosTurno?.nombreTurno || 'Se rompe el modal con turno.nombreTurno'}</p>
+            <p style={{ margin: '0.5rem 0' }}><strong>Profesor:</strong> {datosTurno?.nommbreProfesor} </p>
           </div>
 
         </div>

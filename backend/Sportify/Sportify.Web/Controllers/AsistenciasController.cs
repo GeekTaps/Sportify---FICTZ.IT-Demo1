@@ -47,6 +47,5 @@ namespace Sportify.Web.Controllers
     {
         public Guid UsuarioId { get; set; }
         public Guid TurnoId { get; set; }
-        public bool Presente { get; set; }
     }
 }

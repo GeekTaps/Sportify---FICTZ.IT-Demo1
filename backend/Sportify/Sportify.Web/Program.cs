@@ -12,6 +12,7 @@ using Sportify.Aplicacion.AplicacionPagos;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Mails;
 using Sportify.Infraestructura;
+using Sportify.Aplicacion.AplicacionAsistencias;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,7 @@ builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
+builder.Services.AddScoped<IRepositorioAsistencias, RepositorioAsistencias>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
@@ -82,6 +84,11 @@ builder.Services.Configure<ModeloMail>(
 builder.Services.AddTransient<IServicioEmail, ServicioEmail>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Scoped de Asistencias
+builder.Services.AddScoped<AsistenciaPasarPresente>();
+builder.Services.AddScoped<AsistenciaAlta>();
+
 
 
 
