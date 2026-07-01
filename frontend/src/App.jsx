@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+import BotonSimularDia11 from './components/BotonSimularDia11'
 import HomePage from './pages/HomePage'
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
@@ -19,6 +20,7 @@ import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
 import ResetearContraseñaPage from './pages/ResetearContraseñaPage'
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
+import SimulacionDia11Page from './pages/SimulacionDia11Page'
 
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
@@ -150,8 +152,11 @@ function App() {
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
                             <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
+                            <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                         </Routes>
                     </main>
+                    
+                    <BotonSimularDia11 /> //se ve incluso si no es admin, arreglarlo despues
 
                     <Footer />
                 </div>

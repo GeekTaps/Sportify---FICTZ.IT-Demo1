@@ -5,6 +5,7 @@ using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Dominio.Pagos;
 using Sportify.Dominio.Reservas;
+using Sportify.Dominio.Usuario;
 
 public class SuspenderTurnoAdminUseCase
 {
@@ -12,17 +13,19 @@ public class SuspenderTurnoAdminUseCase
     private readonly IRepositorioReserva repositorioReserva;
     private readonly IRepositorioPago repositorioPago;
     private readonly IRepositorioUsuarios repositorioUsuario;
+    private readonly IRepositorioCreditos repositorioCreditos;
 
     public SuspenderTurnoAdminUseCase(
     IRepositorioTurno repositorioTurno,
     IRepositorioReserva repositorioReserva,
     IRepositorioPago repositorioPago,
-    IRepositorioUsuarios repositorioUsuario)
+    IRepositorioUsuarios repositorioUsuario, IRepositorioCreditos repositorioCreditos)
 {
     this.repositorioTurno = repositorioTurno;
     this.repositorioReserva = repositorioReserva;
     this.repositorioPago = repositorioPago;
     this.repositorioUsuario = repositorioUsuario;
+    this.repositorioCreditos = repositorioCreditos;
 }
 
     public async Task Ejecutar(Guid idTurno) //deveria devolver los mails de los usuarios para mandar el mail de cancelacion
@@ -59,6 +62,28 @@ public class SuspenderTurnoAdminUseCase
                 await repositorioPago.registrarPago(reembolso);
             }
 
+            await repositorioReserva.eliminarReserva(reserva.id);
+        }
+
+        foreach (var reserva in reservasAbonadas) //credito de reservas abonadas
+        {
+            //aca deberia crear un credito correspondiente al deporte del tipo de la reserva cancelada.
+            var pago = await repositorioPago.listarPagosReserva(reserva.id);
+            foreach (var p in pago)
+            {
+                // crear un credito correspondiente al deporte del tipo de la reserva cancelada
+                var creditoExistente = await repositorioCreditos.ObtenerCredito(p.idUsuario, turno.IdDeporte);
+                if (creditoExistente != null) //si ya tiene un credito para ese deporte, se le suma uno mas y lo guarda
+                {
+                    creditoExistente.AgregarCredito();
+                    await repositorioCreditos.ModificarCredito(creditoExistente);
+                }
+                else //sino crea un nuevo credito para ese deporte y lo guarda
+                {
+                    var nuevoCredito = new Credito(p.idUsuario, turno.IdDeporte);
+                    await repositorioCreditos.AgregarCredito(nuevoCredito);
+                }
+            }
             await repositorioReserva.eliminarReserva(reserva.id);
         }
 

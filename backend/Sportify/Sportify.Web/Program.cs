@@ -54,12 +54,14 @@ builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarPagoUseCase>();
 builder.Services.AddScoped<ListarPagosUsuarioUseCase>();
 builder.Services.AddScoped<ListarMailsDeUnTurnoUseCase>();
+builder.Services.AddScoped<ListarMailsDeUsuariosConPagosPendientesUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 
 builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
+builder.Services.AddTransient<IRepositorioCreditos, RepositorioCreditos>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();

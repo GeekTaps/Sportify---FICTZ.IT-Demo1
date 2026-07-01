@@ -10,6 +10,7 @@ using Sportify.Infraestructura.Identity;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Web.DTOs;
+using Sportify.Aplicacion.AplicacionUsuarios;
 
 namespace Sportify.Web.Controllers
 {
@@ -29,6 +30,7 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioTurno _repositorioTurno;
         private readonly IRepositorioDeporte _repositorioDeporte;
         private readonly IRepositorioReserva _repositorioReserva;
+        private readonly IRepositorioCreditos _repositorioCreditos;
 
         // El constructor recibe los casos de uso inyectados automáticamente por el contenedor de dependencias de ASP.NET (configurado en Program.cs)
         public ReservasController(
@@ -39,7 +41,7 @@ namespace Sportify.Web.Controllers
             UserManager<UsuarioIdentity> userManager,
             IRepositorioTurno repositorioTurno,
             IRepositorioDeporte repositorioDeporte,
-            IRepositorioReserva repositorioReserva)
+            IRepositorioReserva repositorioReserva, IRepositorioCreditos repositorioCreditos)
         {
             _reservaAltaUseCase = reservaAltaUseCase;
             _reservaBajaUseCase = reservaBajaUseCase;
@@ -49,6 +51,7 @@ namespace Sportify.Web.Controllers
             _repositorioTurno = repositorioTurno;
             _repositorioDeporte = repositorioDeporte;
             _repositorioReserva = repositorioReserva;
+            _repositorioCreditos = repositorioCreditos;
         }
 
         // POST: api/Reservas
@@ -284,7 +287,9 @@ namespace Sportify.Web.Controllers
                     return BadRequest(new { mensaje = "Ya tenés un turno reservado en esa fecha y horario" });
                 }
 
-                if (turno.Precio > 0 && user.Creditos == 0)
+                var creditosDelDeporte = await _repositorioCreditos.ObtenerCredito(Guid.Parse(user.Id), turno.IdDeporte);
+
+                if (turno.Precio > 0 && (creditosDelDeporte == null || creditosDelDeporte.Cantidad <= 0))
                 {
                     return Ok(new { mensaje = "Requiere pago" });
                 }
@@ -293,11 +298,11 @@ namespace Sportify.Web.Controllers
                 string mensaje = "";
 
                 // Lógica de créditos o gratis
-                if (turno.Precio > 0 && user.Creditos > 0)
+                if (turno.Precio > 0 && creditosDelDeporte != null && creditosDelDeporte.Cantidad > 0)
                 {
                     pagoRealizado = true;
-                    user.Creditos--;
-                    await _userManager.UpdateAsync(user);
+                    creditosDelDeporte.UsarCredito();
+                    await _repositorioCreditos.ModificarCredito(creditosDelDeporte);
                     mensaje = "Reserva lista! Se usó el crédito disponible";
                 }
                 else

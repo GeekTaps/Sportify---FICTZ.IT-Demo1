@@ -17,7 +17,6 @@ public class UsuarioIdentity : IdentityUser
     public bool Borrado { get; set; } = false;
     public bool Suspendido { get; set; } = false;
     public int CancelacionesMes { get; set; } = 0;
-    public int Creditos { get; set; } = 0;
     public bool EsAdmin { get; set; } = false;
 
     public UsuarioIdentity()

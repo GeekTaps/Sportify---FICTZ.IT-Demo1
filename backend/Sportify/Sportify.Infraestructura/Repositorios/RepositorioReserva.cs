@@ -83,4 +83,18 @@ public class RepositorioReserva : IRepositorioReserva
 
         return await query.ToListAsync();
     }
+
+    public async Task<List<Guid>> BuscarUsuariosConPagosPendientes()
+    {
+        List<Guid> usuariosConPagosPendientes = new List<Guid>();
+        foreach (var reserva in archivo.Reservas)
+        {
+            if (!reserva.paga && !reserva.eliminada)
+            {
+                usuariosConPagosPendientes.Add(reserva.idUsuario);
+            }
+        }
+        return usuariosConPagosPendientes;
+    }
+
 }

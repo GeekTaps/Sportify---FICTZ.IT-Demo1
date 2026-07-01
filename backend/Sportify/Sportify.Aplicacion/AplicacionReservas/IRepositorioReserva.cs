@@ -12,4 +12,5 @@ public interface IRepositorioReserva{
     public Task<List<Reserva>> ListarReservasPorTurno(Guid idTurno);
     public Task<Reserva> buscarReserva(Guid idReserva);
     public Task<int> ContarReservasPorTurno(Guid idTurno);
+    public Task<List<Guid>> BuscarUsuariosConPagosPendientes();
 }
