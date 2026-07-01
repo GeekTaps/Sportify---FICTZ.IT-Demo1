@@ -22,4 +22,5 @@ public class ApplicationDbContext : IdentityDbContext<UsuarioIdentity> //esta cl
 
     public DbSet<Sportify.Dominio.Pagos.Pago> Pagos { get; set; }
     public DbSet<Sportify.Dominio.Reservas.Reserva> Reservas { get; set; }
+    public DbSet<Sportify.Dominio.Asistencias.Asistencia> Asistencias { get; set; }
 }

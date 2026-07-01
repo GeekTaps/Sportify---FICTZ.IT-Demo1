@@ -189,6 +189,7 @@ namespace Sportify.Web.Controllers
                 var dto = new ReservaDetalleDTO
                 {
                     IdReserva = reserva.id,
+                    IdTurno = reserva.idTurno,
                     Actividad = nombreActividad,
                     Fecha = turno.Fecha.ToString("dd/MM/yy"),
                     Horario = turno.horaInicio.ToString("HH:mm") + "hs",

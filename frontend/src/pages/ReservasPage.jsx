@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import GeneradorQR from "../components/GeneradorQr";
 
 function ReservasPage() {
   const { user } = useContext(AuthContext);
@@ -11,6 +12,7 @@ function ReservasPage() {
   const [errorModal, setErrorModal] = useState("");
   const [mensajeCancelacion, setMensajeCancelacion] = useState(null);
   const [cancelando, setCancelando] = useState(false);
+  const [mostrarQR, setMostrarQR] = useState(false);
 
   const cargarReservas = async () => {
     if (!user) {
@@ -66,6 +68,7 @@ function ReservasPage() {
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
+      console.log("JSON que viene de .NET:", data);
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -79,6 +82,7 @@ function ReservasPage() {
     const huboCancel = !!mensajeCancelacion;
     setReservaSeleccionada(null);
     setMensajeCancelacion(null);
+    setMostrarQR(false);
     if (huboCancel) {
       cargarReservas();
     }
@@ -195,6 +199,28 @@ function ReservasPage() {
                   <strong>Profesor designado:</strong>{" "}
                   {reservaSeleccionada.profesor}
                 </p>
+                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
+                  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                    {!mostrarQR ? (
+                      <button 
+                        onClick={() => setMostrarQR(true)} 
+                        className="btn"
+                        style={{ background: '#007bff', color: 'white', width: '100%', padding: '10px' }}
+                      > 
+                      </button>
+                    ) : (
+                      <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
+                        <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
+                        <button 
+                          onClick={() => setMostrarQR(false)}
+                          style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
+                        >
+                          Ocultar QR
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {mensajeCancelacion ? (
                   <div style={{ marginTop: "1rem" }}>
@@ -283,7 +309,7 @@ function ReservasPage() {
             )}
           </div>
         </div>
-      )}
+      )}   
     </div>
   );
 }
