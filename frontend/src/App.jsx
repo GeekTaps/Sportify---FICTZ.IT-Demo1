@@ -156,7 +156,7 @@ function App() {
                         </Routes>
                     </main>
                     
-                    <BotonSimularDia11 /> //se ve incluso si no es admin, arreglarlo despues
+                    <BotonSimularDia11 />
 
                     <Footer />
                 </div>

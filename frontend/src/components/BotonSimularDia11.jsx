@@ -1,8 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 function BotonSimularDia11() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
+  if (!user?.esAdmin) {
+    return null;
+  }
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
