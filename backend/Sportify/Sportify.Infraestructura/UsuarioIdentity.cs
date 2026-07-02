@@ -18,6 +18,7 @@ public class UsuarioIdentity : IdentityUser
     public bool Suspendido { get; set; } = false;
     public int CancelacionesMes { get; set; } = 0;
     public bool EsAdmin { get; set; } = false;
+    public bool EsEmpleado { get; set; } = false;
 
     public UsuarioIdentity()
     {

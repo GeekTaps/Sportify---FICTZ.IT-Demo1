@@ -68,6 +68,31 @@ public async Task RegistrarUsuario(Usuario usuario)
         throw new ValidacionException($"No se pudo registrar el usuario: {errores}");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
     }
 }
+public async Task RegistrarEmpleado(Usuario usuario)
+    {
+        UsuarioIdentity usuarioAAgregar = new UsuarioIdentity
+{
+    NombreCompleto = usuario.NombreCompleto,
+    UserName = usuario.Mail,
+    Email = usuario.Mail,
+    FechaNacimiento = usuario.FechaNacimiento,
+    Dni = usuario.Dni,
+    Borrado = false,
+    EsEmpleado = true
+};
+                                    //gpt me dijo que tengo que hacerlo asi :D
+    IdentityResult resultado =
+        await userManager.CreateAsync(  //al parecer usermanager hace cosas 
+            usuarioAAgregar,
+            usuario.PasswordNueva
+        );
+
+    if (!resultado.Succeeded)
+    {
+        var errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+        throw new ValidacionException($"No se pudo registrar el usuario: {errores}");         //de momento dejo esto aca quiza no combiene que el repositorio maneje instrucciones (Segun la arquitectura cebollal)
+    }
+    }
 public async Task ModificarUsuario(string id, Usuario dto)
 {
     var usuario = await userManager.FindByIdAsync(id);

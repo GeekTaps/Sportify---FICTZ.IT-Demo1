@@ -17,6 +17,8 @@ import LoginPage from './pages/LoginPage'
 import VisualizarPagos from './pages/VisualizarPagos'
 import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
+import ResetearContraseñaPage from './pages/ResetearContraseñaPage';
+import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
 import ResetearContraseñaPage from './pages/ResetearContraseñaPage'
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
@@ -60,6 +62,7 @@ function Navigation() {
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
+                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                     </>
                 )}
 
@@ -150,6 +153,7 @@ function App() {
                             <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
                             <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
+                            <Route path="/registrarEmpleado" element={<RegistrarEmpleadoPage />} />
                             <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
