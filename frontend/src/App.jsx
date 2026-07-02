@@ -19,7 +19,6 @@ import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
 import ResetearContraseñaPage from './pages/ResetearContraseñaPage';
 import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
-import ResetearContraseñaPage from './pages/ResetearContraseñaPage'
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
