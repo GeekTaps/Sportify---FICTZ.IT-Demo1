@@ -15,17 +15,20 @@ public class ObtenerInfoAbonoUseCase
     private readonly IRepositorioAbono _repositorioAbono;
     private readonly IRepositorioUsuarios _repositorioUsuarios;
     private readonly IRepositorioReserva _repositorioReserva;
+    private readonly IRepositorioCreditos _repositorioCreditos;
 
     public ObtenerInfoAbonoUseCase(
         IRepositorioTurno repositorioTurno,
         IRepositorioAbono repositorioAbono,
         IRepositorioUsuarios repositorioUsuarios,
-        IRepositorioReserva repositorioReserva)
+        IRepositorioReserva repositorioReserva,
+        IRepositorioCreditos repositorioCreditos)
     {
         _repositorioTurno = repositorioTurno;
         _repositorioAbono = repositorioAbono;
         _repositorioUsuarios = repositorioUsuarios;
         _repositorioReserva = repositorioReserva;
+        _repositorioCreditos = repositorioCreditos;
     }
 
     public async Task<AbonoInfoDTO> Ejecutar(Guid idTurno, string email)
@@ -88,7 +91,9 @@ public class ObtenerInfoAbonoUseCase
         // Calculate Price
         int cantidadClases = clasesAbono.Count;
         double precioClase = turno.Precio;
-        int creditos = usuario.Creditos;
+
+        var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turno.IdDeporte);
+        int creditos = creditoEntity != null ? creditoEntity.Cantidad : 0;
 
         double precioBase = cantidadClases * precioClase;
         double descuento = creditos * precioClase;

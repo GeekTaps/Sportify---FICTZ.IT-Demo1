@@ -18,19 +18,22 @@ namespace Sportify.Aplicacion.AplicacionAbonos
         private readonly IRepositorioTurno _repositorioTurno;
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly IRepositorioHorario _repositorioHorario;
+        private readonly IRepositorioCreditos _repositorioCreditos;
 
         public AbonarUseCase(
             IRepositorioAbono repositorioAbono,
             IRepositorioUsuarios repositorioUsuarios,
             IRepositorioTurno repositorioTurno,
             ReservaAltaUseCase reservaAltaUseCase,
-            IRepositorioHorario repositorioHorario)
+            IRepositorioHorario repositorioHorario,
+            IRepositorioCreditos repositorioCreditos)
         {
             _repositorioAbono = repositorioAbono;
             _repositorioUsuarios = repositorioUsuarios;
             _repositorioTurno = repositorioTurno;
             _reservaAltaUseCase = reservaAltaUseCase;
             _repositorioHorario = repositorioHorario;
+            _repositorioCreditos = repositorioCreditos;
         }
 
         public async Task Ejecutar(string email, Guid idTurnoBase)
@@ -67,19 +70,26 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             double precioPorClase = turnoBase.Precio;
             double precioTotalOriginal = turnosDelAbono.Count * precioPorClase;
             
-            // Consumir créditos del usuario si tiene
+            // Consumir créditos del usuario si tiene para el deporte
+            var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turnoBase.IdDeporte);
             int creditosADescontar = 0;
-            if (usuario.Creditos > 0)
+            if (creditoEntity != null && creditoEntity.Cantidad > 0)
             {
-                if (usuario.Creditos >= precioTotalOriginal)
+                if (creditoEntity.Cantidad >= precioTotalOriginal)
                 {
                     creditosADescontar = (int)precioTotalOriginal;
                 }
                 else
                 {
-                    creditosADescontar = usuario.Creditos;
+                    creditosADescontar = creditoEntity.Cantidad;
                 }
-                await _repositorioUsuarios.DescontarCreditos(usuario.Id, creditosADescontar);
+                
+                // Actualizar creditoEntity usando UsarCredito() varias veces
+                for (int i = 0; i < creditosADescontar; i++)
+                {
+                    creditoEntity.UsarCredito();
+                }
+                await _repositorioCreditos.ModificarCredito(creditoEntity);
             }
 
             // Crear y guardar el abono
