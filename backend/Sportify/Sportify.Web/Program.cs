@@ -13,6 +13,7 @@ using Sportify.Aplicacion;
 using Sportify.Aplicacion.Mails;
 using Sportify.Infraestructura;
 using Sportify.Aplicacion.AplicacionAsistencias;
+using Sportify.Aplicacion.AplicacionEstadisticas;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioAsistencias, RepositorioAsistencias>();
+builder.Services.AddScoped<IRepositorioEstadisticas, RepositorioEstadisticas>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();

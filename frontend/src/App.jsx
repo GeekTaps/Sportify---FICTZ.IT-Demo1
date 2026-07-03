@@ -24,6 +24,7 @@ import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
+import EstadisticasPage from './pages/EstadisticasPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -63,6 +64,7 @@ function Navigation() {
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
                     </>
                 )}
 
@@ -158,6 +160,7 @@ function App() {
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
+                            <Route path="/estadisticas" element={<EstadisticasPage />} />
                         </Routes>
                     </main>
                     
