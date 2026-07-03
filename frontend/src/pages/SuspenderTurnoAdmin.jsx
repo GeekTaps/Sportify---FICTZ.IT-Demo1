@@ -24,6 +24,19 @@ function SuspenderTurnoAdmin()
 
             if (!mails || mails.length === 0)
             {
+                //acá deberia cancelar el turno y mostrar un mensaje de que no hay usuarios con ese turno reservado
+                const cancelarResponse = await fetch(
+                `http://localhost:5266/api/turnos/deporte/${idTurno}`,
+                {
+                    method: "POST"
+                }
+                );
+
+                if (!cancelarResponse.ok)
+                {
+                    alert("No se pudo cancelar el turno.");
+                    return;
+                }
                 alert("No hay usuarios con ese turno reservado");
                 navigate("/turnos"); // opcional: volver al listado
                 return;
