@@ -13,6 +13,8 @@ using Sportify.Aplicacion;
 using Sportify.Aplicacion.Mails;
 using Sportify.Infraestructura;
 using Sportify.Aplicacion.AplicacionAsistencias;
+using Sportify.Aplicacion.AplicacionAbonos;
+using Sportify.Aplicacion.AplicacionListasDeEspera;
 using Sportify.Aplicacion.AplicacionEstadisticas;
 
 
@@ -39,10 +41,15 @@ builder.Services.AddControllersWithViews();
 //Scoped de Repositorios // se registran los repositorios para que puedan ser inyectados en los casos de uso
 builder.Services.AddScoped<IRepositorioDeporte, RepositorioDeportes>();
 builder.Services.AddScoped<IRepositorioTurno, RepositorioTurno>();
+builder.Services.AddScoped<IRepositorioHorario, Sportify.Infraestructura.Repositorios.RepositorioHorario>();
 builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioAsistencias, RepositorioAsistencias>();
+builder.Services.AddScoped<IRepositorioAbono, RepositorioAbono>();
+builder.Services.AddScoped<IRepositorioListaDeEsperaAbono, RepositorioListaDeEsperaAbono>();
+builder.Services.AddScoped<IRepositorioListaDeEsperaTurno, RepositorioListaDeEsperaTurno>();
+builder.Services.AddScoped<IRepositorioHorario, RepositorioHorario>();
 builder.Services.AddScoped<IRepositorioEstadisticas, RepositorioEstadisticas>();
 
 //Scoped de Deportes
@@ -80,6 +87,7 @@ builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
 builder.Services.AddScoped<TurnoBajaUseCase>();
 builder.Services.AddScoped<SuspenderTurnoAdminUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
+builder.Services.AddTransient<IValidadorHorario, ValidadorHorario>();
 
 //Scoped de Reservas
 builder.Services.AddScoped<ReservaListadoUseCase>();
@@ -99,8 +107,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<AsistenciaPasarPresente>();
 builder.Services.AddScoped<AsistenciaAlta>();
 
+//Scoped de Abonos
+builder.Services.AddScoped<AbonarUseCase>();
+builder.Services.AddScoped<ObtenerInfoAbonoUseCase>();
 
-
+//Scoped de Listas De Espera
+builder.Services.AddScoped<EntrarListaAbonoUseCase>();
+builder.Services.AddScoped<EntrarListaTurnoUseCase>();
+builder.Services.AddScoped<IValidadorListaDeEsperaAbono, ValidadorListaDeEsperaAbono>();
+builder.Services.AddScoped<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaTurno>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.

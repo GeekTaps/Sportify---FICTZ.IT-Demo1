@@ -6,6 +6,10 @@
 # dotenv files
 .env
 
+# Scripts temporales
+AddListaDeEspera.sql
+SqlRunner/
+
 *.db
 *.db-shm
 *.db-wal

@@ -5,6 +5,7 @@ using Sportify.Aplicacion.Excepciones;
 using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionDeportes;
+using System.Linq;
 public class TurnoAltaUseCase(IRepositorioTurno repositorioTurno, IValidadorTurno validadorTurno, IRepositorioDeporte repoDeporte){
 
     public async Task Ejecutar(Turno turno) //ejecuta el caso de uso de crear un turno

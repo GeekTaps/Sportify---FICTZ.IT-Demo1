@@ -162,12 +162,14 @@ public async Task<Usuario> ObtenerPorId(string id)
     }
 
    return new Usuario(
+    usuarioIdentity.Id,
     usuarioIdentity.NombreCompleto,
     usuarioIdentity.Email,
     usuarioIdentity.Dni,
     "",
     "",
-    usuarioIdentity.FechaNacimiento
+    usuarioIdentity.FechaNacimiento,
+    usuarioIdentity.Creditos
     );
 }
 public async Task<List<Usuario>> ListarUsuarios()
@@ -177,12 +179,14 @@ public async Task<List<Usuario>> ListarUsuarios()
 
     List<Usuario> usuarios = usuariosIdentity
         .Select(u => new Usuario(
+    u.Id,
     u.NombreCompleto,
     u.Email,
     u.Dni,
     "",
     "",
-    u.FechaNacimiento
+    u.FechaNacimiento,
+    u.Creditos
 ))
         .ToList();
 
@@ -199,12 +203,14 @@ public async Task<Usuario> ObtenerPorMail(string mail)
     }
 
     return new Usuario(
+        usuarioIdentity.Id,
         usuarioIdentity.NombreCompleto,
         usuarioIdentity.Email,
         usuarioIdentity.Dni,
         "",
         "",
-        usuarioIdentity.FechaNacimiento
+        usuarioIdentity.FechaNacimiento,
+        usuarioIdentity.Creditos
     );    
 
 
@@ -221,5 +227,16 @@ public  async Task ReactivarAlumno(string mail)
     usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
 
     
+}
+
+public async Task DescontarCreditos(string id, int cantidad)
+{
+    var usuario = await userManager.FindByIdAsync(id);
+    if (usuario != null)
+    {
+        usuario.Creditos -= cantidad;
+        if (usuario.Creditos < 0) usuario.Creditos = 0;
+        await userManager.UpdateAsync(usuario);
+    }
 }
 }
