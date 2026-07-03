@@ -51,7 +51,7 @@ public class RepositorioDeportes : IRepositorioDeporte
         return await archivo.Deportes.FindAsync(idDeporte);
     }
     
-    public async Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion) //modificar la descripción del deporte encontrado por id
+    public async Task<bool> modificarDeporte(Guid idDeporte, string nuevaDescripcion, double nuevoPrecio) //modificar la descripción y el precio del deporte encontrado por id
     {
         Deporte? deporte = await archivo.Deportes.FindAsync(idDeporte);
         if (deporte == null)
@@ -59,13 +59,14 @@ public class RepositorioDeportes : IRepositorioDeporte
             return false;
         }
         deporte.descripcion = nuevaDescripcion;
+        deporte.precio = nuevoPrecio;
         await archivo.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> crearDeporte(string nombre, string descripcion) 
+    public async Task<bool> crearDeporte(string nombre, string descripcion, double precio) 
     {
-        Deporte deporte = new Deporte(nombre, descripcion);
+        Deporte deporte = new Deporte(nombre, descripcion, precio);
         await archivo.Deportes.AddAsync(deporte);
         await archivo.SaveChangesAsync();
         return true;

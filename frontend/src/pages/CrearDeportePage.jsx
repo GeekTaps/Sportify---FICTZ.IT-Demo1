@@ -7,6 +7,7 @@ function CrearDeportePage() {
 
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,8 +17,14 @@ function CrearDeportePage() {
     setError("");
     setSuccess("");
 
-    if (!nombre.trim() || !descripcion.trim()) {
+    if (!nombre.trim() || !descripcion.trim() || precio === "") {
       setError("Completá todos los campos.");
+      return;
+    }
+
+    const precioNumerico = Number(precio);
+    if (Number.isNaN(precioNumerico) || precioNumerico < 0) {
+      setError("El precio debe ser un número mayor o igual a 0.");
       return;
     }
 
@@ -27,7 +34,7 @@ function CrearDeportePage() {
       const response = await fetch("http://localhost:5266/api/deportes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() }),
+        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim(), precio: precioNumerico }),
       });
 
       if (!response.ok) {
@@ -39,6 +46,7 @@ function CrearDeportePage() {
       setSuccess("Deporte registrado correctamente.");
       setNombre("");
       setDescripcion("");
+      setPrecio("");
       setTimeout(() => navigate("/deportes"), 1000);
     } catch (err) {
       console.error(err);
@@ -60,6 +68,8 @@ function CrearDeportePage() {
         setNombre={setNombre}
         descripcion={descripcion}
         setDescripcion={setDescripcion}
+        precio={precio}
+        setPrecio={setPrecio}
         onSubmit={registrarDeporte}
         loading={loading}
         error={error}

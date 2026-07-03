@@ -1,4 +1,15 @@
-function RegistrarDeporteForm({ nombre, setNombre, descripcion, setDescripcion, onSubmit, loading, error, success }) {
+function RegistrarDeporteForm({
+  nombre,
+  setNombre,
+  descripcion,
+  setDescripcion,
+  precio,
+  setPrecio,
+  onSubmit,
+  loading,
+  error,
+  success,
+}) {
   return (
     <form onSubmit={onSubmit} style={{ maxWidth: "520px" }}>
       <div className="form-group">
@@ -20,6 +31,19 @@ function RegistrarDeporteForm({ nombre, setNombre, descripcion, setDescripcion, 
           onChange={(event) => setDescripcion(event.target.value)}
           placeholder="Breve descripción de la actividad"
           rows={4}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="precio-deporte">Precio</label>
+        <input
+          id="precio-deporte"
+          type="number"
+          min="0"
+          step="0.01"
+          value={precio}
+          onChange={(event) => setPrecio(event.target.value)}
+          placeholder="Ej: 2000"
         />
       </div>
 

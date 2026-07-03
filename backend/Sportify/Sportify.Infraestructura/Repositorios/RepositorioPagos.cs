@@ -24,7 +24,12 @@ public class RepositorioPagos : IRepositorioPago
 
     public async Task<List<Pago>> listarPagosUsuario(Guid idUsuario)
     {
-         return await archivo.Pagos.Where(p => p.idUsuario == idUsuario).ToListAsync();
+        return await archivo.Pagos.Where(p => p.idUsuario == idUsuario).ToListAsync();
+    }
+    
+    public async Task<List<Pago>> listarPagosReserva(Guid idReserva)
+    {
+        return await archivo.Pagos.Where(p => p.idReserva == idReserva).ToListAsync();
     }
 
     public async Task registrarPago(Pago pagoRealizado)

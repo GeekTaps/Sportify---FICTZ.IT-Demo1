@@ -78,7 +78,6 @@ public async Task<IActionResult> GetUserInfo(string email)
     {
         email = user.Email,
         suspendido = user.Suspendido,
-        creditos = user.Creditos
     });
 }
 

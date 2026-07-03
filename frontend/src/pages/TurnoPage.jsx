@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import BotonCancelarTurno from "../components/FrontTurnos/BotonCancelarTurno";
 
 // Inicializar MercadoPago con la Public Key
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
@@ -334,6 +335,9 @@ function TurnoPage() {
             {user?.esAdmin && (
               <div style={{ marginTop: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
                 <BotonModificarTurno onClick={() => modificarTurno(modalTurno.id)} />
+
+                <BotonCancelarTurno idTurno={modalTurno.id}/>
+
                 <button
                   onClick={() => handleEliminarTurno(modalTurno.id)}
                   className="btn btn-danger"

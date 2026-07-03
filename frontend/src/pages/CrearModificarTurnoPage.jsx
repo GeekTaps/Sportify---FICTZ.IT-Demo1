@@ -66,12 +66,23 @@ function CrearModificarTurnoPage() {
     cargarTurno();
   }, [id, isModifying]);
 
+  useEffect(() => {
+    if (!idDeporte || !deportes.length || isModifying) {
+      return;
+    }
+
+    const deporteSeleccionado = deportes.find((deporte) => deporte.id === idDeporte);
+    if (deporteSeleccionado) {
+      setPrecio(deporteSeleccionado.precio?.toString() ?? "");
+    }
+  }, [idDeporte, deportes, isModifying]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!fechaInicio || !cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
+    if (!fechaInicio || !cupo || precio === "" || !idDeporte || !horaInicio || !nommbreProfesor) {
       setError("No puede haber campos en blanco");
       return;
     }

@@ -6,7 +6,8 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace Sportify.Aplicacion.Mails;
-
+//dotnet add package MailKit //EJECUTAR ESOS COMANDOS
+//dotnet add package MimeKit
 public class ServicioEmail : IServicioEmail
 {
         //Conozcan a ServicioEmail, este es mi amigucho que se encarga de enviar mails

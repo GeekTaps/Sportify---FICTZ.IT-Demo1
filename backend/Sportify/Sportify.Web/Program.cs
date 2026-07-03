@@ -55,12 +55,19 @@ builder.Services.AddTransient<IValidadorDeporte, ValidadorDeporte>();
 builder.Services.AddScoped<RegistrarUsuarioUseCase>();
 builder.Services.AddScoped<RegistrarPagoUseCase>();
 builder.Services.AddScoped<ListarPagosUsuarioUseCase>();
+builder.Services.AddScoped<ListarMailsDeUnTurnoUseCase>();
+builder.Services.AddScoped<ListarMailsDeUsuariosConPagosPendientesUseCase>();
 builder.Services.AddTransient<IValidadorRegistrarUsuario, ValidadorRegistrarUsuario>();
 
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 
 builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
+builder.Services.AddTransient<IRepositorioCreditos, RepositorioCreditos>();
+
+builder.Services.AddScoped<RecuperarCuentaUseCase>();
+
+builder.Services.AddScoped<RegistrarEmpleadoUseCase>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
@@ -69,6 +76,7 @@ builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
 builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
 builder.Services.AddScoped<TurnoBajaUseCase>();
+builder.Services.AddScoped<SuspenderTurnoAdminUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 
 //Scoped de Reservas

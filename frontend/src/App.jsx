@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
+import BotonSimularDia11 from './components/BotonSimularDia11'
 import HomePage from './pages/HomePage'
 import DeportePage from './pages/DeportePage'
 import ModificarDeportePage from './pages/ModificarDeportePage'
@@ -17,7 +18,12 @@ import VisualizarPagos from './pages/VisualizarPagos'
 import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
 import OlvideMiContraseñaPage from './pages/OlvideMiContraseñaPage'
 import ResetearContraseñaPage from './pages/ResetearContraseñaPage';
+import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
+import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
+import IngresarMailPage from './pages/IngresarMailPage'
+import SimulacionDia11Page from './pages/SimulacionDia11Page'
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
+
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -56,6 +62,7 @@ function Navigation() {
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
+                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                     </>
                 )}
 
@@ -146,9 +153,15 @@ function App() {
                             <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
                             <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
+                            <Route path="/registrarEmpleado" element={<RegistrarEmpleadoPage />} />
+                            <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
+                            <Route path="/ingresar-mail" element={<IngresarMailPage />} />
+                            <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                         </Routes>
                     </main>
+                    
+                    <BotonSimularDia11 />
 
                     <Footer />
                 </div>

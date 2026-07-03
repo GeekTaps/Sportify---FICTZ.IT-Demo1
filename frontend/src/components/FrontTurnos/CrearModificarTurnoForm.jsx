@@ -110,14 +110,16 @@ function CrearModificarTurnoForm({
         <label htmlFor="precio">Precio</label>
         <input
           id="precio"
-          type="number"
-          min="0"
-          step="100"
-          value={precio}
-          onChange={(e) => setPrecio(e.target.value)}
-          required
+          type="text"
+          value={precio === "" ? "" : precio}
+          readOnly
           placeholder="0"
         />
+        <small style={{ display: "block", marginTop: "0.25rem", color: "#666" }}>
+          {isModifying
+            ? "El precio del turno se conserva y no se puede modificar."
+            : "El precio se toma automáticamente del deporte seleccionado."}
+        </small>
       </div>
 
       {/* 

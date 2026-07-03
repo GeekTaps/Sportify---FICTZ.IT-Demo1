@@ -14,11 +14,11 @@ public class DeporteModificacionUseCase
         this.validadorDeporte = validadorDeporte;
     }
 
-    public async Task Ejecutar(Guid idDeporte, string nuevaDescripcion) //modifica solo la descripción de un deporte existente
+    public async Task Ejecutar(Guid idDeporte, string nuevaDescripcion, double nuevoPrecio) //modifica la descripción y el precio de un deporte existente
     {
         if (await validadorDeporte.validarId(idDeporte, repositorioDeporte)) //valida que el deporte con el ID proporcionado exista antes de modificarlo
         {
-            await repositorioDeporte.modificarDeporte(idDeporte, nuevaDescripcion);
+            await repositorioDeporte.modificarDeporte(idDeporte, nuevaDescripcion, nuevoPrecio);
         }
         else
         {

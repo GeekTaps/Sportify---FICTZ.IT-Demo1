@@ -74,4 +74,27 @@ public class RepositorioReserva : IRepositorioReserva
     {
         return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno && !r.eliminada);
     }
+
+    public async Task<List<Reserva>> ListarReservasPorTurno(Guid idTurno)
+    {
+        var query = from r in archivo.Reservas
+                    where r.idTurno == idTurno && !r.eliminada
+                    select r;
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<List<Guid>> BuscarUsuariosConPagosPendientes()
+    {
+        List<Guid> usuariosConPagosPendientes = new List<Guid>();
+        foreach (var reserva in archivo.Reservas)
+        {
+            if (!reserva.paga && !reserva.eliminada)
+            {
+                usuariosConPagosPendientes.Add(reserva.idUsuario);
+            }
+        }
+        return usuariosConPagosPendientes;
+    }
+
 }

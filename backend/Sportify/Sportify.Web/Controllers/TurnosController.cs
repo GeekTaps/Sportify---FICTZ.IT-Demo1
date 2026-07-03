@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionTurnos;
+using Sportify.Aplicacion.AplicacionPagos;
 using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Excepciones;
+using Sportify.Aplicacion.AplicacionUsuarios;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 [ApiController]
@@ -19,9 +22,9 @@ public class TurnosController : ControllerBase
     private readonly IRepositorioTurno repositorioTurno;
 
     public TurnosController(
-        TurnoListadoUseCase listadoUseCase, 
-        TurnoAltaUseCase altaUseCase, 
-        TurnoModificacionUseCase modificacionUseCase, 
+        TurnoListadoUseCase listadoUseCase,
+        TurnoAltaUseCase altaUseCase,
+        TurnoModificacionUseCase modificacionUseCase,
         TurnoAltaMensualUseCase altaMensualUseCase,
         TurnoModificacionMensualUseCase modificacionMensualUseCase,
         Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte,
@@ -64,12 +67,12 @@ public class TurnosController : ControllerBase
         {
             var turnos = await listadoUseCase.Ejecutar();
             var turno = turnos.FirstOrDefault(t => t.Id == id);
-            
+
             if (turno == null)
             {
                 return NotFound(new { message = "Turno no encontrado." });
             }
-            
+
             return Ok(turno);
         }
         catch (Exception ex)
@@ -77,6 +80,36 @@ public class TurnosController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    [HttpPost("deporte/{idTurno:guid}")]
+    public async Task<IActionResult> CancelarTurno(Guid idTurno, [FromServices] SuspenderTurnoAdminUseCase suspenderTurnoAdminUseCase)
+    {
+        try
+        {
+            await suspenderTurnoAdminUseCase.Ejecutar(idTurno);
+            return Ok(new { message = "Turno cancelado exitosamente." });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("deporte/{idTurno:guid}")]
+    public async Task<IActionResult> ObtenerMailsUsuariosPorTurno(Guid idTurno, [FromServices] ListarMailsDeUnTurnoUseCase listarMailsDeUnTurnoUseCase)
+    {
+        try
+        {
+            IEnumerable<string> mails = await listarMailsDeUnTurnoUseCase.Ejecutar(idTurno);
+            return Ok(mails);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+
 
     [HttpPost]
     public async Task<IActionResult> CrearTurno([FromBody] Turno turno)

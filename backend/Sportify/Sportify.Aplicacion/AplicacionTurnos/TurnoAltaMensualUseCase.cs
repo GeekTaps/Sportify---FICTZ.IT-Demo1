@@ -45,10 +45,6 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             {
                 throw new ValidacionException("El cupo debe ser mayor a 0");
             }
-            if (precio < 0)
-            {
-                throw new ValidacionException("El precio no puede ser negativo");
-            }
 
             // Validar parsing de hora
             if (!TimeOnly.TryParse(horaInicioStr, out TimeOnly horaInicio))
@@ -73,6 +69,11 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             if (deporteObj == null)
             {
                 throw new ValidacionException("El deporte no existe.");
+            }
+
+            if (deporteObj.precio < 0)
+            {
+                throw new ValidacionException("El precio no puede ser negativo");
             }
 
             var fechasDelMes = new List<DateTime>();
@@ -118,7 +119,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                     horaFin = horaFin,
                     cupo = cupo,
                     cupoMaximo = cupo,
-                    Precio = precio,
+                    Precio = deporteObj.precio,
                     nombreTurno = $"{deporteObj.nombre} - {fechaConHora:dd/MM/yy} - {horaInicio:HH:mm}hs",
                     nommbreProfesor = nombreProfesor,
                     ListaEsperaHabilitada = listaEsperaHabilitada

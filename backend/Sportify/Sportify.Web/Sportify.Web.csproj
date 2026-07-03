@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="mercadopago-sdk" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.8" />
@@ -15,12 +16,12 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.8" />
+    <PackageReference Include="MimeKit" Version="4.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Sportify.Dominio\Sportify.Dominio.csproj" />
-    <ProjectReference Include="..\Sportify.Aplicacion\Sportify.Aplicacion.csproj" />
     <ProjectReference Include="..\Sportify.Infraestructura\Sportify.Infraestructura.csproj" />
     
   </ItemGroup>
