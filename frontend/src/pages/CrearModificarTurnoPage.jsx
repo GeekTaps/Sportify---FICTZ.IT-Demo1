@@ -8,7 +8,8 @@ function CrearModificarTurnoPage() {
   const isModifying = !!id;
 
   const [deportes, setDeportes] = useState([]);
-  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaInicio, setFechaInicio] = useState(""); // Solo usado para modificar
+  const [diaSemana, setDiaSemana] = useState(""); // Usado para crear
   const [cupo, setCupo] = useState("");
   const [idDeporte, setIdDeporte] = useState("");
   const [nombreTurno, setNombreTurno] = useState("");
@@ -71,8 +72,18 @@ function CrearModificarTurnoPage() {
     setError("");
     setSuccess("");
 
-    if (!fechaInicio || !cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
+    if (!cupo || !precio || !idDeporte || !horaInicio || !nommbreProfesor) {
       setError("No puede haber campos en blanco");
+      return;
+    }
+
+    if (!isModifying && !diaSemana) {
+      setError("Debe seleccionar un día de la semana");
+      return;
+    }
+
+    if (isModifying && !fechaInicio) {
+      setError("La fecha de inicio no es válida");
       return;
     }
 
@@ -92,7 +103,8 @@ function CrearModificarTurnoPage() {
 
     const turnoData = {
       idDeporte: idDeporte,
-      fechaInicio: fechaInicio,
+      fecha: isModifying ? fechaInicio : undefined, // Para el PUT si requiere la fecha
+      diaSemana: isModifying ? undefined : diaSemana, // Para el POST
       horaInicio: horaInicio,
       cupo: parseInt(cupo),
       precio: parseFloat(precio),
@@ -102,8 +114,8 @@ function CrearModificarTurnoPage() {
 
     try {
       const url = isModifying
-        ? `http://localhost:5266/api/turnos/mensual/${id}`
-        : "http://localhost:5266/api/turnos/mensual";
+        ? `http://localhost:5266/api/turnos/${id}`
+        : "http://localhost:5266/api/turnos";
       const method = isModifying ? "PUT" : "POST";
 
       const response = await fetch(url, {
@@ -155,6 +167,8 @@ function CrearModificarTurnoPage() {
       <CrearModificarTurnoForm
         fechaInicio={fechaInicio}
         setFechaInicio={setFechaInicio}
+        diaSemana={diaSemana}
+        setDiaSemana={setDiaSemana}
         cupo={cupo}
         setCupo={setCupo}
         idDeporte={idDeporte}

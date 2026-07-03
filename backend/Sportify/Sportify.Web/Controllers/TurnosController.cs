@@ -13,8 +13,6 @@ public class TurnosController : ControllerBase
     private readonly TurnoListadoUseCase listadoUseCase;
     private readonly TurnoAltaUseCase altaUseCase;
     private readonly TurnoModificacionUseCase modificacionUseCase;
-    private readonly TurnoAltaMensualUseCase altaMensualUseCase;
-    private readonly TurnoModificacionMensualUseCase modificacionMensualUseCase;
     private readonly Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte;
     private readonly IRepositorioTurno repositorioTurno;
 
@@ -22,16 +20,12 @@ public class TurnosController : ControllerBase
         TurnoListadoUseCase listadoUseCase, 
         TurnoAltaUseCase altaUseCase, 
         TurnoModificacionUseCase modificacionUseCase, 
-        TurnoAltaMensualUseCase altaMensualUseCase,
-        TurnoModificacionMensualUseCase modificacionMensualUseCase,
         Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte,
         IRepositorioTurno repositorioTurno)
     {
         this.listadoUseCase = listadoUseCase;
         this.altaUseCase = altaUseCase;
         this.modificacionUseCase = modificacionUseCase;
-        this.altaMensualUseCase = altaMensualUseCase;
-        this.modificacionMensualUseCase = modificacionMensualUseCase;
         this.repositorioDeporte = repositorioDeporte;
         this.repositorioTurno = repositorioTurno;
     }
@@ -79,28 +73,40 @@ public class TurnosController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CrearTurno([FromBody] Turno turno)
+    public async Task<IActionResult> CrearTurno([FromBody] Sportify.Web.DTOs.CrearTurnoRequest request)
     {
-        if (turno == null)
+        if (request == null)
         {
-            return BadRequest(new { message = "El turno no puede estar vacío." });
-        }
-
-        var deportes = await repositorioDeporte.ListarDeportes();
-        var deporte = deportes.FirstOrDefault(d => d.id == turno.IdDeporte);
-        if (deporte != null)
-        {
-            turno.nombreTurno = $"{deporte.nombre} - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
-        }
-        else
-        {
-            turno.nombreTurno = $"Turno - {turno.Fecha:dd/MM/yy} - {turno.horaInicio:HH:mm}hs";
+            return BadRequest(new { message = "El request no puede estar vacío." });
         }
 
         try
         {
-            await altaUseCase.Ejecutar(turno);
-            return Ok(new { message = "Turno creado exitosamente.", id = turno.Id });
+            TimeOnly horaInicio;
+            TimeOnly horaFin;
+
+            if (!TimeOnly.TryParse(request.HoraInicio, out horaInicio))
+            {
+                return BadRequest(new { message = "La hora de inicio no tiene un formato válido." });
+            }
+
+            if (string.IsNullOrEmpty(request.HoraFin) || !TimeOnly.TryParse(request.HoraFin, out horaFin))
+            {
+                // Por defecto los turnos duran 1 hora
+                horaFin = horaInicio.AddHours(1);
+            }
+
+            await altaUseCase.Ejecutar(
+                request.IdDeporte,
+                request.DiaSemana,
+                horaInicio,
+                horaFin,
+                request.Cupo,
+                request.Precio,
+                request.NombreProfesor,
+                request.ListaEsperaHabilitada
+            );
+            return Ok(new { message = "Turnos generados exitosamente." });
         }
         catch (ValidacionException ex)
         {
@@ -150,67 +156,6 @@ public class TurnosController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
-
-    [HttpPost("mensual")]
-        public async Task<IActionResult> CrearTurnoMensual([FromBody] Sportify.Web.DTOs.CrearTurnoMensualRequest request)
-        {
-            try
-            {
-                await altaMensualUseCase.Ejecutar(
-                    request.IdDeporte, 
-                    request.FechaInicio, 
-                    request.HoraInicio, 
-                    request.Cupo, 
-                    request.Precio,
-                    request.NombreProfesor, 
-                    request.ListaEsperaHabilitada);
-                    
-                return Ok(new { message = "Turno creado con éxito" });
-            }
-            catch (ValidacionException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (EntidadRepetidaException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-        [HttpPut("mensual/{id:guid}")]
-        public async Task<IActionResult> ModificarTurnoMensual(Guid id, [FromBody] Sportify.Web.DTOs.CrearTurnoMensualRequest request)
-        {
-            try
-            {
-                await modificacionMensualUseCase.Ejecutar(
-                    id,
-                    request.IdDeporte, 
-                    request.FechaInicio, 
-                    request.HoraInicio, 
-                    request.Cupo, 
-                    request.Precio,
-                    request.NombreProfesor, 
-                    request.ListaEsperaHabilitada);
-                    
-                return Ok(new { message = "Turnos modificados con éxito" });
-            }
-            catch (ValidacionException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (EntidadRepetidaException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> EliminarTurno(Guid id, [FromServices] TurnoBajaUseCase bajaUseCase)

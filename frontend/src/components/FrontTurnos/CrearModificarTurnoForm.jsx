@@ -1,6 +1,8 @@
 function CrearModificarTurnoForm({
   fechaInicio,
   setFechaInicio,
+  diaSemana,
+  setDiaSemana,
   cupo,
   setCupo,
   idDeporte,
@@ -56,18 +58,39 @@ function CrearModificarTurnoForm({
         </select>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="fechaInicio">Fecha de inicio</label>
-        <input
-          id="fechaInicio"
-          type="date"
-          value={fechaInicio}
-          onChange={(e) => setFechaInicio(e.target.value)}
-          required
-          min={minFecha}
-          disabled={isModifying}
-        />
-      </div>
+      {isModifying ? (
+        <div className="form-group">
+          <label htmlFor="fechaInicio">Fecha de inicio</label>
+          <input
+            id="fechaInicio"
+            type="date"
+            value={fechaInicio}
+            onChange={(e) => setFechaInicio(e.target.value)}
+            required
+            min={minFecha}
+            disabled={true}
+          />
+        </div>
+      ) : (
+        <div className="form-group">
+          <label htmlFor="diaSemana">Día de la semana</label>
+          <select
+            id="diaSemana"
+            value={diaSemana}
+            onChange={(e) => setDiaSemana(e.target.value)}
+            required
+          >
+            <option value="">Seleccioná un día</option>
+            <option value="Monday">Lunes</option>
+            <option value="Tuesday">Martes</option>
+            <option value="Wednesday">Miércoles</option>
+            <option value="Thursday">Jueves</option>
+            <option value="Friday">Viernes</option>
+            <option value="Saturday">Sábado</option>
+            <option value="Sunday">Domingo</option>
+          </select>
+        </div>
+      )}
 
       <div className="form-group">
         <label htmlFor="horaInicio">Hora de Inicio</label>

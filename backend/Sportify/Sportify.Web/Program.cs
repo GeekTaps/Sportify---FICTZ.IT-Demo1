@@ -42,6 +42,7 @@ builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioListaDeEsperaTurno, RepositorioListaDeEsperaTurno>();
+builder.Services.AddScoped<IRepositorioHorario, RepositorioHorario>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
@@ -66,10 +67,9 @@ builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
 builder.Services.AddScoped<TurnoListadoUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
-builder.Services.AddScoped<TurnoAltaMensualUseCase>();
-builder.Services.AddScoped<TurnoModificacionMensualUseCase>();
 builder.Services.AddScoped<TurnoBajaUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
+builder.Services.AddTransient<IValidadorHorario, ValidadorHorario>();
 
 //Scoped de Reservas
 builder.Services.AddScoped<ReservaListadoUseCase>();
