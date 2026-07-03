@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sportify.Infraestructura.Data;
 
@@ -10,9 +11,11 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260702184620_AddListaDeEspera")]
+    partial class AddListaDeEspera
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -145,32 +148,6 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Sportify.Dominio.Abonos.Abono", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Eliminado")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("FechaInicio")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("IdHorario")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("IdUsuario")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Abonos");
-                });
-
             modelBuilder.Entity("Sportify.Dominio.Deportes.Deporte", b =>
                 {
                     b.Property<Guid>("id")
@@ -286,30 +263,6 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Reservas");
                 });
 
-            modelBuilder.Entity("Sportify.Dominio.Turnos.Horario", b =>
-                {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("diaSemana")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("eliminado")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<TimeOnly>("hora")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("idDeporte")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Horarios");
-                });
-
             modelBuilder.Entity("Sportify.Dominio.Turnos.Turno", b =>
                 {
                     b.Property<Guid>("Id")
@@ -320,9 +273,6 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("IdDeporte")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("IdHorario")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("ListaEsperaHabilitada")
