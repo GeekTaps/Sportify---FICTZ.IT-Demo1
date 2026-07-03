@@ -12,6 +12,7 @@ using Sportify.Aplicacion.AplicacionPagos;
 using Sportify.Aplicacion.AplicacionListasDeEspera;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Mails;
+using Sportify.Aplicacion.AplicacionAbonos;
 using Sportify.Infraestructura;
 
 
@@ -42,7 +43,9 @@ builder.Services.AddScoped<IRepositorioUsuarios, RepositorioUsuarios>();
 builder.Services.AddScoped<IRepositorioReserva, RepositorioReserva>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPagos>();
 builder.Services.AddScoped<IRepositorioListaDeEsperaTurno, RepositorioListaDeEsperaTurno>();
+builder.Services.AddScoped<IRepositorioListaDeEsperaAbono, RepositorioListaDeEsperaAbono>();
 builder.Services.AddScoped<IRepositorioHorario, RepositorioHorario>();
+builder.Services.AddScoped<IRepositorioAbono, RepositorioAbono>();
 
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
@@ -80,7 +83,12 @@ builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
 
 //Scoped de Listas de Espera
 builder.Services.AddScoped<EntrarListaTurnoUseCase>();
+builder.Services.AddScoped<EntrarListaAbonoUseCase>();
 builder.Services.AddTransient<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaTurno>();
+builder.Services.AddTransient<IValidadorListaDeEsperaAbono, ValidadorListaDeEsperaAbono>();
+
+builder.Services.AddScoped<ObtenerInfoAbonoUseCase>();
+builder.Services.AddScoped<AbonarUseCase>();
 
 //Mails papá
 builder.Services.Configure<ModeloMail>(

@@ -18,6 +18,7 @@ public  Task<Usuario> ObtenerPorId(string id);
 public  Task<List<Usuario >> ListarUsuarios();
 public Task<Usuario> ObtenerPorMail(string mail);
 public  Task<bool> ExisteMail(string mail);
+public Task DescontarCreditos(string id, int cantidad);
 
 
 }

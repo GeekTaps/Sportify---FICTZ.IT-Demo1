@@ -9,11 +9,13 @@ public class Usuario{ //Aca esta usuario, si lo se debí sacarlo, pero la interf
                       //o hago que los metodos que tengan que ver con un usuario manden campo por campo(una paja pero se puede hacer no hay problem)
 public string NombreCompleto { get; set; } = "";
 
-    //no hay id se setea en userentity lo mismo con el borrado
+    public string Id { get; set; } = "";
+    public int Creditos { get; set; } = 0;
+    
     public string Mail { get; set; }
     public string Dni { get; set; }
     public string PasswordActual { get; set; } = "";
-public string PasswordNueva { get; set; } = "";
+    public string PasswordNueva { get; set; } = "";
     public DateTime FechaNacimiento { get; set; }
     
     public Usuario(string nombre, string Mail, string Dni, string Contraseña, string? passwordNueva, DateTime fechaNacimiento)
@@ -25,5 +27,17 @@ public string PasswordNueva { get; set; } = "";
         this.PasswordActual = Contraseña;
         this.PasswordNueva = passwordNueva;
         this.FechaNacimiento= fechaNacimiento;
+    }
+
+    public Usuario(string id, string nombre, string Mail, string Dni, string Contraseña, string? passwordNueva, DateTime fechaNacimiento, int creditos)
+    {
+        this.Id = id;
+        this.NombreCompleto = nombre;
+        this.Mail = Mail;
+        this.Dni= Dni;
+        this.PasswordActual = Contraseña;
+        this.PasswordNueva = passwordNueva;
+        this.FechaNacimiento= fechaNacimiento;
+        this.Creditos = creditos;
     }
 }

@@ -25,4 +25,5 @@ public class ApplicationDbContext : IdentityDbContext<UsuarioIdentity> //esta cl
     public DbSet<Sportify.Dominio.ListasDeEspera.ListaDeEsperaTurno> ListaDeEsperaTurno { get; set; }
     public DbSet<Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono> ListaDeEsperaAbono { get; set; }
     public DbSet<Sportify.Dominio.Turnos.Horario> Horarios { get; set; }
+    public DbSet<Sportify.Dominio.Abonos.Abono> Abonos { get; set; }
 }

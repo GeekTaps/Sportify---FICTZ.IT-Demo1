@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import AbonoInfoModal from "../components/FrontAbonos/AbonoInfoModal";
 
 // Inicializar MercadoPago con la Public Key
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
@@ -25,15 +26,32 @@ function TurnoPage() {
   // Estado para error al eliminar turno
   const [errorEliminar, setErrorEliminar] = useState("");
 
+  // Estado para abonos
+  const [abonoInfo, setAbonoInfo] = useState(null);
+  const [isAbonoModalOpen, setIsAbonoModalOpen] = useState(false);
+  const [loadingAbono, setLoadingAbono] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Revisar si volvimos de Mercado Pago con error
+  // Revisar si volvimos de Mercado Pago con error (pagos estándar)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("pago") === "rechazado") {
       alert("El pago no pudo completarse. Se ha cancelado la reserva y se restauró el cupo de la clase.");
       // Limpiar URL
+      navigate("/turnos", { replace: true });
+    }
+
+    const abonoStatus = params.get("abono");
+    if (abonoStatus === "exitoso") {
+      alert("Listo! Te abonaste exitosamente a la actividad.");
+      navigate("/turnos", { replace: true });
+    } else if (abonoStatus === "rechazado") {
+      alert("El pago de tu abono no pudo completarse. Se canceló la operación.");
+      navigate("/turnos", { replace: true });
+    } else if (abonoStatus === "error_interno") {
+      alert("Ocurrió un error al procesar el abono luego del pago.");
       navigate("/turnos", { replace: true });
     }
   }, [location, navigate]);
@@ -141,6 +159,28 @@ function TurnoPage() {
     setEsErrorReserva(false);
     setPreferenceId(null);
     setErrorEliminar("");
+    setIsAbonoModalOpen(false);
+    setAbonoInfo(null);
+  };
+
+  const handleInfoAbono = async () => {
+    setLoadingAbono(true);
+    try {
+      const response = await fetch(`http://localhost:5266/api/abonos/info?idTurno=${modalTurno.id}&email=${encodeURIComponent(user.email)}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setAbonoInfo(data);
+        setIsAbonoModalOpen(true);
+      } else {
+        alert(data.message || "Error al obtener información del abono");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión al obtener información del abono");
+    } finally {
+      setLoadingAbono(false);
+    }
   };
 
   const handleReservar = async () => {
@@ -316,19 +356,43 @@ function TurnoPage() {
                 {!reservaExitosa ? (
                   <>
                     {modalTurno.cupo > 0 ? (
-                      <button
-                        onClick={handleReservar}
-                        disabled={loadingReserva}
-                        className="btn btn-primary"
-                        style={{ width: "100%" }}
-                      >
-                        {loadingReserva ? "Procesando..." : "Reservar turno"}
-                      </button>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        <button
+                          onClick={handleReservar}
+                          disabled={loadingReserva || loadingAbono}
+                          className="btn btn-primary"
+                          style={{ width: "100%" }}
+                        >
+                          {loadingReserva ? "Procesando..." : "Reservar turno"}
+                        </button>
+                        {modalTurno.idHorario && (
+                          <button
+                            onClick={handleInfoAbono}
+                            disabled={loadingReserva || loadingAbono}
+                            className="btn btn-secondary"
+                            style={{ width: "100%", background: "var(--c-azul-medio)", color: "white" }}
+                          >
+                            {loadingAbono ? "Cargando..." : "Abonarse"}
+                          </button>
+                        )}
+                      </div>
                     )
                       : (
-                        <button onClick={handleEntrarListaEspera} className="btn btn-secondary" style={{ width: "100%" }}>
-                          Entrar a lista de espera
-                        </button>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                          <button onClick={handleEntrarListaEspera} className="btn btn-secondary" style={{ width: "100%" }}>
+                            Entrar a lista de espera
+                          </button>
+                          {modalTurno.idHorario && (
+                            <button
+                              onClick={handleInfoAbono}
+                              disabled={loadingReserva || loadingAbono}
+                              className="btn btn-secondary"
+                              style={{ width: "100%", background: "var(--c-azul-medio)", color: "white" }}
+                            >
+                              {loadingAbono ? "Cargando..." : "Abonarse"}
+                            </button>
+                          )}
+                        </div>
                       )
                       /* :   
                       (
@@ -392,6 +456,15 @@ function TurnoPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {isAbonoModalOpen && abonoInfo && (
+        <AbonoInfoModal
+          info={abonoInfo}
+          turnoId={modalTurno?.id}
+          userEmail={user?.email}
+          onClose={() => setIsAbonoModalOpen(false)}
+        />
       )}
     </div>
   );

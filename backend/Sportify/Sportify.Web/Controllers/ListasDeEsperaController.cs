@@ -13,13 +13,16 @@ namespace Sportify.Web.Controllers
     public class ListasDeEsperaController : ControllerBase
     {
         private readonly EntrarListaTurnoUseCase _entrarListaTurnoUseCase;
+        private readonly EntrarListaAbonoUseCase _entrarListaAbonoUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
 
         public ListasDeEsperaController(
             EntrarListaTurnoUseCase entrarListaTurnoUseCase,
+            EntrarListaAbonoUseCase entrarListaAbonoUseCase,
             UserManager<UsuarioIdentity> userManager)
         {
             _entrarListaTurnoUseCase = entrarListaTurnoUseCase;
+            _entrarListaAbonoUseCase = entrarListaAbonoUseCase;
             _userManager = userManager;
         }
 
@@ -41,6 +44,30 @@ namespace Sportify.Web.Controllers
                 await _entrarListaTurnoUseCase.Ejecutar(idUsuario, request.IdTurno);
 
                 return Ok(new { mensaje = "Te uniste a la lista de espera. Cuando sea tu turno, vas a tener 2 horas para confirmar tu asistencia." });
+            }
+            catch (EntidadNotFoundException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
+
+        [HttpPost("abono")]
+        public async Task<IActionResult> EntrarAbono([FromBody] EntrarListaEsperaRequest request)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null) return NotFound(new { mensaje = "Usuario no encontrado." });
+
+                Guid idUsuario = Guid.Parse(user.Id);
+
+                await _entrarListaAbonoUseCase.Ejecutar(idUsuario, request.IdTurno, request.Email);
+
+                return Ok(new { mensaje = "Te uniste a la lista de espera. Cuando haya cupo en esta actividad, serás notificado." });
             }
             catch (EntidadNotFoundException ex)
             {
