@@ -15,6 +15,7 @@ import MisPagosPage from './pages/MisPagosPage'
 import LoginPage from './pages/LoginPage'
 import VisualizarPagos from './pages/VisualizarPagos'
 import ListadoPagosAdmin from './pages/ListadoPagosAdmin';
+import EstadisticasPage from './pages/EstadisticasPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -53,6 +54,7 @@ function Navigation() {
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
                     </>
                 )}
 
@@ -141,6 +143,7 @@ function App() {
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                             <Route path="/pagos/visualizar" element={<VisualizarPagos />} />
                             <Route path="/pagos/admin/:usuarioId" element={<ListadoPagosAdmin />} />
+                            <Route path="/estadisticas" element={<EstadisticasPage />} />
                         </Routes>
                     </main>
 
