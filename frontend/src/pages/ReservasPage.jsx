@@ -205,8 +205,20 @@ function ReservasPage() {
                       <button 
                         onClick={() => setMostrarQR(true)} 
                         className="btn"
-                        style={{ background: '#007bff', color: 'white', width: '100%', padding: '10px' }}
+                        style={{ 
+                          background: '#0d47a1', // Un azul más intenso/oscuro que el original
+                          color: 'white', 
+                          width: '100%', 
+                          padding: '18px 30px',  // Más padding para darle altura y presencia
+                          fontSize: '1.25rem',   // Texto más grande
+                          fontWeight: 'bold',    // Texto en negrita
+                          borderRadius: '16px',  // Bordes bien redondeados
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' // Una sutil sombra
+                        }}
                       > 
+                        Mostrar QR de Asistencia
                       </button>
                     ) : (
                       <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
