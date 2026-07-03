@@ -209,6 +209,38 @@ function TurnoPage() {
     }
   };
 
+  const handleEntrarListaEspera = async () => {
+    setLoadingReserva(true);
+    setMensajeReserva("");
+    setEsErrorReserva(false);
+
+    try {
+      const response = await fetch("http://localhost:5266/api/ListasDeEspera/entrar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          idTurno: modalTurno.id
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setEsErrorReserva(false);
+        setMensajeReserva(data.mensaje);
+      } else {
+        setEsErrorReserva(true);
+        setMensajeReserva(data.mensaje || "Ocurrió un error al intentar entrar a la lista de espera.");
+      }
+    } catch (error) {
+      setEsErrorReserva(true);
+      setMensajeReserva("Error de conexión con el servidor.");
+    } finally {
+      setLoadingReserva(false);
+    }
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -292,16 +324,20 @@ function TurnoPage() {
                       >
                         {loadingReserva ? "Procesando..." : "Reservar turno"}
                       </button>
-                    ) : /* modalTurno.listaEsperaHabilitada ? (
-                      <button onClick={() => alert("Función de lista de espera no implementada aún.")} className="btn btn-secondary" style={{ width: "100%" }}>
-                        Entrar a lista de espera
-                      </button>
-                    ) : */ (
-                        <div className="alert alert-warning">
-                          Por el momento no hay más cupos para esta actividad
-                        </div>
-                      )}
-
+                    )
+                      : (
+                        <button onClick={handleEntrarListaEspera} className="btn btn-secondary" style={{ width: "100%" }}>
+                          Entrar a lista de espera
+                        </button>
+                      )
+                      /* :   
+                      (
+                          <div className="alert alert-warning">
+                            Por el momento no hay más cupos para esta actividad
+                          </div>
+                        )
+                      */
+                    }
                     {mensajeReserva && (
                       <div className={`alert ${esErrorReserva ? 'alert-error' : 'alert-success'}`} style={{ marginTop: "15px" }}>
                         {mensajeReserva}
