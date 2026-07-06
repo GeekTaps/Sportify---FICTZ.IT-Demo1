@@ -102,6 +102,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                 if (t.cupo > 0)
                 {
                     var nuevaReserva = new Reserva(Guid.Parse(usuario.Id), t.Id, false, t.Precio, t.nombreTurno);
+                    nuevaReserva.marcarComoAbonado();
                     await _reservaAltaUseCase.Ejecutar(nuevaReserva);
 
                     t.cupo--;

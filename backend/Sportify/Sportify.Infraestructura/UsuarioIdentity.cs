@@ -19,7 +19,7 @@ public class UsuarioIdentity : IdentityUser
     public int CancelacionesMes { get; set; } = 0;
     public bool EsAdmin { get; set; } = false;
     public bool EsEmpleado { get; set; } = false;
-    public int Creditos { get; set; } = 0;
+    public int Creditos { get; set; } = 0; // no deberia existir
 
     public UsuarioIdentity()
     {
