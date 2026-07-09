@@ -15,12 +15,8 @@ public string NombreCompleto { get; set; } = "";
     public string Mail { get; set; }
     public string Dni { get; set; }
     public string PasswordActual { get; set; } = "";
-<<<<<<< HEAD
 public string PasswordNueva { get; set; } = "";
     public bool Suspendido { get; set; } = false;
-=======
-    public string PasswordNueva { get; set; } = "";
->>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
     public DateTime FechaNacimiento { get; set; }
     
     public Usuario(string nombre, string Mail, string Dni, string Contraseña, string? passwordNueva, DateTime fechaNacimiento)

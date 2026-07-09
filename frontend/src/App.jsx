@@ -22,12 +22,9 @@ import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
-<<<<<<< HEAD
 import ListarAlumnosPage from './pages/ListarAlumnosPage';
 
-=======
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
->>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
 
 import EstadisticasPage from './pages/EstadisticasPage';
 
@@ -69,11 +66,8 @@ function Navigation() {
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
-<<<<<<< HEAD
                         <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
-=======
                         <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
->>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
                     </>
                 )}
 

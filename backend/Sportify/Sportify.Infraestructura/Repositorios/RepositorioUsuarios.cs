@@ -228,7 +228,6 @@ public  async Task ReactivarAlumno(string mail)
     await userManager.UpdateAsync(usuarioBuscado);
     
 }
-<<<<<<< HEAD
 public async Task<List<Usuario>> ListarUsuariosSuspendidos()
 {
     List<UsuarioIdentity> usuariosIdentity =
@@ -246,17 +245,9 @@ public async Task<List<Usuario>> ListarUsuariosSuspendidos()
         .ToList();
 
     return usuarios;
-=======
-
-public async Task DescontarCreditos(string id, int cantidad)
-{
-    var usuario = await userManager.FindByIdAsync(id);
-    if (usuario != null)
-    {
-        usuario.Creditos -= cantidad;
-        if (usuario.Creditos < 0) usuario.Creditos = 0;
-        await userManager.UpdateAsync(usuario);
-    }
->>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
 }
+public Task DescontarCreditos(string id, int cantidad)
+    {
+        throw new NotImplementedException(); //espero explicaciones
+    }
 }
