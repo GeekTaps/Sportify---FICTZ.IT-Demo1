@@ -8,6 +8,8 @@ using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Dominio.Reservas;
 using Sportify.Dominio.Abonos;
 using Sportify.Aplicacion.Excepciones;
+using Sportify.Dominio.Pagos;
+using Sportify.Aplicacion.AplicacionPagos;
 
 namespace Sportify.Aplicacion.AplicacionAbonos
 {
@@ -19,6 +21,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly IRepositorioHorario _repositorioHorario;
         private readonly IRepositorioCreditos _repositorioCreditos;
+        private readonly IRepositorioPago _repositorioPago;
 
         public AbonarUseCase(
             IRepositorioAbono repositorioAbono,
@@ -26,7 +29,8 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             IRepositorioTurno repositorioTurno,
             ReservaAltaUseCase reservaAltaUseCase,
             IRepositorioHorario repositorioHorario,
-            IRepositorioCreditos repositorioCreditos)
+            IRepositorioCreditos repositorioCreditos,
+            IRepositorioPago repositorioPago)
         {
             _repositorioAbono = repositorioAbono;
             _repositorioUsuarios = repositorioUsuarios;
@@ -34,9 +38,16 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             _reservaAltaUseCase = reservaAltaUseCase;
             _repositorioHorario = repositorioHorario;
             _repositorioCreditos = repositorioCreditos;
+            _repositorioPago = repositorioPago;
         }
 
         public async Task Ejecutar(string email, Guid idTurnoBase)
+        {
+            // HARDCODEO DE PAGOS: este overload permite registrar el pago con el monto mostrado sin usar Mercado Pago.
+            await Ejecutar(email, idTurnoBase, null);
+        }
+
+        public async Task Ejecutar(string email, Guid idTurnoBase, decimal? montoPago)
         {
             var usuario = await _repositorioUsuarios.ObtenerPorMail(email);
             if (usuario == null) throw new ValidacionException("Usuario no encontrado.");
@@ -69,6 +80,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             // Calcular precio y descontar creditos
             double precioPorClase = turnoBase.Precio;
             double precioTotalOriginal = turnosDelAbono.Count * precioPorClase;
+            double montoAPagar = precioTotalOriginal;
             
             // Consumir créditos del usuario si tiene para el deporte
             var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turnoBase.IdDeporte);
@@ -90,11 +102,14 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                     creditoEntity.UsarCredito();
                 }
                 await _repositorioCreditos.ModificarCredito(creditoEntity);
+                montoAPagar = Math.Max(0, precioTotalOriginal - creditosADescontar * precioPorClase);
             }
 
             // Crear y guardar el abono
             var abono = new Abono(Guid.Parse(usuario.Id), idHorario);
             await _repositorioAbono.CrearAbono(abono);
+
+            Guid? idPrimeraReserva = null;
 
             // Generar las reservas para todas las clases y descontar cupos
             foreach (var t in turnosDelAbono)
@@ -105,9 +120,21 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                     nuevaReserva.marcarComoAbonado();
                     await _reservaAltaUseCase.Ejecutar(nuevaReserva);
 
+                    if (idPrimeraReserva == null)
+                    {
+                        idPrimeraReserva = nuevaReserva.id;
+                    }
+
                     t.cupo--;
                     await _repositorioTurno.ModificarTurno(t, t.Id);
                 }
+            }
+
+            decimal montoFinalPago = montoPago ?? (decimal)montoAPagar;
+            if (montoFinalPago > 0 && idPrimeraReserva.HasValue)
+            {
+                var pago = new Pago(idPrimeraReserva.Value, Guid.Parse(usuario.Id), montoFinalPago);
+                await _repositorioPago.registrarPago(pago);
             }
         }
     }

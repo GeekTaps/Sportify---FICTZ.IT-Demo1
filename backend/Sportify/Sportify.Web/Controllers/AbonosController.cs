@@ -44,6 +44,32 @@ public class AbonosController : ControllerBase
         }
     }
 
+    // HARDCODEO DE PAGOS: este endpoint registra el abono localmente sin salir a Mercado Pago.
+    [HttpPost("procesar-pago-local")]
+    public async Task<IActionResult> ProcesarPagoLocal([FromBody] AbonoPreferenceRequest request)
+    {
+        try
+        {
+            var info = await _obtenerInfoAbonoUseCase.Ejecutar(request.IdTurno, request.Email);
+
+            if (info.IsAlreadySubscribed || info.HasConflict || info.NoCupo)
+            {
+                return BadRequest(new { message = "No es posible procesar el pago debido al estado del abono." });
+            }
+
+            decimal monto = (decimal)info.PrecioTotal;
+            await _abonarUseCase.Ejecutar(request.Email, request.IdTurno, monto);
+
+            return Ok(new { mensaje = "Pago registrado correctamente.", monto });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error al procesar el pago local", error = ex.Message });
+        }
+    }
+
+    /*
+    // HARDCODEO DE PAGOS: bloque original de Mercado Pago preservado como referencia.
     [HttpPost("crear-preferencia")]
     public async Task<IActionResult> CrearPreferencia([FromBody] AbonoPreferenceRequest request)
     {
@@ -98,6 +124,7 @@ public class AbonosController : ControllerBase
             return StatusCode(500, new { message = "Error al comunicarse con Mercado Pago", error = ex.Message });
         }
     }
+    */
 
     [HttpGet("retorno")]
     public async Task<IActionResult> Retorno(string status, Guid idTurno, string email)
