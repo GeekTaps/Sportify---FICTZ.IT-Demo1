@@ -17,6 +17,7 @@ public  Task BajaLogica(string id);
 public  Task ModificarUsuario(string id, Usuario usuario);
 public  Task<Usuario> ObtenerPorId(string id);
 public  Task<List<Usuario >> ListarUsuarios();
+public  Task<List<Usuario >> ListarUsuariosSuspendidos();
 public Task<Usuario> ObtenerPorMail(string mail);
 public  Task<bool> ExisteMail(string mail);
 

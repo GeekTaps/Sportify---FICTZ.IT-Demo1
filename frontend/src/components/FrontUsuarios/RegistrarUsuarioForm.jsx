@@ -23,7 +23,7 @@ setFechaNacimiento,
         <input
           id="reg-nombre"
           type="text"
-          placeholder="Juan Pérez"
+          placeholder="Tomás Martin Ciénaga"
           value={nombreCompleto}
           onChange={(e) => setNombreCompleto(e.target.value)}
         />
