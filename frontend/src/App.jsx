@@ -26,7 +26,7 @@ import ListarAlumnosPage from './pages/ListarAlumnosPage';
 
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
-import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
+
 
 import EstadisticasPage from './pages/EstadisticasPage';
 
