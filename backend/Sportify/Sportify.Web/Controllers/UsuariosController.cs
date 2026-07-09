@@ -32,7 +32,9 @@ public class UsuariosController : ControllerBase
     [HttpGet]
     public IActionResult ListarUsuarios()
     {
-        var usuarios = userManager.Users.Select(user => new
+        var usuarios = userManager.Users
+         .Where(u => !u.EsAdmin).Select(user => new
+            
         {
             id = user.Id,
             email = user.Email,
@@ -41,7 +43,9 @@ public class UsuariosController : ControllerBase
             dni = user.Dni,
             fechaNacimiento = user.FechaNacimiento,
             suspendido = user.Suspendido,
-        }).ToList();
+            
+        }
+        ).ToList();
 
         return Ok(usuarios);
     }
@@ -123,9 +127,21 @@ public async Task<IActionResult> Login([FromBody] LoginDTO dto)
     });
 }
 [HttpGet("suspendidos")]
-public async Task<IActionResult> ListarSuspendidos()
+public IActionResult ListarSuspendidos()
 {
-    var usuarios = await listarUsuariosSuspendidosUseCase.Ejecutar();
+    var usuarios = userManager.Users
+         .Where(u => u.Suspendido && !u.EsAdmin)
+        .Select(user => new
+        {
+            id = user.Id,
+            email = user.Email,
+            nombreCompleto = user.NombreCompleto,   
+            esAdmin = user.EsAdmin,
+            dni = user.Dni,
+            fechaNacimiento = user.FechaNacimiento,
+            suspendido = user.Suspendido
+        }).ToList();
+
     return Ok(usuarios);
 }
 [HttpPost("reactivar/{email}")]
