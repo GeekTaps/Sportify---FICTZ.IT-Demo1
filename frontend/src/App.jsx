@@ -26,6 +26,8 @@ import ListarAlumnosPage from './pages/ListarAlumnosPage';
 
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
+import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
+
 import EstadisticasPage from './pages/EstadisticasPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";

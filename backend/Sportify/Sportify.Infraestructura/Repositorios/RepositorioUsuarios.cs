@@ -246,8 +246,16 @@ public async Task<List<Usuario>> ListarUsuariosSuspendidos()
 
     return usuarios;
 }
-public Task DescontarCreditos(string id, int cantidad)
+
+
+public async Task DescontarCreditos(string id, int cantidad)
+{
+    var usuario = await userManager.FindByIdAsync(id);
+    if (usuario != null)
     {
-        throw new NotImplementedException(); //espero explicaciones
+        usuario.Creditos -= cantidad;
+        if (usuario.Creditos < 0) usuario.Creditos = 0;
+        await userManager.UpdateAsync(usuario);
     }
+}
 }
