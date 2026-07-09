@@ -91,6 +91,9 @@ namespace Sportify.Web.Controllers
             {
                 var client = new PreferenceClient();
                 Preference preference = await client.CreateAsync(requestPref);
+
+                Console.WriteLine($"PreferenceId: {preference.Id}");
+
                 return Ok(new { preferenceId = preference.Id });
             }
             catch (Exception ex)
