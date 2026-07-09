@@ -14,5 +14,6 @@ public class Turno
     public bool ListaEsperaHabilitada { get; set; } = false;
 
     public bool mostrarEnHome { get; set; } = true; //indica si el turno se muestra en la pagina principal (home) o no, por defecto se muestra en home.
+    public Guid? IdHorario { get; set; } //identificador del horario fijo que generó este turno
 
 }

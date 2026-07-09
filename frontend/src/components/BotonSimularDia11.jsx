@@ -26,7 +26,7 @@ function BotonSimularDia11() {
           fontWeight: 'bold'
         }}
       >
-        Simular Día 11
+        Simular Día 10
       </button>
     </div>
   );

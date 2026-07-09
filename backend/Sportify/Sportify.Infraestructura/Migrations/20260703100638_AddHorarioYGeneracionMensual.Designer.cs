@@ -11,8 +11,8 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260531190600_FechaNacimientoUsuario")]
-    partial class FechaNacimientoUsuario
+    [Migration("20260703100638_AddHorarioYGeneracionMensual")]
+    partial class AddHorarioYGeneracionMensual
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,6 +167,46 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Deportes");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaAbono");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaTurno", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idTurno")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaTurno");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Pagos.Pago", b =>
                 {
                     b.Property<Guid>("id")
@@ -196,6 +236,9 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("eliminada")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
 
@@ -220,6 +263,30 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Reservas");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Turnos.Horario", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("diaSemana")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("eliminado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("hora")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Horarios");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Turnos.Turno", b =>
                 {
                     b.Property<Guid>("Id")
@@ -232,6 +299,9 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("IdDeporte")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("IdHorario")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("ListaEsperaHabilitada")
                         .HasColumnType("INTEGER");
 
@@ -241,11 +311,17 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<int>("cupo")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("cupoMaximo")
+                        .HasColumnType("INTEGER");
+
                     b.Property<TimeOnly>("horaFin")
                         .HasColumnType("TEXT");
 
                     b.Property<TimeOnly>("horaInicio")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("mostrarEnHome")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("nombreTurno")
                         .IsRequired()

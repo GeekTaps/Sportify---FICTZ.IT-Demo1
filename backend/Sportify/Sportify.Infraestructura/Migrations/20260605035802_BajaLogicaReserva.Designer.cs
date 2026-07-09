@@ -12,7 +12,7 @@ namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260605035802_BajaLogicaReserva")]
-    partial class BajaLogicaReserva
+    partial class BajaLogicaReserva : Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

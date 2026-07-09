@@ -22,9 +22,14 @@ import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
+<<<<<<< HEAD
 import ListarAlumnosPage from './pages/ListarAlumnosPage';
 
+=======
+import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
+>>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
 
+import EstadisticasPage from './pages/EstadisticasPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -64,7 +69,11 @@ function Navigation() {
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
+<<<<<<< HEAD
                         <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
+=======
+                        <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
+>>>>>>> 2e1cb923a19ae31dc8195786ec4f3c94daabeea1
                     </>
                 )}
 
@@ -160,6 +169,8 @@ function App() {
                             <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
+                            <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
+                            <Route path="/estadisticas" element={<EstadisticasPage />} />
                         </Routes>
                     </main>
                     

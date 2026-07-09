@@ -11,8 +11,8 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260604173200_AddCupoMaximo")]
-    partial class AddCupoMaximo
+    [Migration("20260702184620_AddListaDeEspera")]
+    partial class AddListaDeEspera
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,6 +167,46 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Deportes");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaAbono");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaTurno", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idTurno")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaTurno");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Pagos.Pago", b =>
                 {
                     b.Property<Guid>("id")
@@ -195,6 +235,9 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("eliminada")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
@@ -249,6 +292,9 @@ namespace Sportify.Infraestructura.Migrations
 
                     b.Property<TimeOnly>("horaInicio")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("mostrarEnHome")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("nombreTurno")
                         .IsRequired()

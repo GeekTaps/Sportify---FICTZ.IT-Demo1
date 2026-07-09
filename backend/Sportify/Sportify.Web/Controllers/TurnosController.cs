@@ -191,7 +191,7 @@ public class TurnosController : ControllerBase
             {
                 await altaMensualUseCase.Ejecutar(
                     request.IdDeporte, 
-                    request.FechaInicio, 
+                    request.DiaSemana, 
                     request.HoraInicio, 
                     request.Cupo, 
                     request.Precio,
@@ -219,6 +219,18 @@ public class TurnosController : ControllerBase
         {
             try
             {
+                var turnoActual = (await repositorioTurno.ListarTurnos())
+                    .FirstOrDefault(t => t.Id == id);
+
+                if (turnoActual == null)
+                {
+                    return NotFound(new { message = "Turno no encontrado." });
+                }
+
+                request.IdDeporte = turnoActual.IdDeporte;
+                request.FechaInicio = turnoActual.Fecha.ToString("yyyy-MM-dd");
+                request.HoraInicio = turnoActual.horaInicio.ToString("HH:mm");
+
                 await modificacionMensualUseCase.Ejecutar(
                     id,
                     request.IdDeporte, 

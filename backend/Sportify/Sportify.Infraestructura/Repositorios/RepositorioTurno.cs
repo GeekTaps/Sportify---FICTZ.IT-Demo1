@@ -49,6 +49,11 @@ public class RepositorioTurno : IRepositorioTurno
         Turno? turno = await archivo.Turnos.FindAsync(idTurno); //busca el turno por su id
         return turno != null; //devuelve true si se encuentra el turno, false si no existe
     }
+
+    public async Task<Turno?> ObtenerTurnoPorId(Guid idTurno)
+    {
+        return await archivo.Turnos.FindAsync(idTurno);
+    }
     
     public async Task<bool> existeTurnoAsociadoAlDeporte(Guid idDeporte) //metodo para verificar si un deporte tiene turnos asociados
     {

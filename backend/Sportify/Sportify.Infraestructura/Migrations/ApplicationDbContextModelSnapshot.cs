@@ -145,6 +145,52 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Abonos.Abono", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Eliminado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaInicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IdHorario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Abonos");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.Asistencias.Asistencia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IdTurno")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Presente")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Asistencias");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Deportes.Deporte", b =>
                 {
                     b.Property<Guid>("id")
@@ -159,9 +205,52 @@ namespace Sportify.Infraestructura.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("precio")
+                        .HasColumnType("REAL");
+
                     b.HasKey("id");
 
                     b.ToTable("Deportes");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaAbono");
+                });
+
+            modelBuilder.Entity("Sportify.Dominio.ListasDeEspera.ListaDeEsperaTurno", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idTurno")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idUsuario")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ListaDeEsperaTurno");
                 });
 
             modelBuilder.Entity("Sportify.Dominio.Pagos.Pago", b =>
@@ -193,6 +282,9 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("abonado")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("eliminada")
                         .HasColumnType("INTEGER");
 
@@ -220,6 +312,30 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Reservas");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Turnos.Horario", b =>
+                {
+                    b.Property<Guid>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("diaSemana")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("eliminado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly>("hora")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("idDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Horarios");
+                });
+
             modelBuilder.Entity("Sportify.Dominio.Turnos.Turno", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,6 +346,9 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("IdDeporte")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("IdHorario")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("ListaEsperaHabilitada")
@@ -266,6 +385,26 @@ namespace Sportify.Infraestructura.Migrations
                     b.ToTable("Turnos");
                 });
 
+            modelBuilder.Entity("Sportify.Dominio.Usuario.Credito", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("DeporteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Creditos");
+                });
+
             modelBuilder.Entity("Sportify.Infraestructura.Identity.UsuarioIdentity", b =>
                 {
                     b.Property<string>("Id")
@@ -299,6 +438,9 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("EsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EsEmpleado")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaNacimiento")

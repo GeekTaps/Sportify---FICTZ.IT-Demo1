@@ -12,32 +12,29 @@ namespace Sportify.Aplicacion.AplicacionTurnos
     {
         private readonly IRepositorioTurno repositorioTurno;
         private readonly IRepositorioDeporte repositorioDeporte;
+        private readonly IRepositorioHorario repositorioHorario;
 
-        public TurnoAltaMensualUseCase(IRepositorioTurno repositorioTurno, IRepositorioDeporte repositorioDeporte)
+        public TurnoAltaMensualUseCase(IRepositorioTurno repositorioTurno, IRepositorioDeporte repositorioDeporte, IRepositorioHorario repositorioHorario)
         {
             this.repositorioTurno = repositorioTurno;
             this.repositorioDeporte = repositorioDeporte;
+            this.repositorioHorario = repositorioHorario;
         }
 
-        public async Task Ejecutar(Guid idDeporte, string fechaInicioStr, string horaInicioStr, int cupo, double precio, string nombreProfesor, bool listaEsperaHabilitada)
+        public async Task Ejecutar(Guid idDeporte, string diaSemanaStr, string horaInicioStr, int cupo, double precio, string nombreProfesor, bool listaEsperaHabilitada)
         {
             // Validar campos vacíos
             if (idDeporte == Guid.Empty || 
-                string.IsNullOrWhiteSpace(fechaInicioStr) || 
+                string.IsNullOrWhiteSpace(diaSemanaStr) || 
                 string.IsNullOrWhiteSpace(horaInicioStr) || 
                 string.IsNullOrWhiteSpace(nombreProfesor))
             {
                 throw new ValidacionException("No puede haber campos en blanco");
             }
 
-            if (!DateTime.TryParse(fechaInicioStr, out DateTime fechaInicio))
+            if (!Enum.TryParse<DayOfWeek>(diaSemanaStr, true, out DayOfWeek diaSemanaObj))
             {
-                throw new ValidacionException("Fecha de inicio inválida");
-            }
-
-            if (fechaInicio.Date < DateTime.Today)
-            {
-                throw new ValidacionException("No puede elegir un día anterior al actual");
+                throw new ValidacionException("Día de la semana inválido");
             }
 
             // Validar cupo y precio
@@ -54,14 +51,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
 
             TimeOnly horaFin = horaInicio.AddHours(1);
 
-            // Validar si es hoy, que la hora no haya pasado
-            var fechaConHoraExacta = new DateTime(fechaInicio.Year, fechaInicio.Month, fechaInicio.Day, horaInicio.Hour, horaInicio.Minute, 0);
-            if (fechaConHoraExacta < DateTime.Now)
-            {
-                throw new ValidacionException("La hora del turno debe ser posterior a la hora actual");
-            }
 
-            DayOfWeek diaSemanaObj = fechaInicio.DayOfWeek;
 
             // Validar deporte existente
             var deportes = await repositorioDeporte.ListarDeportes();
@@ -78,12 +68,8 @@ namespace Sportify.Aplicacion.AplicacionTurnos
 
             var fechasDelMes = new List<DateTime>();
             
-            // CREACIÓN INDIVIDUAL
-            fechasDelMes.Add(fechaInicio.Date);
-
-            /*
-            // CREACIÓN MENSUAL COMENTADA:
-            var startDate = fechaInicio.Date;
+            // CREACIÓN MENSUAL RE-HABILITADA:
+            var startDate = DateTime.Today;
             for (int i = 0; i <= 30; i++)
             {
                 var dt = startDate.AddDays(i);
@@ -96,7 +82,6 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                     }
                 }
             }
-            */
 
             if (!fechasDelMes.Any())
             {
@@ -104,6 +89,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos
             }
 
             // Generar los objetos Turno
+            var horario = await repositorioHorario.CrearYGuardarHorario(idDeporte, diaSemanaStr, horaInicio);
             var turnosNuevos = new List<Turno>();
             foreach (var fecha in fechasDelMes)
             {
@@ -122,7 +108,8 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                     Precio = deporteObj.precio,
                     nombreTurno = $"{deporteObj.nombre} - {fechaConHora:dd/MM/yy} - {horaInicio:HH:mm}hs",
                     nommbreProfesor = nombreProfesor,
-                    ListaEsperaHabilitada = listaEsperaHabilitada
+                    ListaEsperaHabilitada = listaEsperaHabilitada,
+                    IdHorario = horario.id
                 };
                 
                 turnosNuevos.Add(turno);

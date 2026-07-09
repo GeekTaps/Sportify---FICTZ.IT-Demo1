@@ -22,4 +22,9 @@ public class ApplicationDbContext : IdentityDbContext<UsuarioIdentity> //esta cl
     public DbSet<Sportify.Dominio.Pagos.Pago> Pagos { get; set; }
     public DbSet<Sportify.Dominio.Reservas.Reserva> Reservas { get; set; }
     public DbSet<Sportify.Dominio.Usuario.Credito> Creditos { get; set; }
+    public DbSet<Sportify.Dominio.Asistencias.Asistencia> Asistencias { get; set; }
+    public DbSet<Sportify.Dominio.ListasDeEspera.ListaDeEsperaTurno> ListaDeEsperaTurno { get; set; }
+    public DbSet<Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono> ListaDeEsperaAbono { get; set; }
+    public DbSet<Sportify.Dominio.Turnos.Horario> Horarios { get; set; }
+    public DbSet<Sportify.Dominio.Abonos.Abono> Abonos { get; set; }
 }

@@ -5,6 +5,7 @@ namespace Sportify.Web.DTOs
     public class ReservaDetalleDTO
     {
         public Guid IdReserva { get; set; }
+        public Guid IdTurno { get; set; }
         public string Actividad { get; set; }
         public string Fecha { get; set; }
         public string Horario { get; set; }

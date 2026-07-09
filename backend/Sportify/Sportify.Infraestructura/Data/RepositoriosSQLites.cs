@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace Sportify.Infraestructura.Data;
 
@@ -26,6 +27,7 @@ public static class RepositoriosSQLites
             // Utilizamos EnsureCreated en lugar de Migrate porque el historial de migraciones
             // a veces no sincroniza bien en dev con SQLite.
             db.Database.EnsureCreated();
+            AsegurarColumnaAbonado(db);
         }
         catch (InvalidOperationException ex) when (ex.Message?.IndexOf("pending changes", StringComparison.OrdinalIgnoreCase) >= 0 ||
                                                    ex.Message?.IndexOf("PendingModelChangesWarning", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -48,6 +50,40 @@ public static class RepositoriosSQLites
         {
             logger?.LogError(ex, "Error inicializando la base de datos SQLite");
             throw;
+        }
+    }
+
+    private static void AsegurarColumnaAbonado(ApplicationDbContext db)
+    {
+        var connection = db.Database.GetDbConnection();
+        var estabaAbierta = connection.State == System.Data.ConnectionState.Open;
+
+        if (!estabaAbierta)
+        {
+            connection.Open();
+        }
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "PRAGMA table_info('Reservas')";
+
+        using var reader = command.ExecuteReader();
+        var columnas = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        while (reader.Read())
+        {
+            columnas.Add(reader.GetString(1));
+        }
+
+        if (!columnas.Contains("abonado"))
+        {
+            using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText = "ALTER TABLE \"Reservas\" ADD COLUMN \"abonado\" BOOLEAN NOT NULL DEFAULT 0";
+            alterCommand.ExecuteNonQuery();
+        }
+
+        if (!estabaAbierta)
+        {
+            connection.Close();
         }
     }
 

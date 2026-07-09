@@ -9,6 +9,7 @@ function CrearModificarTurnoPage() {
 
   const [deportes, setDeportes] = useState([]);
   const [fechaInicio, setFechaInicio] = useState("");
+  const [diaSemana, setDiaSemana] = useState("");
   const [cupo, setCupo] = useState("");
   const [idDeporte, setIdDeporte] = useState("");
   const [nombreTurno, setNombreTurno] = useState("");
@@ -82,7 +83,17 @@ function CrearModificarTurnoPage() {
     setError("");
     setSuccess("");
 
-    if (!fechaInicio || !cupo || precio === "" || !idDeporte || !horaInicio || !nommbreProfesor) {
+    if (isModifying && !fechaInicio) {
+      setError("No puede haber campos en blanco");
+      return;
+    }
+
+    if (!isModifying && !diaSemana) {
+      setError("No puede haber campos en blanco");
+      return;
+    }
+
+    if (!cupo || !idDeporte || !horaInicio || !nommbreProfesor) {
       setError("No puede haber campos en blanco");
       return;
     }
@@ -103,10 +114,11 @@ function CrearModificarTurnoPage() {
 
     const turnoData = {
       idDeporte: idDeporte,
-      fechaInicio: fechaInicio,
+      fechaInicio: isModifying ? fechaInicio : undefined,
+      diaSemana: !isModifying ? diaSemana : undefined,
       horaInicio: horaInicio,
       cupo: parseInt(cupo),
-      precio: parseFloat(precio),
+      precio: parseFloat(precio || 0),
       nombreProfesor: nommbreProfesor.trim(),
       listaEsperaHabilitada: listaEsperaHabilitada
     };
@@ -166,6 +178,8 @@ function CrearModificarTurnoPage() {
       <CrearModificarTurnoForm
         fechaInicio={fechaInicio}
         setFechaInicio={setFechaInicio}
+        diaSemana={diaSemana}
+        setDiaSemana={setDiaSemana}
         cupo={cupo}
         setCupo={setCupo}
         idDeporte={idDeporte}
