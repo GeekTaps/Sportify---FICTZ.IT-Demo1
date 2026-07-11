@@ -129,6 +129,7 @@
             "trola",
             "trolo",
             "judio"
+            
         };
 
         nombre = nombre.ToLower();
