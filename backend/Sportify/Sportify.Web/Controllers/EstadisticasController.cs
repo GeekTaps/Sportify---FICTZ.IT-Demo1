@@ -30,5 +30,19 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
+
+        [HttpGet("turnos")]
+        public async Task<IActionResult> ObtenerEstadisticasPorTurno()
+        {
+            try
+            {
+                List<EstadisticaTurnoDto> lista = await _repositorioEstadisticas.ObtenerInscripcionesPorTurno();
+                return Ok(lista);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
+            }
+        }
     }
 }

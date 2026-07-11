@@ -14,12 +14,16 @@ export default function EstadisticasPage() {
     '#4dc9f6','#1E5Bf0','#0c0391','#1A2F50','#8d8d8c','#166a8f','#00a950','#58595b','#8549ba'
   ];
 
-  const verEstadisticas = async () => {
+  const [tipo, setTipo] = useState('deportes');
+
+  const verEstadisticas = async (nuevoTipo) => {
+    setTipo(nuevoTipo);
     setMostrado(true);
     setCargando(true);
     setError(null);
     try {
-      const resp = await apiClient.get('/Estadisticas/deportes');
+      const endpoint = nuevoTipo === 'turnos' ? '/Estadisticas/turnos' : '/Estadisticas/deportes';
+      const resp = await apiClient.get(endpoint);
       setDatos(resp.data || []);
     } catch (err) {
       setError('No se pudo cargar las estadísticas');
@@ -29,7 +33,6 @@ export default function EstadisticasPage() {
     }
   };
 
-  // ESTE ES EL BLOQUE REEMPLAZADO
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -39,12 +42,9 @@ export default function EstadisticasPage() {
     }
 
     if (datos && datos.length > 0) {
-      // Agregamos d.nombreDeporte a las opciones
-      const labels = datos.map(d => d.nombreDeporte || d.NombreDeporte || d.nombre || '');
+      const labels = datos.map(d => d.nombreTurno || d.nombreDeporte || d.NombreDeporte || d.nombre || '');
       const values = datos.map(d => d.CantidadInscripciones ?? d.cantidadInscripciones ?? 0);
       const backgroundColor = datos.map((_, index) => colores[index % colores.length]);
-
-      // Calculamos el total general sumando las inscripciones de todos los deportes
       const totalInscripciones = values.reduce((sum, current) => sum + current, 0);
 
       chartRef.current = new Chart(canvasRef.current.getContext('2d'), {
@@ -64,13 +64,10 @@ export default function EstadisticasPage() {
                 label: context => {
                   const label = context.label || '';
                   const value = context.parsed || 0;
-                  
-                  // Calculamos el porcentaje dinámicamente para el tooltip
-                  const porcentaje = totalInscripciones > 0 
-                    ? ((value / totalInscripciones) * 100).toFixed(1) 
+                  const porcentaje = totalInscripciones > 0
+                    ? ((value / totalInscripciones) * 100).toFixed(1)
                     : 0;
-
-                  return ` ${label}: ${value} inscripciones (${porcentaje}%)`;
+                  return `${label}: ${value} inscripciones (${porcentaje}%)`;
                 }
               }
             }
@@ -89,42 +86,47 @@ export default function EstadisticasPage() {
 
   return (
     <div style={{padding: '1rem'}}>
-      <h2>Estadísticas de Deportes</h2>
-      <p>Como Administrator, podés ver cuántas personas se inscriben por deporte.</p>
-      <button onClick={verEstadisticas} className="btn btn-primary">Ver estadísticas de deportes</button>
+      <h2>Estadísticas</h2>
+      <p>Como Administrador, podés ver estadísticas por deporte o por turno. Tenés ambas opciones disponibles.</p>
+      <div style={{display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem'}}>
+        <button onClick={() => verEstadisticas('deportes')} className="btn btn-primary">Ver estadísticas de deportes</button>
+        <button onClick={() => verEstadisticas('turnos')} className="btn btn-secondary">Ver estadísticas de turnos</button>
+      </div>
 
       {cargando && <p>Cargando...</p>}
       {error && <p style={{color: 'red'}}>{error}</p>}
 
       {!cargando && !error && mostrado && datos && datos.length === 0 && (
-        <p>No hay estadísticas actuales sobre los deportes</p>
+        <p>No hay estadísticas actuales sobre los {tipo === 'turnos' ? 'turnos' : 'deportes'}</p>
       )}
 
       {mostrado && !cargando && !error && datos && datos.length > 0 && (
         <div style={{marginTop: '1rem'}}>
-          <p>El gráfico representa la cantidad de inscripciones por deporte.</p>
+          <p>El gráfico representa la cantidad de inscripciones por {tipo === 'turnos' ? 'turno' : 'deporte'}.</p>
         </div>
       )}
 
-      <div style={{maxWidth: '300px', marginTop: '1rem'}}>
-        <canvas ref={canvasRef} style={{width: '100%'}} />
+      <div style={{maxWidth: '380px', marginTop: '1rem'}}>
+        <canvas ref={canvasRef} style={{width: '100%', height: '320px'}} />
       </div>
 
       {mostrado && !cargando && !error && datos && datos.length > 0 && (
         <div style={{marginTop: '1rem'}}>
-          <h3>Colores por deporte</h3>
+          <h3>Colores por {tipo === 'turnos' ? 'turno' : 'deporte'}</h3>
           <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-          {datos.map((d, index) => {
-  // Agregamos d.nombreDeporte también acá
-  const label = d.nombreDeporte || d.NombreDeporte || d.nombre || 'Desconocido';
-  const color = colores[index % colores.length];
-  return (
-    <li key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '0.5rem'}}>
-      <span style={{width: '16px', height: '16px', backgroundColor: color, display: 'inline-block', borderRadius: '50%', marginRight: '0.75rem'}} />
-      <span>{label}</span>
-    </li>
-  );
-})}
+            {datos.map((d, index) => {
+              const label = tipo === 'turnos'
+                ? `${d.nombreTurno || d.NombreTurno || d.nombre || 'Turno'} (${d.NombreDeporte || d.nombreDeporte || d.nombre || ''})`
+                : d.nombreDeporte || d.NombreDeporte || d.nombre || 'Desconocido';
+              const color = colores[index % colores.length];
+
+              return (
+                <li key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '0.5rem'}}>
+                  <span style={{width: '16px', height: '16px', backgroundColor: color, display: 'inline-block', borderRadius: '50%', marginRight: '0.75rem'}} />
+                  <span>{label}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

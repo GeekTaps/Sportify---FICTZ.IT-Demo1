@@ -32,4 +32,20 @@ public class RepositorioEstadisticas: IRepositorioEstadisticas
 
 		return stats;
 	}
-}
+	public async Task<List<EstadisticaTurnoDto>> ObtenerInscripcionesPorTurno()
+	{
+		var stats = await (from r in archivo.Reservas
+					   where !r.eliminada
+					   join t in archivo.Turnos on r.idTurno equals t.Id
+					   join d in archivo.Deportes on t.IdDeporte equals d.id
+					   group r by new { t.Id, t.nombreTurno, d.nombre } into g
+					   select new EstadisticaTurnoDto
+					   {
+						IdTurno = g.Key.Id,
+						NombreTurno = string.IsNullOrEmpty(g.Key.nombreTurno) ? g.Key.nombre : g.Key.nombreTurno,
+						NombreDeporte = g.Key.nombre,
+						CantidadInscripciones = g.Count()
+					   }).ToListAsync();
+
+		return stats;
+	}}
