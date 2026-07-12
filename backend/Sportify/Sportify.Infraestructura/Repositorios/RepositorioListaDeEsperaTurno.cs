@@ -61,9 +61,20 @@ public class RepositorioListaDeEsperaTurno : IRepositorioListaDeEsperaTurno
 
     public async Task<List<Usuario>> listarUsuarios(Guid idTurno)
     {
-        var ids = await archivo.ListaDeEsperaTurno.Where(e => e.idTurno == idTurno).Select(e => e.idUsuario.ToString()).ToListAsync();
+        var entries = await archivo.ListaDeEsperaTurno
+            .Where(e => e.idTurno == idTurno)
+            .OrderBy(e => e.fecha)
+            .ToListAsync();
+
+        var ids = entries.Select(e => e.idUsuario.ToString()).ToList();
         var users = await archivo.Users.Where(u => ids.Contains(u.Id)).ToListAsync();
-        return users.Select(ui => new Usuario(ui.NombreCompleto, ui.Email, ui.Dni, "", "", ui.FechaNacimiento)).ToList();
+        var usersById = users.ToDictionary(u => u.Id, u => u);
+
+        return entries
+            .Select(e => usersById.TryGetValue(e.idUsuario.ToString(), out var user) ? new Usuario(user.Id, user.NombreCompleto, user.Email, user.Dni, "", "", user.FechaNacimiento, 0) : null)
+            .Where(u => u != null)
+            .Select(u => u!)
+            .ToList();
     }
 
     public async Task<List<Turno>> listarTurnos(Guid idUsuario)

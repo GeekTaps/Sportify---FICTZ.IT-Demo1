@@ -24,6 +24,9 @@ function TurnoPage() {
   const [requierePago, setRequierePago] = useState(false);
   const [esErrorReserva, setEsErrorReserva] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
+  const [tokenConfirmacionEspera, setTokenConfirmacionEspera] = useState(null);
+  const [idTurnoConfirmacionEspera, setIdTurnoConfirmacionEspera] = useState(null);
+  const [confirmandoEspera, setConfirmandoEspera] = useState(false);
 
   // Estado para error al eliminar turno
   const [errorEliminar, setErrorEliminar] = useState("");
@@ -35,10 +38,20 @@ function TurnoPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const esTurnoConfirmablePorLink = Boolean(tokenConfirmacionEspera && modalTurno && (
+    String(modalTurno.id) === String(idTurnoConfirmacionEspera) || String(modalTurno.Id) === String(idTurnoConfirmacionEspera)
+  ));
 
-  // Revisar si volvimos de Mercado Pago con error (pagos estándar)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    const token = params.get("confirmarReserva");
+    const idTurno = params.get("idTurno");
+    if (token && idTurno) {
+      setTokenConfirmacionEspera(token);
+      setIdTurnoConfirmacionEspera(idTurno);
+    }
+
+    // Revisar si volvimos de Mercado Pago con error (pagos estándar)
     if (params.get("pago") === "rechazado") {
       alert("El pago no pudo completarse. Se ha cancelado la reserva y se restauró el cupo de la clase.");
       // Limpiar URL
@@ -75,6 +88,14 @@ function TurnoPage() {
   useEffect(() => {
     cargarTurnos();
   }, []);
+
+  useEffect(() => {
+    if (!turnos.length || !idTurnoConfirmacionEspera) return;
+    const turnoEncontrado = turnos.find((turno) => turno.id === idTurnoConfirmacionEspera);
+    if (turnoEncontrado) {
+      abrirModal(turnoEncontrado);
+    }
+  }, [turnos, idTurnoConfirmacionEspera]);
 
   const modificarTurno = (id) => {
     navigate(`/turnos/modificar/${id}`);
@@ -265,6 +286,44 @@ function TurnoPage() {
     }
   };
 
+  const handleConfirmarReservaDesdeEspera = async () => {
+    if (!tokenConfirmacionEspera || !modalTurno?.id) return;
+
+    setConfirmandoEspera(true);
+    setMensajeReserva("");
+    setEsErrorReserva(false);
+
+    try {
+      const response = await fetch("http://localhost:5266/api/ListasDeEspera/confirmar-reserva", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token: tokenConfirmacionEspera,
+          idTurno: modalTurno.id
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setEsErrorReserva(false);
+        setMensajeReserva(data.mensaje || "Reserva confirmada correctamente.");
+        setReservaExitosa(true);
+        setRequierePago(false);
+        cargarTurnos();
+      } else {
+        setEsErrorReserva(true);
+        setMensajeReserva(data.message || data.mensaje || "No se pudo confirmar la reserva.");
+      }
+    } catch (error) {
+      setEsErrorReserva(true);
+      setMensajeReserva("Error de conexión con el servidor.");
+    } finally {
+      setConfirmandoEspera(false);
+      setLoadingReserva(false);
+    }
+  };
+
   const handleEntrarListaEspera = async () => {
     setLoadingReserva(true);
     setMensajeReserva("");
@@ -373,6 +432,16 @@ function TurnoPage() {
                   <>
                     {modalTurno.cupo > 0 ? (
                       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                        {esTurnoConfirmablePorLink && (
+                          <button
+                            onClick={handleConfirmarReservaDesdeEspera}
+                            disabled={loadingReserva || confirmandoEspera}
+                            className="btn btn-success"
+                            style={{ width: "100%" }}
+                          >
+                            {confirmandoEspera ? "Confirmando..." : "Confirmar reserva y pagar seña"}
+                          </button>
+                        )}
                         <button
                           onClick={handleReservar}
                           disabled={loadingReserva || loadingAbono}
@@ -395,6 +464,11 @@ function TurnoPage() {
                     )
                       : (
                         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                          {esTurnoConfirmablePorLink && (
+                            <button onClick={handleConfirmarReservaDesdeEspera} className="btn btn-success" style={{ width: "100%" }} disabled={confirmandoEspera}>
+                              {confirmandoEspera ? "Confirmando..." : "Confirmar reserva y pagar seña"}
+                            </button>
+                          )}
                           <button onClick={handleEntrarListaEspera} className="btn btn-secondary" style={{ width: "100%" }}>
                             Entrar a lista de espera
                           </button>
