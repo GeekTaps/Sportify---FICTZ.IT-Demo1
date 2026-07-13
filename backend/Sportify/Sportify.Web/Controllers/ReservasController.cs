@@ -11,6 +11,7 @@ using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Web.DTOs;
 using Sportify.Aplicacion.AplicacionUsuarios;
+using Sportify.Aplicacion.AplicacionAsistencias;
 
 namespace Sportify.Web.Controllers
 {
@@ -33,6 +34,7 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioDeporte _repositorioDeporte;
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly IRepositorioCreditos _repositorioCreditos;
+        private readonly IRepositorioAsistencias _repositorioAsistencias;
 
         // El constructor recibe los casos de uso inyectados automáticamente por el contenedor de dependencias de ASP.NET (configurado en Program.cs)
         public ReservasController(
@@ -45,7 +47,8 @@ namespace Sportify.Web.Controllers
             UserManager<UsuarioIdentity> userManager,
             IRepositorioTurno repositorioTurno,
             IRepositorioDeporte repositorioDeporte,
-            IRepositorioReserva repositorioReserva, IRepositorioCreditos repositorioCreditos)
+            IRepositorioReserva repositorioReserva, IRepositorioCreditos repositorioCreditos,
+            IRepositorioAsistencias repositorioAsistencias)
         {
             _reservaAltaUseCase = reservaAltaUseCase;
             _reservaBajaUseCase = reservaBajaUseCase;
@@ -58,6 +61,7 @@ namespace Sportify.Web.Controllers
             _repositorioDeporte = repositorioDeporte;
             _repositorioReserva = repositorioReserva;
             _repositorioCreditos = repositorioCreditos;
+            _repositorioAsistencias = repositorioAsistencias;
         }
 
         // POST: api/Reservas
@@ -207,7 +211,9 @@ namespace Sportify.Web.Controllers
                 var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
                 var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
 
-                var dto = new ReservaDetalleDTO
+                bool asistio = await _repositorioAsistencias.AsistioATurno(reserva.idUsuario, reserva.idTurno);
+
+                var dto = new 
                 {
                     IdReserva = reserva.id,
                     IdTurno = reserva.idTurno,
@@ -217,7 +223,10 @@ namespace Sportify.Web.Controllers
                     Profesor = turno.nommbreProfesor ?? "Sin profesor",
                     HorasAnticipacion = horasAnticipacion,
                     CancelacionesMes = cancelaciones,
-                    Suspendido = suspendido
+                    Suspendido = suspendido,
+                    Paga = reserva.paga,
+                    Monto = reserva.monto,
+                    Asistio = asistio
                 };
 
                 return Ok(dto);
