@@ -81,6 +81,7 @@ builder.Services.AddScoped<RegistrarEmpleadoUseCase>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
+builder.Services.AddScoped<TurnoListadoAnterioresUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
