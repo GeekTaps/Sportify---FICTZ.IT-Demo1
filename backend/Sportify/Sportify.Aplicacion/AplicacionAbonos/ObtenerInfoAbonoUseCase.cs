@@ -94,13 +94,15 @@ public class ObtenerInfoAbonoUseCase
 
         var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turno.IdDeporte);
         int creditos = creditoEntity != null ? creditoEntity.Cantidad : 0;
+        int creditosAplicables = Math.Min(creditos, cantidadClases);
 
         double precioBase = cantidadClases * precioClase;
-        double descuento = creditos * precioClase;
-        
-        response.DescuentoAplicado = descuento;
-        response.PrecioTotal = precioBase - descuento;
-        if (response.PrecioTotal < 0) response.PrecioTotal = 0;
+        response.PrecioTotal = (precioBase - (creditosAplicables*precioClase)) * 0.80;
+        response.DescuentoAplicado = precioBase - response.PrecioTotal;
+        if (response.PrecioTotal < 0){
+            response.PrecioTotal = 0;
+            response.DescuentoAplicado = precioBase;
+        }
 
         return response;
     }

@@ -70,7 +70,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
     setLoading(true);
     setMensaje('');
     setEsError(false);
-    
+
     try {
       const response = await fetch("http://localhost:5266/api/abonos/crear-preferencia", {
         method: "POST",
@@ -107,7 +107,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
     setLoading(true);
     setMensaje('');
     setEsError(false);
-    
+
     try {
       const response = await fetch("http://localhost:5266/api/listasdeespera/abono", {
         method: "POST",
@@ -119,7 +119,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
         setEsError(false);
         setMensaje(data.mensaje || "Te has anotado en la lista de espera exitosamente.");
@@ -142,21 +142,21 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
         <p><strong>Horario Fijo:</strong> {horario}</p>
-        
+
         {descuentoAplicado > 0 && (
           <p style={{ color: "green", fontWeight: "bold" }}>
-            ¡Tenés un descuento de ${descuentoAplicado} por tus créditos disponibles!
+            ¡Tenés un descuento de ${descuentoAplicado}!
           </p>
         )}
-        
+
         <p style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
           <strong>Precio total a pagar:</strong> ${precioTotal}
         </p>
 
         {noCupo && (
-           <div className="alert alert-warning" style={{ margin: "15px 0" }}>
-             Por el momento no hay más cupos para abonarse a esta actividad.
-           </div>
+          <div className="alert alert-warning" style={{ margin: "15px 0" }}>
+            Por el momento no hay más cupos para abonarse a esta actividad.
+          </div>
         )}
 
         {mensaje && (
@@ -170,8 +170,8 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
             preferenceId ? (
               <Wallet initialization={{ preferenceId }} customization={{ texts: { action: 'pay' } }} />
             ) : (
-              <button 
-                className="btn btn-primary" 
+              <button
+                className="btn btn-primary"
                 onClick={handlePagarAbono}
                 disabled={loading}
               >
@@ -179,15 +179,15 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
               </button>
             )
           ) : (
-            <button 
-              className="btn btn-secondary" 
+            <button
+              className="btn btn-secondary"
               onClick={handleEntrarListaEspera}
               disabled={loading || mensaje}
             >
               {loading ? "Procesando..." : "Entrar a lista de espera"}
             </button>
           )}
-          
+
           <button onClick={onClose} className="btn" style={{ background: "var(--border)", color: "var(--text-main)" }}>
             Cancelar
           </button>

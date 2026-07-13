@@ -436,7 +436,7 @@ function TurnoPage() {
               <div style={{ marginTop: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
                 <BotonModificarTurno onClick={() => modificarTurno(modalTurno.id)} />
 
-                <BotonCancelarTurno idTurno={modalTurno.id}/>
+                <BotonCancelarTurno idTurno={modalTurno.id} />
 
                 <button
                   onClick={() => handleEliminarTurno(modalTurno.id)}

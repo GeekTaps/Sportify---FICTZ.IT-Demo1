@@ -75,14 +75,8 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             int creditosADescontar = 0;
             if (creditoEntity != null && creditoEntity.Cantidad > 0)
             {
-                if (creditoEntity.Cantidad >= precioTotalOriginal)
-                {
-                    creditosADescontar = (int)precioTotalOriginal;
-                }
-                else
-                {
-                    creditosADescontar = creditoEntity.Cantidad;
-                }
+                // El máximo de créditos a descontar es la cantidad de clases a las que se está abonando
+                creditosADescontar = Math.Min(creditoEntity.Cantidad, turnosDelAbono.Count);
                 
                 // Actualizar creditoEntity usando UsarCredito() varias veces
                 for (int i = 0; i < creditosADescontar; i++)
