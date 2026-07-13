@@ -89,41 +89,7 @@ namespace Sportify.Web.Controllers
             }
         }
 
-        // GET: api/Reservas/usuario/email/{email}
-        // Endpoint que devuelve la lista de reservas hechas por un usuario en particular, usando su Email.
-        [HttpGet("usuario/email/{email}")]
-        public async Task<IActionResult> ListarReservasUsuario(string email)
-        {
-            try
-            {
-                // Buscamos al usuario por su email
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user == null)
-                {
-                    return NotFound(new { mensaje = "No se encontró ningún usuario registrado con ese email." });
-                }
-
-                // Convertimos el ID del usuario (string en Identity) a Guid
-                Guid idUsuario = Guid.Parse(user.Id);
-
-                // Llamamos al caso de uso de listado de reservas para este ID de usuario específico
-                var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(idUsuario);
-                
-                // Si fue exitoso, devolvemos HTTP 200 OK junto con el arreglo JSON de las reservas
-                return Ok(reservas); 
-            }
-            catch (ListadoVacioException ex)
-            {
-                // La excepción indica que no hay reservas. Retornamos HTTP 404 Not Found.
-                return NotFound(new { mensaje = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
-            }
-        }
-
-        // GET: api/Reservas/usuario/{id}
+       // GET: api/Reservas/usuario/{id}
         // Endpoint que devuelve la lista de reservas de un usuario por su ID de Identity.
         [HttpGet("usuario/{id:guid}")]
         public async Task<IActionResult> ListarReservasUsuarioPorId(Guid id)
@@ -131,6 +97,52 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
+                return Ok(reservas);
+            }
+            catch (ListadoVacioException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
+            }
+        }
+
+        // GET: api/Reservas/usuario/activas/{id}
+        // Endpoint que devuelve la lista de reservas activas de un usuario por su ID de Identity.
+        [HttpGet("usuario/activas/{id:guid}")]
+        public async Task<IActionResult> ListarReservasActivasUsuarioPorId(Guid id)
+        {
+            try
+            {
+                var reservas = await _ReservaListadoActivasUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
+                return Ok(reservas);
+            }
+            catch (ListadoVacioException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
+            }
+        }
+
+        // GET: api/Reservas/usuario/anteriores/{id}
+        // Endpoint que devuelve la lista de reservas anteriores de un usuario por su ID de Identity.
+        [HttpGet("usuario/anteriores/{id:guid}")]
+        public async Task<IActionResult> ListarReservasUsuarioAnterioresPorId(Guid id)
+        {
+            try
+            {
+                var reservas = await _ReservaListadoAnterioresUseCase.Ejecutar(id);
                 if (reservas == null || reservas.Count == 0) {
                     throw new ListadoVacioException("el usuario seleccionado no posee reservas");
                 }

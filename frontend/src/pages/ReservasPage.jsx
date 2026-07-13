@@ -13,6 +13,41 @@ function ReservasPage() {
   const [mensajeCancelacion, setMensajeCancelacion] = useState(null);
   const [cancelando, setCancelando] = useState(false);
   const [mostrarQR, setMostrarQR] = useState(false);
+  const [viendoHistorial, setViendoHistorial] = useState(false);
+
+  const cargarReservasActivas = async () => {
+    if (!user) {
+      setMensaje("Debes iniciar sesión para ver tus reservas");
+      return;
+    }
+
+    try {
+      setMensaje("");
+      const response = await fetch(
+        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          const errData = await response.json();
+          throw new Error(
+            errData.mensaje || "No se encontraron reservas para este usuario."
+          );
+        }
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      setReservas(data);
+      if (data.length === 0) {
+        setMensaje("No Cuenta Con Reservas Activas Actualmente");
+      }
+    } catch (error) {
+      console.error("Error al cargar reservas:", error);
+      setMensaje(error.message);
+      setReservas([]);
+    }
+  };
 
   const cargarReservas = async () => {
     if (!user) {
@@ -48,20 +83,58 @@ function ReservasPage() {
     }
   };
 
+  const cargarReservasAnteriores = async () => {
+    if (!user) {
+      setMensaje("Debes iniciar sesión para ver tus reservas");
+      return;
+    }
+
+    try {
+      setMensaje("");
+      const response = await fetch(
+        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          const errData = await response.json();
+          throw new Error(
+            errData.mensaje || "No se encontraron reservas para este usuario."
+          );
+        }
+        throw new Error(`Error HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      setReservas(data);
+      if (data.length === 0) {
+        setMensaje("No Cuenta Con Reservas Anteriores");
+      }
+    } catch (error) {
+      console.error("Error al cargar reservas:", error);
+      setMensaje(error.message);
+      setReservas([]);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      cargarReservas();
+      if (viendoHistorial) {
+        cargarReservasAnteriores();
+      } else {
+        cargarReservasActivas();
+      }
     } else {
       setMensaje("Debes iniciar sesión para ver tus reservas");
     }
-  }, [user]);
+  }, [user, viendoHistorial]);
 
   const abrirModal = async (idReserva) => {
     setLoadingDetalles(true);
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
-    
+
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`
@@ -84,7 +157,7 @@ function ReservasPage() {
     setMensajeCancelacion(null);
     setMostrarQR(false);
     if (huboCancel) {
-      cargarReservas();
+      viendoHistorial ? cargarReservasAnteriores() : cargarReservasActivas();
     }
   };
 
@@ -101,12 +174,12 @@ function ReservasPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMensajeCancelacion({ 
-          tipo: "success", 
+        setMensajeCancelacion({
+          tipo: "success",
           texto: data.mensaje,
           advertencia: data.advertencia
         });
-        await cargarReservas();
+        viendoHistorial ? await cargarReservasAnteriores() : await cargarReservasActivas();
       } else {
         setMensajeCancelacion({
           tipo: "error",
@@ -123,8 +196,24 @@ function ReservasPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>Mis Reservas</h1>
-        <p>Visualizá y gestioná tus reservas activas.</p>
+        <h1>{viendoHistorial ? "Historial de Reservas" : "Mis Reservas"}</h1>
+        {/* <p>{viendoHistorial ? "Visualizá tus reservas pasadas o canceladas." : "Visualizá y gestioná tus reservas activas."}</p> */}
+        {user && !user.esAdmin && (
+          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "10px" }}>
+            <button
+              className={`btn ${!viendoHistorial ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setViendoHistorial(false)}
+            >
+              Ver reservas actuales
+            </button>
+            <button
+              className={`btn ${viendoHistorial ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setViendoHistorial(true)}
+            >
+              Ver historial de reservas
+            </button>
+          </div>
+        )}
       </div>
 
       {user?.esAdmin && (
@@ -156,6 +245,9 @@ function ReservasPage() {
                   <strong>Pago:</strong>{" "}
                   {r.paga ? "Confirmado ✅" : "Pendiente ⏳"} &nbsp;·&nbsp;
                   <strong>Monto:</strong> ${r.monto}
+                  {viendoHistorial && (
+                    <> &nbsp;·&nbsp; <strong>Asistencia:</strong> {r.asistio ? "Presente ✅" : "Ausente ❌"} </>
+                  )}
                 </p>
               </div>
               <span className="reserva-card-arrow">›</span>
@@ -202,13 +294,13 @@ function ReservasPage() {
                 {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     {!mostrarQR ? (
-                      <button 
-                        onClick={() => setMostrarQR(true)} 
+                      <button
+                        onClick={() => setMostrarQR(true)}
                         className="btn"
-                        style={{ 
+                        style={{
                           background: '#0d47a1', // Un azul más intenso/oscuro que el original
-                          color: 'white', 
-                          width: '100%', 
+                          color: 'white',
+                          width: '100%',
                           padding: '18px 30px',  // Más padding para darle altura y presencia
                           fontSize: '1.25rem',   // Texto más grande
                           fontWeight: 'bold',    // Texto en negrita
@@ -217,13 +309,13 @@ function ReservasPage() {
                           cursor: 'pointer',
                           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' // Una sutil sombra
                         }}
-                      > 
+                      >
                         Mostrar QR de Asistencia
                       </button>
                     ) : (
                       <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
                         <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
-                        <button 
+                        <button
                           onClick={() => setMostrarQR(false)}
                           style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
                         >
@@ -238,8 +330,8 @@ function ReservasPage() {
                   <div style={{ marginTop: "1rem" }}>
                     <div
                       className={`alert ${mensajeCancelacion.tipo === "success"
-                          ? "alert-success"
-                          : "alert-error"
+                        ? "alert-success"
+                        : "alert-error"
                         }`}
                     >
                       {mensajeCancelacion.texto}
@@ -254,16 +346,12 @@ function ReservasPage() {
                   <>
                     <hr />
 
-                    {reservaSeleccionada.suspendido ? (
-                      <div className="alert alert-error">
-                        Tu cuenta está suspendida. En caso de cancelar, no se
-                        devolverá el valor de la seña.
-                      </div>
-                    ) : (
+                    {reservaSeleccionada.horasAnticipacion >= 0 && (
                       <>
-                        {reservaSeleccionada.horasAnticipacion < 0 ? (
-                          <div className="alert alert-warning">
-                            Esta reserva ya pasó. No es posible cancelarla.
+                        {reservaSeleccionada.suspendido ? (
+                          <div className="alert alert-error">
+                            Tu cuenta está suspendida. En caso de cancelar, no se
+                            devolverá el valor de la seña.
                           </div>
                         ) : (
                           <>
@@ -321,8 +409,9 @@ function ReservasPage() {
             )}
           </div>
         </div>
-      )}   
-    </div>
+      )
+      }
+    </div >
   );
 }
 
