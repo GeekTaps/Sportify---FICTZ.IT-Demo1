@@ -63,6 +63,8 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             bool estaAbonado = await _repositorioAbono.ExisteAbonoActivo(Guid.Parse(usuario.Id), idHorario);
             if (estaAbonado) throw new ValidacionException("Ya estás abonado a este horario.");
 
+
+
             // Buscar clases que corresponden a este mes (y primeros 10 días del siguiente si estamos después del 20)
             var hoy = DateTime.Now.Date;
             var maxFecha = new DateTime(hoy.Year, hoy.Month, DateTime.DaysInMonth(hoy.Year, hoy.Month));

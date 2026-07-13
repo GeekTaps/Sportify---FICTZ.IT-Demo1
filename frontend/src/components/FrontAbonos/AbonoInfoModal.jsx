@@ -35,20 +35,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
     );
   }
 
-  // Escenario 2: Conflicto de horario
-  if (hasConflict) {
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
-          <div className="alert alert-error">Ya tenés una reserva en ese horario.</div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-            <button onClick={onClose} className="btn btn-secondary">Cerrar</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   // Escenario 3: Pasado el día 10
   if (isPast10thDay && hasFewClasses) {
