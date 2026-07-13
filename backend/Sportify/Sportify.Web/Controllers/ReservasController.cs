@@ -25,7 +25,9 @@ namespace Sportify.Web.Controllers
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly ReservaBajaUseCase _reservaBajaUseCase;
         private readonly ReservaBusquedaUseCase _reservaBusquedaUseCase;
-        private readonly ReservaListadoUseCase _reservaListadoUseCase;
+        private readonly ReservaListadoCompletoUseCase _ReservaListadoCompletoUseCase;
+        private readonly ReservaListadoActivasUseCase _ReservaListadoActivasUseCase;
+        private readonly ReservaListadoAnterioresUseCase _ReservaListadoAnterioresUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
         private readonly IRepositorioTurno _repositorioTurno;
         private readonly IRepositorioDeporte _repositorioDeporte;
@@ -37,7 +39,9 @@ namespace Sportify.Web.Controllers
             ReservaAltaUseCase reservaAltaUseCase,
             ReservaBajaUseCase reservaBajaUseCase,
             ReservaBusquedaUseCase reservaBusquedaUseCase,
-            ReservaListadoUseCase reservaListadoUseCase,
+            ReservaListadoCompletoUseCase reservaListadoCompletoUseCase,
+            ReservaListadoActivasUseCase reservaListadoActivasUseCase,
+            ReservaListadoAnterioresUseCase reservaListadoAnterioresUseCase,
             UserManager<UsuarioIdentity> userManager,
             IRepositorioTurno repositorioTurno,
             IRepositorioDeporte repositorioDeporte,
@@ -46,7 +50,9 @@ namespace Sportify.Web.Controllers
             _reservaAltaUseCase = reservaAltaUseCase;
             _reservaBajaUseCase = reservaBajaUseCase;
             _reservaBusquedaUseCase = reservaBusquedaUseCase;
-            _reservaListadoUseCase = reservaListadoUseCase;
+            _ReservaListadoCompletoUseCase = reservaListadoCompletoUseCase;
+            _ReservaListadoActivasUseCase = reservaListadoActivasUseCase;
+            _ReservaListadoAnterioresUseCase = reservaListadoAnterioresUseCase;
             _userManager = userManager;
             _repositorioTurno = repositorioTurno;
             _repositorioDeporte = repositorioDeporte;
@@ -101,7 +107,7 @@ namespace Sportify.Web.Controllers
                 Guid idUsuario = Guid.Parse(user.Id);
 
                 // Llamamos al caso de uso de listado de reservas para este ID de usuario específico
-                var reservas = await _reservaListadoUseCase.Ejecutar(idUsuario);
+                var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(idUsuario);
                 
                 // Si fue exitoso, devolvemos HTTP 200 OK junto con el arreglo JSON de las reservas
                 return Ok(reservas); 
@@ -124,7 +130,7 @@ namespace Sportify.Web.Controllers
         {
             try
             {
-                var reservas = await _reservaListadoUseCase.Ejecutar(id);
+                var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(id);
                 if (reservas == null || reservas.Count == 0) {
                     throw new ListadoVacioException("el usuario seleccionado no posee reservas");
                 }

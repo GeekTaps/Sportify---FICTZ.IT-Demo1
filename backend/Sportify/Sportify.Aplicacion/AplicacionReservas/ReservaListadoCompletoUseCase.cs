@@ -1,0 +1,29 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Sportify.Dominio.Reservas;
+using Sportify.Aplicacion;
+
+namespace Sportify.Aplicacion.AplicacionReservas;
+
+public class ReservaListadoCompletoUseCase
+{
+    IRepositorioReserva repositorioReserva;
+    IValidadorReserva validadorReserva;
+
+    // devuelve el listado de reservas de un usuario
+    public ReservaListadoCompletoUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
+    {
+        this.repositorioReserva = repositorioReserva;
+        this.validadorReserva = validadorReserva;
+    }
+
+    public async Task<List<Reserva>> Ejecutar(Guid idUsuario)
+    {
+        List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
+        if(reservas.Count == 0){
+            throw new ListadoVacioException("No Hiciste Ninguna Reserva Todavía");
+        }
+        return reservas;
+    }
+}

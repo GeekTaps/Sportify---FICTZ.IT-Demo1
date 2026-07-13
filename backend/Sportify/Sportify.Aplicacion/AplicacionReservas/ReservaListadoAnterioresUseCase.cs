@@ -6,13 +6,13 @@ using Sportify.Aplicacion;
 
 namespace Sportify.Aplicacion.AplicacionReservas;
 
-public class ReservaListadoUseCase
+public class ReservaListadoAnterioresUseCase
 {
     IRepositorioReserva repositorioReserva;
     IValidadorReserva validadorReserva;
 
-    // devuelve el listado de reservas de un usuario
-    public ReservaListadoUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
+    // devuelve el listado de reservas anteriores de un usuario
+    public ReservaListadoAnterioresUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
     {
         this.repositorioReserva = repositorioReserva;
         this.validadorReserva = validadorReserva;
@@ -21,9 +21,10 @@ public class ReservaListadoUseCase
     public async Task<List<Reserva>> Ejecutar(Guid idUsuario)
     {
         List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
-        if(reservas.Count == 0){
-            throw new ListadoVacioException("No Cuenta Con Reservas Activas Actualmente");
+        List<Reserva> reservasAnteriores = reservas.Where(r => r.estaEliminada()).ToList();
+        if (reservasAnteriores.Count == 0) {
+            throw new ListadoVacioException("No Contás Con Reservas Anteriores");
         }
-        return reservas;
+        return reservasAnteriores;
     }
 }
