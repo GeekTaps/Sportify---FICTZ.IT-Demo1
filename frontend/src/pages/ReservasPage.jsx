@@ -291,6 +291,17 @@ function ReservasPage() {
                   <strong>Profesor designado:</strong>{" "}
                   {reservaSeleccionada.profesor}
                 </p>
+                <p>
+                  <strong>Pago:</strong> {reservaSeleccionada.paga ? "Confirmado ✅" : "Pendiente ⏳"}
+                </p>
+                <p>
+                  <strong>Monto:</strong> ${reservaSeleccionada.monto}
+                </p>
+                {viendoHistorial && (
+                  <p>
+                    <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
+                  </p>
+                )}
                 {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     {!mostrarQR ? (
