@@ -17,9 +17,22 @@ function OlvideMiContraseñaPage() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
-      setMensaje(data.message);
-    } catch {
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        // fallback if the response is not valid JSON
+        const text = await response.text();
+        data = { message: text };
+      }
+
+      console.log('forgot-password response', response.status, data);
+
+      setMensaje(
+        data.message ?? (response.ok ? 'Si el correo existe, recibirás un email.' : 'Ocurrió un error, intentá de nuevo.')
+      );
+    } catch (err) {
+      console.error('forgot-password error', err);
       setMensaje("Ocurrió un error, intentá de nuevo.");
     } finally {
       setLoading(false);

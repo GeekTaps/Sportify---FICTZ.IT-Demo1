@@ -55,4 +55,27 @@ public async Task<IActionResult> EnviarRecordatorioPagos()
 
     return Ok();
 }
+
+    [HttpPost("test")]
+    public async Task<IActionResult> SendTest([FromBody] System.Text.Json.JsonElement datos)
+    {
+        try
+        {
+            var email = datos.GetProperty("email").GetString();
+            if (string.IsNullOrWhiteSpace(email))
+                return BadRequest(new { message = "Email requerido" });
+
+            var body = """
+                <h2>Mail de prueba - Sportify</h2>
+                <p>Este correo confirma la capacidad de envío desde la aplicación.</p>
+                """;
+
+            await servicioEmail.MandarMail(email, "Prueba de envío Sportify", body);
+            return Ok(new { message = "Mail de prueba enviado" });
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
 }

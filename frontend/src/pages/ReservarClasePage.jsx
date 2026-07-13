@@ -130,7 +130,32 @@ function ReservarClasePage() {
                 {requierePago && (
                     <div style={{ marginTop: "20px" }}>
                         <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                        <button style={{ padding: "10px 20px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "16px" }}>
+                        {/* HARDCODEO DE PAGOS: este bloque ejecuta el pago local directo cuando el usuario confirma. */}
+                        <button 
+                            onClick={async () => {
+                                try {
+                                    const response = await fetch("http://localhost:5266/api/pagos/procesar-pago-local", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ idTurno: turnoSeleccionado, email: user.email })
+                                    });
+                                    const data = await response.json();
+                                    if (response.ok) {
+                                        setEsError(false);
+                                        setMensaje(data.mensaje || "Pago registrado correctamente.");
+                                        setReservaExitosa(true);
+                                        setRequierePago(false);
+                                    } else {
+                                        setEsError(true);
+                                        setMensaje(data.message || data.mensaje || "No se pudo procesar el pago local.");
+                                    }
+                                } catch (error) {
+                                    setEsError(true);
+                                    setMensaje("Error de conexión con el servidor.");
+                                }
+                            }}
+                            style={{ padding: "10px 20px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "16px" }}
+                        >
                             Proceder al pago
                         </button>
                     </div>

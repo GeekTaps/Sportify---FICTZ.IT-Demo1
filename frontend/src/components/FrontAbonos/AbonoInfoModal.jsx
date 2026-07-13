@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Wallet } from '@mercadopago/sdk-react';
+// HARDCODEO DE PAGOS: se deja comentado el import original de Mercado Pago como referencia.
+// import { Wallet } from '@mercadopago/sdk-react';
 
 const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
   const [loading, setLoading] = useState(false);
@@ -66,13 +67,14 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
     );
   }
 
+  // HARDCODEO DE PAGOS: este bloque reemplaza la creación de preferencia por un pago local inmediato.
   const handlePagarAbono = async () => {
     setLoading(true);
     setMensaje('');
     setEsError(false);
 
     try {
-      const response = await fetch("http://localhost:5266/api/abonos/crear-preferencia", {
+      const response = await fetch("http://localhost:5266/api/abonos/procesar-pago-local", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,17 +85,12 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.preferenceId === "precio_cero") {
-          // El pago se cubre enteramente con créditos.
-          // Invocamos manualmente al retorno para registrarlo.
-          window.location.href = `http://localhost:5266/api/abonos/retorno?status=approved&idTurno=${turnoId}&email=${encodeURIComponent(userEmail)}`;
-        } else {
-          setPreferenceId(data.preferenceId);
-        }
+        setEsError(false);
+        setMensaje(data.mensaje || "Pago registrado correctamente.");
       } else {
         const errData = await response.json();
         setEsError(true);
-        setMensaje(errData.message || "Error al crear la preferencia de pago.");
+        setMensaje(errData.message || "Error al procesar el pago local.");
       }
     } catch (err) {
       setEsError(true);
@@ -167,17 +164,14 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
           {!noCupo ? (
-            preferenceId ? (
-              <Wallet initialization={{ preferenceId }} customization={{ texts: { action: 'pay' } }} />
-            ) : (
-              <button
-                className="btn btn-primary"
-                onClick={handlePagarAbono}
-                disabled={loading}
-              >
-                {loading ? "Procesando..." : "Confirmar y Pagar"}
-              </button>
-            )
+            /* HARDCODEO DE PAGOS: este botón reemplaza al widget de Mercado Pago por un pago local directo. */
+            <button
+              className="btn btn-primary"
+              onClick={handlePagarAbono}
+              disabled={loading}
+            >
+              {loading ? "Procesando..." : "Confirmar y Pagar"}
+            </button>
           ) : (
             <button
               className="btn btn-secondary"
@@ -188,6 +182,19 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
             </button>
           )}
 
+          {/* HARDCODEO DE PAGOS: se conserva el bloque original de Mercado Pago comentado como referencia.
+          {preferenceId ? (
+            <Wallet initialization={{ preferenceId }} customization={{ texts: { action: 'pay' } }} />
+          ) : (
+            <button 
+              className="btn btn-primary" 
+              onClick={handlePagarAbono}
+              disabled={loading}
+            >
+              {loading ? "Procesando..." : "Confirmar y Pagar"}
+            </button>
+          )}
+          */}
           <button onClick={onClose} className="btn" style={{ background: "var(--border)", color: "var(--text-main)" }}>
             Cancelar
           </button>

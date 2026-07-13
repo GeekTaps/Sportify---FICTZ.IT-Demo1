@@ -22,7 +22,11 @@ import RegistrarEmpleadoPage from './pages/RegistrarEmpleadoPage';
 import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
+import ListarAlumnosPage from './pages/ListarAlumnosPage';
+
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
+
+
 
 import EstadisticasPage from './pages/EstadisticasPage';
 
@@ -64,6 +68,7 @@ function Navigation() {
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
+                        <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
                         <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
                     </>
                 )}
@@ -149,6 +154,7 @@ function App() {
                             <Route path="/pagos/registrar" element={<PagosRegistrarPage />} />
                             <Route path="/mis-pagos" element={<MisPagosPage />} />
                             <Route path="/reservas" element={<ReservasPage />} />
+                            <Route path="/alumnos" element={<ListarAlumnosPage />} />
                             <Route path="/modificarUsuario" element={<ModificarUsuarioPage />} />
                             <Route path="/modificarUsuario/:id" element={<ModificarUsuarioPage />} />
                             <Route path="/pagos/visualizar" element={<VisualizarPagos />} />
