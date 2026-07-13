@@ -11,6 +11,7 @@ using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Web.DTOs;
 using Sportify.Aplicacion.AplicacionUsuarios;
+using Sportify.Aplicacion.AplicacionAsistencias;
 
 namespace Sportify.Web.Controllers
 {
@@ -25,33 +26,42 @@ namespace Sportify.Web.Controllers
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly ReservaBajaUseCase _reservaBajaUseCase;
         private readonly ReservaBusquedaUseCase _reservaBusquedaUseCase;
-        private readonly ReservaListadoUseCase _reservaListadoUseCase;
+        private readonly ReservaListadoCompletoUseCase _ReservaListadoCompletoUseCase;
+        private readonly ReservaListadoActivasUseCase _ReservaListadoActivasUseCase;
+        private readonly ReservaListadoAnterioresUseCase _ReservaListadoAnterioresUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
         private readonly IRepositorioTurno _repositorioTurno;
         private readonly IRepositorioDeporte _repositorioDeporte;
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly IRepositorioCreditos _repositorioCreditos;
+        private readonly IRepositorioAsistencias _repositorioAsistencias;
 
         // El constructor recibe los casos de uso inyectados automáticamente por el contenedor de dependencias de ASP.NET (configurado en Program.cs)
         public ReservasController(
             ReservaAltaUseCase reservaAltaUseCase,
             ReservaBajaUseCase reservaBajaUseCase,
             ReservaBusquedaUseCase reservaBusquedaUseCase,
-            ReservaListadoUseCase reservaListadoUseCase,
+            ReservaListadoCompletoUseCase reservaListadoCompletoUseCase,
+            ReservaListadoActivasUseCase reservaListadoActivasUseCase,
+            ReservaListadoAnterioresUseCase reservaListadoAnterioresUseCase,
             UserManager<UsuarioIdentity> userManager,
             IRepositorioTurno repositorioTurno,
             IRepositorioDeporte repositorioDeporte,
-            IRepositorioReserva repositorioReserva, IRepositorioCreditos repositorioCreditos)
+            IRepositorioReserva repositorioReserva, IRepositorioCreditos repositorioCreditos,
+            IRepositorioAsistencias repositorioAsistencias)
         {
             _reservaAltaUseCase = reservaAltaUseCase;
             _reservaBajaUseCase = reservaBajaUseCase;
             _reservaBusquedaUseCase = reservaBusquedaUseCase;
-            _reservaListadoUseCase = reservaListadoUseCase;
+            _ReservaListadoCompletoUseCase = reservaListadoCompletoUseCase;
+            _ReservaListadoActivasUseCase = reservaListadoActivasUseCase;
+            _ReservaListadoAnterioresUseCase = reservaListadoAnterioresUseCase;
             _userManager = userManager;
             _repositorioTurno = repositorioTurno;
             _repositorioDeporte = repositorioDeporte;
             _repositorioReserva = repositorioReserva;
             _repositorioCreditos = repositorioCreditos;
+            _repositorioAsistencias = repositorioAsistencias;
         }
 
         // POST: api/Reservas
@@ -83,48 +93,60 @@ namespace Sportify.Web.Controllers
             }
         }
 
-        // GET: api/Reservas/usuario/email/{email}
-        // Endpoint que devuelve la lista de reservas hechas por un usuario en particular, usando su Email.
-        [HttpGet("usuario/email/{email}")]
-        public async Task<IActionResult> ListarReservasUsuario(string email)
-        {
-            try
-            {
-                // Buscamos al usuario por su email
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user == null)
-                {
-                    return NotFound(new { mensaje = "No se encontró ningún usuario registrado con ese email." });
-                }
-
-                // Convertimos el ID del usuario (string en Identity) a Guid
-                Guid idUsuario = Guid.Parse(user.Id);
-
-                // Llamamos al caso de uso de listado de reservas para este ID de usuario específico
-                var reservas = await _reservaListadoUseCase.Ejecutar(idUsuario);
-                
-                // Si fue exitoso, devolvemos HTTP 200 OK junto con el arreglo JSON de las reservas
-                return Ok(reservas); 
-            }
-            catch (ListadoVacioException ex)
-            {
-                // La excepción indica que no hay reservas. Retornamos HTTP 404 Not Found.
-                return NotFound(new { mensaje = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
-            }
-        }
-
-        // GET: api/Reservas/usuario/{id}
+       // GET: api/Reservas/usuario/{id}
         // Endpoint que devuelve la lista de reservas de un usuario por su ID de Identity.
         [HttpGet("usuario/{id:guid}")]
         public async Task<IActionResult> ListarReservasUsuarioPorId(Guid id)
         {
             try
             {
-                var reservas = await _reservaListadoUseCase.Ejecutar(id);
+                var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
+                return Ok(reservas);
+            }
+            catch (ListadoVacioException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
+            }
+        }
+
+        // GET: api/Reservas/usuario/activas/{id}
+        // Endpoint que devuelve la lista de reservas activas de un usuario por su ID de Identity.
+        [HttpGet("usuario/activas/{id:guid}")]
+        public async Task<IActionResult> ListarReservasActivasUsuarioPorId(Guid id)
+        {
+            try
+            {
+                var reservas = await _ReservaListadoActivasUseCase.Ejecutar(id);
+                if (reservas == null || reservas.Count == 0) {
+                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
+                }
+                return Ok(reservas);
+            }
+            catch (ListadoVacioException ex)
+            {
+                return NotFound(new { mensaje = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "el usuario seleccionado no posee reservas", detalle = ex.Message });
+            }
+        }
+
+        // GET: api/Reservas/usuario/anteriores/{id}
+        // Endpoint que devuelve la lista de reservas anteriores de un usuario por su ID de Identity.
+        [HttpGet("usuario/anteriores/{id:guid}")]
+        public async Task<IActionResult> ListarReservasUsuarioAnterioresPorId(Guid id)
+        {
+            try
+            {
+                var reservas = await _ReservaListadoAnterioresUseCase.Ejecutar(id);
                 if (reservas == null || reservas.Count == 0) {
                     throw new ListadoVacioException("el usuario seleccionado no posee reservas");
                 }
@@ -189,7 +211,9 @@ namespace Sportify.Web.Controllers
                 var fechaTurno = turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
                 var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
 
-                var dto = new ReservaDetalleDTO
+                bool asistio = await _repositorioAsistencias.AsistioATurno(reserva.idUsuario, reserva.idTurno);
+
+                var dto = new 
                 {
                     IdReserva = reserva.id,
                     IdTurno = reserva.idTurno,
@@ -199,7 +223,10 @@ namespace Sportify.Web.Controllers
                     Profesor = turno.nommbreProfesor ?? "Sin profesor",
                     HorasAnticipacion = horasAnticipacion,
                     CancelacionesMes = cancelaciones,
-                    Suspendido = suspendido
+                    Suspendido = suspendido,
+                    Paga = reserva.paga,
+                    Monto = reserva.monto,
+                    Asistio = asistio
                 };
 
                 return Ok(dto);
