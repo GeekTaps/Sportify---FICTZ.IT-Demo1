@@ -16,6 +16,8 @@ function TurnoPage() {
   const [modalTurno, setModalTurno] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [loadingUser, setLoadingUser] = useState(false);
+  const [viendoHistorial, setViendoHistorial] = useState(false);
+  const [infoHistoricaTurno, setInfoHistoricaTurno] = useState(null);
 
   // Estados de reserva
   const [loadingReserva, setLoadingReserva] = useState(false);
@@ -60,7 +62,8 @@ function TurnoPage() {
 
   const cargarTurnos = async () => {
     try {
-      const response = await fetch("http://localhost:5266/api/turnos");
+      const url = viendoHistorial ? "http://localhost:5266/api/turnos/anteriores" : "http://localhost:5266/api/turnos";
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Error HTTP ${response.status}`);
       }
@@ -74,7 +77,7 @@ function TurnoPage() {
 
   useEffect(() => {
     cargarTurnos();
-  }, []);
+  }, [viendoHistorial]);
 
   const modificarTurno = (id) => {
     navigate(`/turnos/modificar/${id}`);
@@ -99,6 +102,19 @@ function TurnoPage() {
 
   const abrirModal = async (turno) => {
     setModalTurno(turno);
+    setInfoHistoricaTurno(null);
+
+    if (viendoHistorial) {
+      try {
+        const res = await fetch(`http://localhost:5266/api/turnos/${turno.id}/info-historica`);
+        if (res.ok) {
+          const data = await res.json();
+          setInfoHistoricaTurno(data);
+        }
+      } catch (e) {
+        console.error("Error cargando info histórica del turno:", e);
+      }
+    }
 
     if (!user) {
       setUserInfo({ error: "No logueado" });
@@ -300,10 +316,26 @@ function TurnoPage() {
   return (
     <div>
       <div className="page-header">
-        <h1>Gestión de Turnos</h1>
+        <h1>{viendoHistorial ? "Historial de Turnos" : "Gestión de Turnos"}</h1>
+        {user?.esAdmin && (
+          <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "10px" }}>
+            <button
+              className={`btn ${!viendoHistorial ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setViendoHistorial(false)}
+            >
+              Ver turnos actuales
+            </button>
+            <button
+              className={`btn ${viendoHistorial ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setViendoHistorial(true)}
+            >
+              Ver historial de turnos
+            </button>
+          </div>
+        )}
       </div>
 
-      {user?.esAdmin && (
+      {user?.esAdmin && !viendoHistorial && (
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
           <Link to="/turnos/crear">
             <button className="btn btn-primary">+ Crear Turno</button>
@@ -312,7 +344,7 @@ function TurnoPage() {
       )}
 
       {turnos.length === 0 ? (
-        <p>Por el momento no hay turnos disponibles</p>
+        <p>{viendoHistorial ? "No hay turnos anteriores cargados" : "Por el momento no hay turnos disponibles"}</p>
       ) : (
         <ul className="grid-list">
           {turnos.map((turno) => (
@@ -343,10 +375,17 @@ function TurnoPage() {
             <p><strong>Horario:</strong> {formatearHora(modalTurno.horaInicio)}</p>
             <p><strong>Profesor designado:</strong> {modalTurno.nommbreProfesor || "N/A"}</p>
             <p><strong>Precio:</strong> ${modalTurno.precio}</p>
+            
+            {viendoHistorial && infoHistoricaTurno && (
+              <>
+                <p><strong>Inscriptos:</strong> {infoHistoricaTurno.inscriptos}</p>
+                <p><strong>Asistencias:</strong> {infoHistoricaTurno.asistencias}</p>
+              </>
+            )}
 
             <hr style={{ margin: "15px 0" }} />
 
-            {loadingUser ? (
+            {viendoHistorial ? null : loadingUser ? (
               <p>Verificando datos de usuario...</p>
             ) : !user ? (
               <div className="alert alert-warning">
@@ -458,7 +497,7 @@ function TurnoPage() {
               </div>
             )}
 
-            {user?.esAdmin && (
+            {user?.esAdmin && !viendoHistorial && (
               <div style={{ marginTop: "15px", display: "flex", flexDirection: "column", gap: "10px" }}>
                 <BotonModificarTurno onClick={() => modificarTurno(modalTurno.id)} />
 
