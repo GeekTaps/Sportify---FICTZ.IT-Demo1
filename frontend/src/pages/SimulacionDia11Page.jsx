@@ -42,7 +42,7 @@ function SimulacionDia11Page() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
-        <h1>Simulando Día 11 del mes...</h1>
+        <h1>Simulando Día 10 del mes...</h1>
     </div>
   );
 }

@@ -4,18 +4,18 @@ using Sportify.Dominio.Usuario;
 
 namespace Sportify.Aplicacion.AplicacionUsuarios;
 
-public class ListarUsuariosUseCase
+public class ListarUsuariosSuspendidosUseCase
 { 
 private readonly IRepositorioUsuarios repositorioUsuarios;
 
 
-    public ListarUsuariosUseCase (IRepositorioUsuarios repositorioUsuarios)
+    public ListarUsuariosSuspendidosUseCase (IRepositorioUsuarios repositorioUsuarios)
     {
         this.repositorioUsuarios =repositorioUsuarios;
     }
 
     
     public async Task<List<Usuario >> Ejecutar(){
-        return await this.repositorioUsuarios.ListarUsuarios();
+        return await this.repositorioUsuarios.ListarUsuariosSuspendidos();
     }
 }

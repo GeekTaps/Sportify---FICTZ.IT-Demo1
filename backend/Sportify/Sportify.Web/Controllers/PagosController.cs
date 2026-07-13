@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Linq;
 using MercadoPago.Config;
 using MercadoPago.Client.Preference;
 using MercadoPago.Resource.Preference;
@@ -48,6 +49,62 @@ namespace Sportify.Web.Controllers
             MercadoPagoConfig.AccessToken = _configuration["MercadoPago:AccessToken"];
         }
 
+        // HARDCODEO DE PAGOS: este endpoint registra el pago localmente sin salir a Mercado Pago.
+        [HttpPost("procesar-pago-local")]
+        public async Task<IActionResult> ProcesarPagoLocal([FromBody] PagoRequest request)
+        {
+            if (request == null || request.IdTurno == Guid.Empty || string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest(new { message = "Datos de pago inválidos." });
+            }
+
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    return NotFound(new { message = "Usuario no encontrado." });
+                }
+
+                var turnoExiste = await _repositorioTurno.BuscarTurnoPorId(request.IdTurno);
+                if (!turnoExiste) return NotFound(new { message = "Turno no encontrado." });
+
+                var listTurnos = await _repositorioTurno.ListarTurnos();
+                var turno = listTurnos.Find(t => t.Id == request.IdTurno);
+                if (turno == null) return NotFound(new { message = "Turno no encontrado." });
+
+                if (turno.cupo <= 0)
+                {
+                    return BadRequest(new { message = "No hay cupo disponible para este turno." });
+                }
+
+                var reservasUsuario = await _repositorioReserva.listarReservasUsuario(Guid.Parse(user.Id));
+                if (reservasUsuario.Any(r => r.idTurno == request.IdTurno))
+                {
+                    return BadRequest(new { message = "Ya reservaste este turno." });
+                }
+
+                decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
+
+                turno.cupo--;
+                await _repositorioTurno.ModificarTurno(turno, turno.Id);
+
+                var nuevaReserva = new Sportify.Dominio.Reservas.Reserva(Guid.Parse(user.Id), turno.Id, true, (double)montoSeña, turno.nombreTurno);
+                await _reservaAltaUseCase.Ejecutar(nuevaReserva);
+
+                var pago = new Pago(nuevaReserva.id, Guid.Parse(user.Id), montoSeña);
+                await _registrarPagoUseCase.Ejecutar(pago);
+
+                return Ok(new { mensaje = "Pago registrado correctamente. Tu reserva quedó confirmada.", monto = montoSeña, reservaId = nuevaReserva.id });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al procesar el pago local", error = ex.Message });
+            }
+        }
+
+        /*
+        // HARDCODEO DE PAGOS: bloque original de Mercado Pago preservado como referencia.
         [HttpPost("crear-preferencia")]
         public async Task<IActionResult> CrearPreferencia([FromBody] PagoRequest request)
         {
@@ -91,6 +148,9 @@ namespace Sportify.Web.Controllers
             {
                 var client = new PreferenceClient();
                 Preference preference = await client.CreateAsync(requestPref);
+
+                Console.WriteLine($"PreferenceId: {preference.Id}");
+
                 return Ok(new { preferenceId = preference.Id });
             }
             catch (Exception ex)
@@ -98,6 +158,7 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { message = "Error al comunicarse con Mercado Pago", error = ex.Message });
             }
         }
+        */
 
         [HttpGet("usuario/{id:guid}")]
         public async Task<IActionResult> ListarPagosUsuario(Guid id)

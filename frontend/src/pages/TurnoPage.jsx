@@ -2,12 +2,13 @@ import BotonModificarTurno from "../components/FrontTurnos/BotonModificarTurno";
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+// HARDCODEO DE PAGOS: se deja comentado el bloque original de Mercado Pago como referencia.
+// import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import BotonCancelarTurno from "../components/FrontTurnos/BotonCancelarTurno";
 import AbonoInfoModal from "../components/FrontAbonos/AbonoInfoModal";
 
-// Inicializar MercadoPago con la Public Key
-initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
+// HARDCODEO DE PAGOS: se deja comentado el init original de Mercado Pago.
+// initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
 
 function TurnoPage() {
   const { user } = useContext(AuthContext);
@@ -213,34 +214,48 @@ function TurnoPage() {
         if (data.mensaje === "Requiere pago") {
           setRequierePago(true);
           setMensajeReserva("Reserva casi lista!");
-          // Pedir al backend que cree la preferencia de Mercado Pago
-          try {
-            const pagoResponse = await fetch("http://localhost:5266/api/pagos/crear-preferencia", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                idTurno: modalTurno.id,
-                email: user.email
-              })
-            });
-
-            if (pagoResponse.ok) {
-              const pagoData = await pagoResponse.json();
-              setPreferenceId(pagoData.preferenceId);
-            } else {
-              const errorData = await pagoResponse.json();
-              setMensajeReserva(`Error MP: ${errorData.message} - ${errorData.error || ''}`);
-            }
-          } catch (err) {
-            console.error("Error al crear preferencia:", err);
-            setMensajeReserva("Error al crear preferencia: " + err.message);
-          }
         }
         // Actualizamos cupo localmente o recargamos
         cargarTurnos();
       } else {
         setEsErrorReserva(true);
         setMensajeReserva(data.mensaje || "Ocurrió un error al intentar reservar.");
+      }
+    } catch (error) {
+      setEsErrorReserva(true);
+      setMensajeReserva("Error de conexión con el servidor.");
+    } finally {
+      setLoadingReserva(false);
+    }
+  };
+
+  // HARDCODEO DE PAGOS: este bloque reemplaza el flujo de Mercado Pago por un pago local inmediato.
+  const handlePagarReservaLocal = async () => {
+    setLoadingReserva(true);
+    setMensajeReserva("");
+    setEsErrorReserva(false);
+
+    try {
+      const response = await fetch("http://localhost:5266/api/pagos/procesar-pago-local", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idTurno: modalTurno.id,
+          email: user.email
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setEsErrorReserva(false);
+        setMensajeReserva(data.mensaje || "Pago registrado correctamente. Tu reserva quedó confirmada.");
+        setReservaExitosa(true);
+        setRequierePago(false);
+        cargarTurnos();
+      } else {
+        setEsErrorReserva(true);
+        setMensajeReserva(data.message || data.mensaje || "No se pudo procesar el pago local.");
       }
     } catch (error) {
       setEsErrorReserva(true);
@@ -416,14 +431,25 @@ function TurnoPage() {
                     {requierePago && (
                       <div style={{ marginTop: "15px" }}>
                         <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                        {preferenceId ? (
-                          <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts: { action: 'pay' } }} />
-                        ) : (
-                          <p style={{ color: "var(--text-muted)" }}>Cargando botón de pago...</p>
-                        )}
+                        {/* HARDCODEO DE PAGOS: este botón reemplaza al widget de Mercado Pago por un pago local directo. */}
+                        <button
+                          onClick={handlePagarReservaLocal}
+                          disabled={loadingReserva}
+                          className="btn btn-primary"
+                          style={{ width: "100%" }}
+                        >
+                          {loadingReserva ? "Procesando..." : "Pagar ahora"}
+                        </button>
                       </div>
                     )}
 
+                    {/* HARDCODEO DE PAGOS: se conserva el bloque original de Mercado Pago comentado como referencia.
+                    {preferenceId ? (
+                      <Wallet initialization={{ preferenceId: preferenceId }} customization={{ texts: { action: 'pay' } }} />
+                    ) : (
+                      <p style={{ color: "var(--text-muted)" }}>Cargando botón de pago...</p>
+                    )}
+                    */}
                     <div style={{ marginTop: "20px" }}>
                       <Link to="/reservas" style={{ color: "var(--primary)", fontWeight: "bold" }}>Ir a Mis Reservas</Link>
                     </div>
