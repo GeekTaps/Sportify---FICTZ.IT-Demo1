@@ -344,7 +344,7 @@ function TurnoPage() {
       )}
 
       {turnos.length === 0 ? (
-        <p>Por el momento no hay turnos disponibles</p>
+        <p>{viendoHistorial ? "No hay turnos anteriores cargados" : "Por el momento no hay turnos disponibles"}</p>
       ) : (
         <ul className="grid-list">
           {turnos.map((turno) => (
