@@ -43,9 +43,7 @@
 			SinPagar = sinPagar
 		};
 	}
-<<<<<<< HEAD
-	}
-=======
+	
 	public async Task<List<EstadisticaTurnoDto>> ObtenerInscripcionesPorTurno()
 	{
 		var stats = await (from r in archivo.Reservas
@@ -103,4 +101,3 @@
 		return result;
 	}
 }
->>>>>>> 37b8bd387fc1b5bfe4e37113272ab2d79b3f7c8d

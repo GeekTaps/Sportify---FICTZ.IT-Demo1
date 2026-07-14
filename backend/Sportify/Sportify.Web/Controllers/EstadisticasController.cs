@@ -30,7 +30,6 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
-<<<<<<< HEAD
         [HttpGet("reservas")]
     public async Task<IActionResult> ObtenerEstadisticasReservas()
     {
@@ -44,7 +43,6 @@ namespace Sportify.Web.Controllers
         return StatusCode(500, new { mensaje = "Error interno", detalle = ex.Message });
     }
 }
-=======
 
         [HttpGet("turnos")]
         public async Task<IActionResult> ObtenerEstadisticasPorTurno()
@@ -87,6 +85,5 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
->>>>>>> 37b8bd387fc1b5bfe4e37113272ab2d79b3f7c8d
     }
 }
