@@ -39,4 +39,12 @@ public class RepositorioAsistencias : IRepositorioAsistencias
 
         return asistencia != null;
     }
+    
+    public async Task<List<Asistencia>> ListarAsistenciasPorUsuario(Guid idUsuario)
+    {
+        return await archivo.Asistencias
+            .Where(a => a.IdUsuario == idUsuario)
+            .ToListAsync();
+    }
+    
 }

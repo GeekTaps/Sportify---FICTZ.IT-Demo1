@@ -8,4 +8,5 @@ public interface IRepositorioAsistencias
     Task<bool> AltaAsistencia(Asistencia asistencia);
     Task<bool> PasarAsistencia(Guid idUsuario, Guid idTurno);
     Task<bool> BuscarAsistencia(Guid idUsuario, Guid idTurno);
+    Task<List<Asistencia>> ListarAsistenciasPorUsuario(Guid idUsuario);
 }
