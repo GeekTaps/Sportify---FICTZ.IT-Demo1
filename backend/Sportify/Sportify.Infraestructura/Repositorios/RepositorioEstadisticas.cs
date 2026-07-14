@@ -32,4 +32,15 @@ public class RepositorioEstadisticas: IRepositorioEstadisticas
 
 		return stats;
 	}
+	public async Task<EstadisticaReservaDto> ObtenerEstadisticasReservas()
+{
+    var pagas = await archivo.Reservas.CountAsync(r => !r.eliminada && r.paga);
+    var sinPagar = await archivo.Reservas.CountAsync(r => !r.eliminada && !r.paga);
+
+    return new EstadisticaReservaDto
+    {
+        Pagas = pagas,
+        SinPagar = sinPagar
+    };
+}
 }

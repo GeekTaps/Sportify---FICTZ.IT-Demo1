@@ -27,6 +27,7 @@ namespace Sportify.Web.Controllers
         private readonly RegistrarPagoUseCase _registrarPagoUseCase;
         private readonly ListarPagosUsuarioUseCase _listarPagosUsuarioUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
+        
 
         public PagosController(
             IConfiguration configuration,
@@ -34,6 +35,7 @@ namespace Sportify.Web.Controllers
             IRepositorioReserva repositorioReserva,
             ReservaAltaUseCase reservaAltaUseCase,
             RegistrarPagoUseCase registrarPagoUseCase,
+            
             ListarPagosUsuarioUseCase listarPagosUsuarioUseCase,
             UserManager<UsuarioIdentity> userManager)
         {
@@ -42,6 +44,7 @@ namespace Sportify.Web.Controllers
             _repositorioReserva = repositorioReserva;
             _reservaAltaUseCase = reservaAltaUseCase;
             _registrarPagoUseCase = registrarPagoUseCase;
+           
             _listarPagosUsuarioUseCase = listarPagosUsuarioUseCase;
             _userManager = userManager;
             
@@ -102,6 +105,7 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { message = "Error al procesar el pago local", error = ex.Message });
             }
         }
+       
 
         /*
         // HARDCODEO DE PAGOS: bloque original de Mercado Pago preservado como referencia.

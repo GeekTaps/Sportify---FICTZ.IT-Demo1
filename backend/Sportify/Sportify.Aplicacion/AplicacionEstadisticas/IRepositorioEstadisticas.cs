@@ -6,4 +6,5 @@ using Sportify.Aplicacion.AplicacionEstadisticas.DTOs;
 public interface IRepositorioEstadisticas
 {
 	Task<List<EstadisticaDeporteDto>> ObtenerInscripcionesPorDeporte();
+	Task<EstadisticaReservaDto> ObtenerEstadisticasReservas();
 }
