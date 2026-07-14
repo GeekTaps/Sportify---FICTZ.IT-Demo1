@@ -39,4 +39,11 @@ public class RepositorioAsistencias : IRepositorioAsistencias
 
         return asistencia != null;
     }
+
+    public async Task<bool> AsistioATurno(Guid idUsuario, Guid idTurno)
+    {
+        var asistencia = await archivo.Asistencias
+            .FirstOrDefaultAsync(a => a.IdUsuario == idUsuario && a.IdTurno == idTurno);
+        return asistencia != null && asistencia.Presente;
+    }
 }
