@@ -48,18 +48,26 @@ public class ObtenerInfoAbonoUseCase
         // 1. IsAlreadySubscribed
         response.IsAlreadySubscribed = await _repositorioAbono.ExisteAbonoActivo(idUsuario, turno.IdHorario.Value);
 
-        // 2. HasConflict (Check if user has any reservation overlapping with the Turno's time on ANY day of this schedule?)
-        // The rule says "El usuario cuenta con una reserva en ese horario". Usually this means they already booked THIS specific turno.
-        // We will check if they have a reservation for this specific Turno.
+        // 2. HasConflict (Check if user has any reservation overlapping with the Turno's time)
         var reservasUsuario = await _repositorioReserva.listarReservasUsuario(idUsuario);
-        response.HasConflict = reservasUsuario.Any(r => r.idTurno == idTurno && !r.eliminada);
+        var todosLosTurnos = await _repositorioTurno.ListarTurnos();
+        
+        response.HasConflict = reservasUsuario.Any(r => 
+        {
+            if (r.eliminada) return false;
+            var tReserva = todosLosTurnos.FirstOrDefault(x => x.Id == r.idTurno);
+            if (tReserva == null) return false;
+            // Check if tReserva conflicts with this specific Turno's date and time (overlap)
+            return tReserva.Fecha.Date == turno.Fecha.Date && 
+                   tReserva.horaInicio < turno.horaFin && 
+                   tReserva.horaFin > turno.horaInicio;
+        });
 
         // 3. IsPast10thDay
         var now = DateTime.Now;
         response.IsPast10thDay = now.Day > 10;
 
         // Fetch all turnos for this Horario
-        var todosLosTurnos = await _repositorioTurno.ListarTurnos();
         var turnosDelHorario = todosLosTurnos
             .Where(t => t.IdHorario == turno.IdHorario.Value && t.Fecha >= now)
             .OrderBy(t => t.Fecha)
@@ -94,13 +102,15 @@ public class ObtenerInfoAbonoUseCase
 
         var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turno.IdDeporte);
         int creditos = creditoEntity != null ? creditoEntity.Cantidad : 0;
+        int creditosAplicables = Math.Min(creditos, cantidadClases);
 
         double precioBase = cantidadClases * precioClase;
-        double descuento = creditos * precioClase;
-        
-        response.DescuentoAplicado = descuento;
-        response.PrecioTotal = precioBase - descuento;
-        if (response.PrecioTotal < 0) response.PrecioTotal = 0;
+        response.PrecioTotal = (precioBase - (creditosAplicables*precioClase)) * 0.80;
+        response.DescuentoAplicado = precioBase - response.PrecioTotal;
+        if (response.PrecioTotal < 0){
+            response.PrecioTotal = 0;
+            response.DescuentoAplicado = precioBase;
+        }
 
         return response;
     }

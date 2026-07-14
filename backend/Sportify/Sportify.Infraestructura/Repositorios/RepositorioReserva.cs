@@ -1,100 +1,108 @@
-namespace Sportify.Infraestructura.Repositorios;
-using System;
+    namespace Sportify.Infraestructura.Repositorios;
+    using System;
 
-using Sportify.Infraestructura.Data;
-using Sportify.Dominio;
-using Sportify.Aplicacion.AplicacionReservas;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Sportify.Dominio.Reservas;
+    using Sportify.Infraestructura.Data;
+    using Sportify.Dominio;
+    using Sportify.Aplicacion.AplicacionReservas;
+    using System.Collections.Generic;
+    using Microsoft.EntityFrameworkCore;
+    using Sportify.Dominio.Reservas;
 
-public class RepositorioReserva : IRepositorioReserva
-{
-    private readonly ApplicationDbContext archivo;
-
-    public RepositorioReserva(ApplicationDbContext archivo)
+    public class RepositorioReserva : IRepositorioReserva
     {
-        this.archivo = archivo;
-    }
+        private readonly ApplicationDbContext archivo;
 
-    // *-*-*-*-*-*-*-*-*-* AGREGAR *-*-*-*-*-*-*-*-*-*
-
-    public async Task agregarReserva(Reserva r)
-    {
-        await archivo.Reservas.AddAsync(r);
-        await archivo.SaveChangesAsync();
-    }
-
-    // *-*-*-*-*-*-*-*-*-* ELIMINAR *-*-*-*-*-*-*-*-*-*
-
-    public async Task<bool> eliminarReserva(Guid idReserva)
-    {
-        Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null || reserva.eliminada)
+        public RepositorioReserva(ApplicationDbContext archivo)
         {
-          return false;
+            this.archivo = archivo;
         }
-        reserva.eliminarLogicamente();
-        await archivo.SaveChangesAsync();
-        return true;
-    }
 
-    // *-*-*-*-*-*-*-*-*-* CHEQUEAR *-*-*-*-*-*-*-*-*-*
+        // *-*-*-*-*-*-*-*-*-* AGREGAR *-*-*-*-*-*-*-*-*-*
 
-    public async Task<bool> existeReserva(Guid idReserva)
-    {
-        Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
-        if (reserva == null || reserva.eliminada)
+        public async Task agregarReserva(Reserva r)
         {
-          return false;
+            await archivo.Reservas.AddAsync(r);
+            await archivo.SaveChangesAsync();
         }
-        else return true;
-    }
 
-    // *-*-*-*-*-*-*-*-*-* BUSCAR POR USUARIO *-*-*-*-*-*-*-*-*-*
+        // *-*-*-*-*-*-*-*-*-* ELIMINAR *-*-*-*-*-*-*-*-*-*
 
-    public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
-    {
-        var query = from r in archivo.Reservas
-                    where r.idUsuario == idUsuario && !r.eliminada
-                    select r;
-
-        return await query.ToListAsync();
-    }
-
-    // *-*-*-*-*-*-*-*-*-* BUSCAR *-*-*-*-*-*-*-*-*-*
-
-    public async Task<Reserva> buscarReserva(Guid idReserva)
-    {
-        // asume que reserva existe
-        return await archivo.Reservas.FirstOrDefaultAsync(r => r.id == idReserva);
-    }
-
-    public async Task<int> ContarReservasPorTurno(Guid idTurno)
-    {
-        return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno && !r.eliminada);
-    }
-
-    public async Task<List<Reserva>> ListarReservasPorTurno(Guid idTurno)
-    {
-        var query = from r in archivo.Reservas
-                    where r.idTurno == idTurno && !r.eliminada
-                    select r;
-
-        return await query.ToListAsync();
-    }
-
-    public async Task<List<Guid>> BuscarUsuariosConPagosPendientes()
-    {
-        List<Guid> usuariosConPagosPendientes = new List<Guid>();
-        foreach (var reserva in archivo.Reservas)
+        public async Task<bool> eliminarReserva(Guid idReserva)
         {
-            if (!reserva.paga && !reserva.eliminada)
+            Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
+            if (reserva == null || reserva.eliminada)
             {
-                usuariosConPagosPendientes.Add(reserva.idUsuario);
+            return false;
             }
+            reserva.eliminarLogicamente();
+            await archivo.SaveChangesAsync();
+            return true;
         }
-        return usuariosConPagosPendientes;
-    }
 
+        // *-*-*-*-*-*-*-*-*-* CHEQUEAR *-*-*-*-*-*-*-*-*-*
+
+        public async Task<bool> existeReserva(Guid idReserva)
+        {
+            Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
+            if (reserva == null || reserva.eliminada)
+            {
+            return false;
+            }
+            else return true;
+        }
+
+        // *-*-*-*-*-*-*-*-*-* BUSCAR POR USUARIO *-*-*-*-*-*-*-*-*-*
+
+        public async Task<List<Reserva>> listarReservasUsuario(Guid idUsuario)
+        {
+            var query = from r in archivo.Reservas
+                        where r.idUsuario == idUsuario && !r.eliminada
+                        select r;
+
+            return await query.ToListAsync();
+        }
+
+        // *-*-*-*-*-*-*-*-*-* BUSCAR *-*-*-*-*-*-*-*-*-*
+
+        public async Task<Reserva> buscarReserva(Guid idReserva)
+        {
+            // asume que reserva existe
+            return await archivo.Reservas.FirstOrDefaultAsync(r => r.id == idReserva);
+        }
+
+        public async Task<int> ContarReservasPorTurno(Guid idTurno)
+        {
+            return await archivo.Reservas.CountAsync(r => r.idTurno == idTurno && !r.eliminada);
+        }
+
+        public async Task<List<Reserva>> ListarReservasPorTurno(Guid idTurno)
+        {
+            var query = from r in archivo.Reservas
+                        where r.idTurno == idTurno && !r.eliminada
+                        select r;
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<Guid>> BuscarUsuariosConPagosPendientes()
+        {
+            List<Guid> usuariosConPagosPendientes = new List<Guid>();
+            foreach (var reserva in archivo.Reservas)
+            {
+                if (!reserva.paga && !reserva.eliminada)
+                {
+                    usuariosConPagosPendientes.Add(reserva.idUsuario);
+                }
+            }
+            return usuariosConPagosPendientes;
+        }
+    public async Task MarcarComoSeña(Guid idReserva)
+{
+    Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
+    if (reserva == null) throw new Exception("Reserva no encontrada.");
+    reserva.marcarComoSeña();
+    await archivo.SaveChangesAsync();
 }
+    
+
+    }

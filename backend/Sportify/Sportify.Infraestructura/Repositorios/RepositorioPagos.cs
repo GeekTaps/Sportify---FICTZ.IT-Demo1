@@ -43,4 +43,10 @@ public class RepositorioPagos : IRepositorioPago
         archivo.Pagos.Add(pagoRealizado);
         await archivo.SaveChangesAsync();
     }
+    public async Task registrarPagoSena(Pago pagoRealizado)
+{
+    // No marca como pagada, solo guarda el pago
+    archivo.Pagos.Add(pagoRealizado);
+    await archivo.SaveChangesAsync();
+}
 }

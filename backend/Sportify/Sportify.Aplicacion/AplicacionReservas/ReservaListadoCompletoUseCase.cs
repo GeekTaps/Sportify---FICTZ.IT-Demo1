@@ -6,13 +6,13 @@ using Sportify.Aplicacion;
 
 namespace Sportify.Aplicacion.AplicacionReservas;
 
-public class ReservaListadoUseCase
+public class ReservaListadoCompletoUseCase
 {
     IRepositorioReserva repositorioReserva;
     IValidadorReserva validadorReserva;
 
     // devuelve el listado de reservas de un usuario
-    public ReservaListadoUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
+    public ReservaListadoCompletoUseCase(IRepositorioReserva repositorioReserva, IValidadorReserva validadorReserva)
     {
         this.repositorioReserva = repositorioReserva;
         this.validadorReserva = validadorReserva;
@@ -22,7 +22,7 @@ public class ReservaListadoUseCase
     {
         List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
         if(reservas.Count == 0){
-            throw new ListadoVacioException("No Cuenta Con Reservas Activas Actualmente");
+            throw new ListadoVacioException("No Hiciste Ninguna Reserva Todavía");
         }
         return reservas;
     }

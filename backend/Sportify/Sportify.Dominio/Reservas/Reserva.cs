@@ -1,5 +1,6 @@
 namespace Sportify.Dominio.Reservas;
-using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 public class Reserva{
     public Guid id { get; private set; }
     public Guid idUsuario { get; private set; }
@@ -10,6 +11,10 @@ public class Reserva{
     public string titulo { get; private set; }
     public bool eliminada { get; private set; } = false;
     public bool abonado { get; private set; } = false;
+    public bool pagoSeña { get; private set; } = false;
+
+    [NotMapped]
+    public bool Asistio { get; set; }
 
 
 
@@ -37,5 +42,9 @@ public class Reserva{
     public void marcarComoAbonado()
     {
         this.abonado = true;
+    }
+    public void marcarComoSeña()
+    {
+    this.pagoSeña = true;
     }
 }

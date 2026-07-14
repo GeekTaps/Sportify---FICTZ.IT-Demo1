@@ -27,6 +27,7 @@ namespace Sportify.Web.Controllers
         private readonly RegistrarPagoUseCase _registrarPagoUseCase;
         private readonly ListarPagosUsuarioUseCase _listarPagosUsuarioUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly RegistrarPagoSenaUseCase _registrarPagoSenaUseCase;
 
         public PagosController(
             IConfiguration configuration,
@@ -34,6 +35,7 @@ namespace Sportify.Web.Controllers
             IRepositorioReserva repositorioReserva,
             ReservaAltaUseCase reservaAltaUseCase,
             RegistrarPagoUseCase registrarPagoUseCase,
+            RegistrarPagoSenaUseCase registrarPagoSenaUseCase,
             ListarPagosUsuarioUseCase listarPagosUsuarioUseCase,
             UserManager<UsuarioIdentity> userManager)
         {
@@ -42,6 +44,7 @@ namespace Sportify.Web.Controllers
             _repositorioReserva = repositorioReserva;
             _reservaAltaUseCase = reservaAltaUseCase;
             _registrarPagoUseCase = registrarPagoUseCase;
+            _registrarPagoSenaUseCase = registrarPagoSenaUseCase;
             _listarPagosUsuarioUseCase = listarPagosUsuarioUseCase;
             _userManager = userManager;
             
@@ -102,6 +105,39 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { message = "Error al procesar el pago local", error = ex.Message });
             }
         }
+       
+
+       //hola soy zega
+       [HttpPost("pagar-sena")]
+public async Task<IActionResult> PagarSena([FromBody] PagoRequest request)
+{
+    try
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null) return NotFound(new { message = "Usuario no encontrado." });
+
+        var reservasUsuario = await _repositorioReserva.listarReservasUsuario(Guid.Parse(user.Id));
+        var reserva = reservasUsuario.FirstOrDefault(r => r.idTurno == request.IdTurno && !r.eliminada);
+        if (reserva == null) return NotFound(new { message = "Reserva no encontrada." });
+
+        var listTurnos = await _repositorioTurno.ListarTurnos();
+        var turno = listTurnos.Find(t => t.Id == request.IdTurno);
+        if (turno == null) return NotFound(new { message = "Turno no encontrado." });
+
+        decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
+
+        await _repositorioReserva.MarcarComoSeña(reserva.id);
+
+       var pago = new Pago(reserva.id, Guid.Parse(user.Id), montoSeña);
+await _registrarPagoSenaUseCase.Ejecutar(pago);
+
+        return Ok(new { mensaje = "Seña registrada correctamente.", monto = montoSeña });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Error al procesar la seña", error = ex.Message });
+    }
+}
 
         /*
         // HARDCODEO DE PAGOS: bloque original de Mercado Pago preservado como referencia.
@@ -223,7 +259,7 @@ namespace Sportify.Web.Controllers
                     return BadRequest(new { message = "esta reserva ya fue pagada" });
                 }
 
-                var pago = new Pago(reserva.id, request.IdUsuario, (decimal)reserva.monto);
+                var pago = new Pago(reserva.id, request.IdUsuario, ((decimal)reserva.monto/2));
                 await _registrarPagoUseCase.Ejecutar(pago);
 
                 return Ok(new { message = "Pago registrado correctamente." });

@@ -5,9 +5,12 @@ using Sportify.Dominio.Turnos;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Excepciones;
 using Sportify.Aplicacion.AplicacionUsuarios;
+using Sportify.Aplicacion.AplicacionReservas;
+using Sportify.Aplicacion.AplicacionAsistencias;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,6 +23,9 @@ public class TurnosController : ControllerBase
     private readonly TurnoModificacionMensualUseCase modificacionMensualUseCase;
     private readonly Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte;
     private readonly IRepositorioTurno repositorioTurno;
+    private readonly TurnoListadoAnterioresUseCase listadoAnterioresUseCase;
+    private readonly IRepositorioReserva repositorioReserva;
+    private readonly IRepositorioAsistencias repositorioAsistencias;
 
     public TurnosController(
         TurnoListadoUseCase listadoUseCase,
@@ -28,7 +34,10 @@ public class TurnosController : ControllerBase
         TurnoAltaMensualUseCase altaMensualUseCase,
         TurnoModificacionMensualUseCase modificacionMensualUseCase,
         Sportify.Aplicacion.AplicacionDeportes.IRepositorioDeporte repositorioDeporte,
-        IRepositorioTurno repositorioTurno)
+        IRepositorioTurno repositorioTurno,
+        TurnoListadoAnterioresUseCase listadoAnterioresUseCase,
+        IRepositorioReserva repositorioReserva,
+        IRepositorioAsistencias repositorioAsistencias)
     {
         this.listadoUseCase = listadoUseCase;
         this.altaUseCase = altaUseCase;
@@ -37,6 +46,9 @@ public class TurnosController : ControllerBase
         this.modificacionMensualUseCase = modificacionMensualUseCase;
         this.repositorioDeporte = repositorioDeporte;
         this.repositorioTurno = repositorioTurno;
+        this.listadoAnterioresUseCase = listadoAnterioresUseCase;
+        this.repositorioReserva = repositorioReserva;
+        this.repositorioAsistencias = repositorioAsistencias;
     }
 
     [HttpGet]
@@ -53,6 +65,56 @@ public class TurnosController : ControllerBase
                 .ToList();
 
             return Ok(filtrados);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("anteriores")]
+    public async Task<IActionResult> ObtenerTurnosAnteriores()
+    {
+        try
+        {
+            var resultado = await listadoAnterioresUseCase.Ejecutar();
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}/info-historica")]
+    public async Task<IActionResult> ObtenerInfoHistoricaTurno(Guid id)
+    {
+        try
+        {
+            var reservas = await repositorioReserva.ListarReservasPorTurno(id);
+            int inscriptos = reservas.Count(r => !r.eliminada);
+
+            var listadoRes = await listadoUseCase.Ejecutar();
+            var turno = listadoRes.FirstOrDefault(t => t.Id == id);
+            
+            if (turno == null)
+            {
+                var listadoAnt = await listadoAnterioresUseCase.Ejecutar();
+                turno = listadoAnt.FirstOrDefault(t => t.Id == id);
+            }
+
+            if (turno == null)
+                return NotFound(new { message = "Turno no encontrado." });
+
+            int asistencias = 0;
+            // Evaluamos la asistencia de los inscriptos
+            foreach (var res in reservas.Where(r => !r.eliminada))
+            {
+                bool asistio = await repositorioAsistencias.AsistioATurno(res.idUsuario, id);
+                if (asistio) asistencias++;
+            }
+
+            return Ok(new { inscriptos = inscriptos, asistencias = asistencias });
         }
         catch (Exception ex)
         {

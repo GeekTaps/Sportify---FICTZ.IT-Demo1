@@ -81,6 +81,7 @@ builder.Services.AddScoped<RegistrarEmpleadoUseCase>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
+builder.Services.AddScoped<TurnoListadoAnterioresUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
@@ -90,8 +91,12 @@ builder.Services.AddScoped<SuspenderTurnoAdminUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 builder.Services.AddTransient<IValidadorHorario, ValidadorHorario>();
 
+//scoped de Pagos?? por que no existía que onda (zega)
+builder.Services.AddScoped<RegistrarPagoSenaUseCase>();
 //Scoped de Reservas
-builder.Services.AddScoped<ReservaListadoUseCase>();
+builder.Services.AddScoped<ReservaListadoActivasUseCase>();
+builder.Services.AddScoped<ReservaListadoAnterioresUseCase>();
+builder.Services.AddScoped<ReservaListadoCompletoUseCase>();
 builder.Services.AddScoped<ReservaAltaUseCase>();
 builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
