@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Dominio.Reservas;
+using Sportify.Dominio.Usuario;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.Excepciones;
 using System;
@@ -390,8 +391,26 @@ namespace Sportify.Web.Controllers
                 {
                     if (horasAnticipacion >= 48)
                     {
-                        mensajeBase += " Seña devuelta.";
-                    }
+                         if(reserva.abonado){
+                            
+                            // Devolver crédito si corresponde
+                            var creditosDelDeporte = await _repositorioCreditos.ObtenerCredito(Guid.Parse(user.Id), turno.IdDeporte);
+                            if (creditosDelDeporte != null)
+                            {
+                                creditosDelDeporte.Cantidad++;
+                                await _repositorioCreditos.ModificarCredito(creditosDelDeporte);
+                                mensajeBase += " Se devolvió un crédito.";
+                            }
+                            else{
+                                {
+                                creditosDelDeporte = new Credito(Guid.Parse(user.Id), turno.IdDeporte);
+                                 await _repositorioCreditos.AgregarCredito(creditosDelDeporte);
+                                 mensajeBase += " Se devolvió un crédito.";
+}
+                            }}
+                            else{
+                        mensajeBase += " Seña devuelta.";}}
+                    
                 }
 
                 user.CancelacionesMes++;
