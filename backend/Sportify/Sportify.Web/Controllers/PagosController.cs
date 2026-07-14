@@ -259,7 +259,7 @@ await _registrarPagoSenaUseCase.Ejecutar(pago);
                     return BadRequest(new { message = "esta reserva ya fue pagada" });
                 }
 
-                var pago = new Pago(reserva.id, request.IdUsuario, (decimal)reserva.monto);
+                var pago = new Pago(reserva.id, request.IdUsuario, ((decimal)reserva.monto/2));
                 await _registrarPagoUseCase.Ejecutar(pago);
 
                 return Ok(new { message = "Pago registrado correctamente." });
