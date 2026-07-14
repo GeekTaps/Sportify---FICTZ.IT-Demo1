@@ -243,7 +243,7 @@ function ReservasPage() {
                 <h3>{r.titulo}</h3>
                 <p>
                   <strong>Pago:</strong>{" "}
-                  {r.paga ? "Confirmado ✅" : "Pendiente ⏳"} &nbsp;·&nbsp;
+                  {r.paga ? "Confirmado ✅" : r.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                   <strong>Monto:</strong> ${r.monto}
                   {viendoHistorial && (
                     <> &nbsp;·&nbsp; <strong>Asistencia:</strong> {r.asistio ? "Presente ✅" : "Ausente ❌"} </>
@@ -277,6 +277,7 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
+                  {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
@@ -292,7 +293,7 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                  <strong>Pago:</strong> {reservaSeleccionada.paga ? "Confirmado ✅" : "Pendiente ⏳"}
+                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
