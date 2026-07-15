@@ -124,4 +124,33 @@ public static class RepositoriosSQLites
             }
         }
     }
+
+    public static async Task SeedUsuariosNormales(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
+
+        string[] emails = { "usuario1@mail.com", "usuario2@mail.com" };
+        string password = "123456";
+
+        foreach (var email in emails)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                var newUser = new Sportify.Infraestructura.Identity.UsuarioIdentity
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    NombreCompleto = email == "usuario1@mail.com" ? "Usuario Uno" : "Usuario Dos",
+                    Dni = email == "usuario1@mail.com" ? "11111111" : "22222222",
+                    EsAdmin = false
+                };
+
+                await userManager.CreateAsync(newUser, password);
+            }
+        }
+    }
 }
