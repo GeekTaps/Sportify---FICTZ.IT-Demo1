@@ -31,18 +31,18 @@ public class RepositorioListaDeEsperaAbono : IRepositorioListaDeEsperaAbono
 
     public async Task<bool> existeEnEspera(ListaDeEsperaAbono e)
     {
-        return await _context.ListaDeEsperaAbono.AnyAsync(l => l.idUsuario == e.idUsuario && l.idDeporte == e.idDeporte);
+        return await _context.ListaDeEsperaAbono.AnyAsync(l => l.idUsuario == e.idUsuario && l.idHorario == e.idHorario);
     }
 
-    public async Task<System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idDeporte)
+    public async Task<System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idHorario)
     {
         // Not implemented fully due to not needing it for this specific feature yet
         return new System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>();
     }
 
-    public async Task<System.Collections.Generic.List<Sportify.Dominio.Deportes.Deporte>> listarDeportes(Guid idUsuario)
+    public async Task<System.Collections.Generic.List<Sportify.Dominio.Turnos.Horario>> listarHorarios(Guid idUsuario)
     {
         // Not implemented fully due to not needing it for this specific feature yet
-        return new System.Collections.Generic.List<Sportify.Dominio.Deportes.Deporte>();
+        return new System.Collections.Generic.List<Sportify.Dominio.Turnos.Horario>();
     }
 }

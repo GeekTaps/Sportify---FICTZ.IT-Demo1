@@ -67,7 +67,7 @@ namespace Sportify.Web.Controllers
 
                 await _entrarListaAbonoUseCase.Ejecutar(idUsuario, request.IdTurno, request.Email);
 
-                return Ok(new { mensaje = "Te uniste a la lista de espera. Cuando haya cupo en esta actividad, serás notificado." });
+                return Ok(new { mensaje = "Te uniste a la lista de espera. Cuando haya cupo en esta actividad, vas a tener 2 horas para confirmar tu lugar." });
             }
             catch (EntidadNotFoundException ex)
             {
