@@ -219,31 +219,7 @@ export default function EstadisticasPage() {
       )}
           <hr style={{ margin: '2rem 0' }} />
 
-<h2>Estadísticas de Reservas</h2>
-<p>Podés ver cuántas reservas están pagas y cuántas no.</p>
-<button onClick={verEstadisticasReservas} className="btn btn-primary">Ver estadísticas de reservas</button>
 
-{cargandoReservas && <p>Cargando...</p>}
-{errorReservas && <p style={{ color: 'red' }}>{errorReservas}</p>}
-
-{mostradoReservas && !cargandoReservas && !errorReservas && datosReservas &&
-  datosReservas.pagas === 0 && datosReservas.sinPagar === 0 && (
-  <p>Aún no hay reservas registradas.</p>
-)}
-
-{mostradoReservas && !cargandoReservas && !errorReservas && datosReservas &&
-  (datosReservas.pagas > 0 || datosReservas.sinPagar > 0) && (
-  <>
-    <p style={{ marginTop: '1rem' }}>El gráfico representa el estado de pago de las reservas.</p>
-    <div style={{ maxWidth: '300px', marginTop: '1rem' }}>
-      <canvas ref={canvasReservasRef} style={{ width: '100%' }} />
-    </div>
-    <div style={{ marginTop: '1rem' }}>
-      <p><strong>Pagas:</strong> {datosReservas.pagas}</p>
-      <p><strong>Sin pagar:</strong> {datosReservas.sinPagar}</p>
-    </div>
-  </>
-)}
      </div>
   );
 }     

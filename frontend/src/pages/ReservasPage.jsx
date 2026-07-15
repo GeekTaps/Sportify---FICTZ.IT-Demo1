@@ -134,7 +134,7 @@ function ReservasPage() {
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
-
+    console.log(turno);
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`

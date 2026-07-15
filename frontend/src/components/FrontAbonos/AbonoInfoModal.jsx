@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // HARDCODEO DE PAGOS: se deja comentado el import original de Mercado Pago como referencia.
 // import { Wallet } from '@mercadopago/sdk-react';
 
-const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
+const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera }) => {
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [esError, setEsError] = useState(false);
@@ -107,6 +107,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose }) => {
       if (response.ok) {
         setEsError(false);
         setMensaje(data.mensaje || "Te has anotado en la lista de espera exitosamente.");
+         if (onEntrarListaEspera) onEntrarListaEspera();
       } else {
         setEsError(true);
         setMensaje(data.mensaje || "Ocurrió un error al intentar anotarte.");

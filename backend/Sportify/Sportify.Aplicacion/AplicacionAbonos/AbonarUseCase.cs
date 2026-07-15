@@ -56,7 +56,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             if (turnoBase == null || turnoBase.IdHorario == null)
                 throw new ValidacionException("Turno base inválido o no es recurrente.");
 
-            Guid idHorario = turnoBase.IdHorario.Value;
+            Guid idHorario = turnoBase.IdHorario;
             var horario = await _repositorioHorario.ObtenerHorarioPorId(idHorario);
             if (horario == null) throw new ValidacionException("Horario no encontrado.");
 

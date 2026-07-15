@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
+using Sportify.Web.DTOs;
 
 namespace Sportify.Web.Controllers
 {
@@ -15,15 +16,29 @@ namespace Sportify.Web.Controllers
         private readonly EntrarListaTurnoUseCase _entrarListaTurnoUseCase;
         private readonly EntrarListaAbonoUseCase _entrarListaAbonoUseCase;
         private readonly UserManager<UsuarioIdentity> _userManager;
+        private readonly SalirListaEsperaTurnoUseCase salirListaEsperaTurnoUseCase;
+        private readonly EstaEnListaEsperaAbonoUseCase estaEnListaEsperaAbonoUseCase;
+        private readonly estaEnListaEsperaTurnoUseCase estaEnListaEsperaTurnoUseCase;
+        private readonly SalirListaEsperaAbonoUseCase salirListaEsperaAbonoUseCase;
+        
 
         public ListasDeEsperaController(
             EntrarListaTurnoUseCase entrarListaTurnoUseCase,
             EntrarListaAbonoUseCase entrarListaAbonoUseCase,
-            UserManager<UsuarioIdentity> userManager)
+            UserManager<UsuarioIdentity> userManager,
+            SalirListaEsperaTurnoUseCase salirListaEsperaTurnoUseCase,
+            EstaEnListaEsperaAbonoUseCase estaEnListaEsperaAbonoUseCase,
+            estaEnListaEsperaTurnoUseCase estaEnListaEsperaTurnoUseCase,
+            SalirListaEsperaAbonoUseCase salirListaEsperaAbonoUseCase
+                    )
         {
             _entrarListaTurnoUseCase = entrarListaTurnoUseCase;
             _entrarListaAbonoUseCase = entrarListaAbonoUseCase;
             _userManager = userManager;
+            this.salirListaEsperaTurnoUseCase = salirListaEsperaTurnoUseCase;
+            this.estaEnListaEsperaAbonoUseCase = estaEnListaEsperaAbonoUseCase;
+            this.estaEnListaEsperaTurnoUseCase = estaEnListaEsperaTurnoUseCase;
+            this.salirListaEsperaAbonoUseCase = salirListaEsperaAbonoUseCase;
         }
 
         [HttpPost("entrar")]
@@ -78,11 +93,58 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
-    }
+    
+    [HttpDelete("salir")]
+public async Task<IActionResult> SalirListaEspera([FromBody] SalirListaDTO dto)
+{
+    await salirListaEsperaTurnoUseCase.Ejecutar(dto.Email, dto.IdTurno);
+
+    return Ok(new
+    {
+        mensaje = "Saliste de la lista de espera."
+    });
+}
+[HttpDelete("salir-abono")]
+public async Task<IActionResult> SalirListaEsperaAbono([FromQuery] string email, [FromQuery] Guid idDeporte)
+{
+    Console.WriteLine($"Intentando salir: email={email}, idDeporte={idDeporte}");
+    await salirListaEsperaAbonoUseCase.Ejecutar(email, idDeporte);
+
+    return Ok(new { mensaje = "Saliste de la lista de espera de abonados." });
+}
+[HttpGet("esta-en-lista-turno")]
+public async Task<IActionResult> EstaEnListaTurno(string email, Guid idTurno)
+{
+    bool esta = await estaEnListaEsperaTurnoUseCase.Ejecutar(email, idTurno);
+    return Ok(esta);
+}
 
     public class EntrarListaEsperaRequest
     {
         public string Email { get; set; }
         public Guid IdTurno { get; set; }
     }
+
+
+[HttpGet("esta-en-lista-abono")]
+public async Task<IActionResult> EstaEnListaAbono(
+    string email,
+    Guid idDeporte,
+    Guid idHorario)
+{
+    bool esta = await estaEnListaEsperaAbonoUseCase.Ejecutar(
+        email,
+        idDeporte,
+        idHorario);
+
+    return Ok(esta);
+}
+
+
+   
+
+
+
+
+}
 }

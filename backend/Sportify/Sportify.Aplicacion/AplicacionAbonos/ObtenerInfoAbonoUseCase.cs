@@ -36,8 +36,8 @@ public class ObtenerInfoAbonoUseCase
         var response = new AbonoInfoDTO();
         
         var turno = await _repositorioTurno.ObtenerTurnoPorId(idTurno);
-        if (turno == null || !turno.IdHorario.HasValue) 
-            throw new Exception("Turno no encontrado o no pertenece a un horario fijo.");
+        if (turno == null) 
+            throw new Exception("Turno no encontrado.");
 
         var usuario = await _repositorioUsuarios.ObtenerPorMail(email);
         if (usuario == null) 
@@ -46,7 +46,7 @@ public class ObtenerInfoAbonoUseCase
         Guid idUsuario = Guid.Parse(usuario.Id);
 
         // 1. IsAlreadySubscribed
-        response.IsAlreadySubscribed = await _repositorioAbono.ExisteAbonoActivo(idUsuario, turno.IdHorario.Value);
+        response.IsAlreadySubscribed = await _repositorioAbono.ExisteAbonoActivo(idUsuario, turno.IdHorario);
 
         // 2. HasConflict (Check if user has any reservation overlapping with the Turno's time)
         var reservasUsuario = await _repositorioReserva.listarReservasUsuario(idUsuario);
@@ -69,7 +69,7 @@ public class ObtenerInfoAbonoUseCase
 
         // Fetch all turnos for this Horario
         var turnosDelHorario = todosLosTurnos
-            .Where(t => t.IdHorario == turno.IdHorario.Value && t.Fecha >= now)
+            .Where(t => t.IdHorario == turno.IdHorario && t.Fecha >= now)
             .OrderBy(t => t.Fecha)
             .ToList();
 

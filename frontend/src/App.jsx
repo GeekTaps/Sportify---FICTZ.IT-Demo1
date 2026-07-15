@@ -127,7 +127,7 @@ function Footer() {
                 <img src={logoLetras} alt="Sportify" className="footer-logo" />
                 <p className="footer-tagline">Tu plataforma de deportes y reservas</p>
                 <hr className="footer-divider" />
-                <p className="footer-copy">© 2026 Sportify · FICTZ.IT Demo 1</p>
+                <p className="footer-copy">© 2026 Sportify · FICTZ.IT Demo 2</p>
             </div>
         </footer>
     );

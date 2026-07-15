@@ -24,9 +24,11 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 {
 
     private readonly UserManager<UsuarioIdentity> userManager;
-    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager)
+    private readonly ApplicationDbContext archivo;
+    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager, ApplicationDbContext archivo)
 {
     this.userManager = userManager;
+    this.archivo = archivo;
 }
     
 public async Task<bool> BuscarId(string id)
@@ -257,5 +259,56 @@ public async Task DescontarCreditos(string id, int cantidad)
         if (usuario.Creditos < 0) usuario.Creditos = 0;
         await userManager.UpdateAsync(usuario);
     }
+}
+public async Task<List<Usuario>> ListarUsuariosEnListaEsperaTurno(Guid idTurno)
+{
+    var ids = await archivo.ListaDeEsperaTurno
+        .Where(x => x.idTurno == idTurno)
+        .Select(x => x.idUsuario.ToString())
+        .ToListAsync();
+
+    var usuariosIdentity = await userManager.Users
+        .Where(u => !u.EsAdmin)
+        .ToListAsync();
+
+    return usuariosIdentity
+        .Where(u => ids.Contains(u.Id, StringComparer.OrdinalIgnoreCase))
+        .Select(u => new Usuario(
+            u.Id,
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            "",
+            u.FechaNacimiento,
+            u.Creditos
+        ))
+        .ToList();
+}
+
+public async Task<List<Usuario>> ListarUsuariosEnListaEsperaAbono(Guid idDeporte)
+{
+    var ids = await archivo.ListaDeEsperaAbono
+        .Where(x => x.idDeporte == idDeporte)
+        .Select(x => x.idUsuario.ToString())
+        .ToListAsync();
+
+    var usuariosIdentity = await userManager.Users
+        .Where(u => !u.EsAdmin)
+        .ToListAsync();
+
+    return usuariosIdentity
+        .Where(u => ids.Contains(u.Id, StringComparer.OrdinalIgnoreCase))
+        .Select(u => new Usuario(
+            u.Id,
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            "",
+            u.FechaNacimiento,
+            u.Creditos
+        ))
+        .ToList();
 }
 }

@@ -71,6 +71,8 @@ builder.Services.AddScoped<ListarUsuariosSuspendidosUseCase>();
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 builder.Services.AddScoped<ReactivarAlumnoUseCase>();
+builder.Services.AddScoped<ListarUsuariosEnListaEsperaTurnoUseCase>();
+builder.Services.AddScoped<ListarUsuariosEnListaEsperaAbonoUseCase>();
 
 builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
 builder.Services.AddTransient<IRepositorioCreditos, RepositorioCreditos>();
@@ -122,6 +124,11 @@ builder.Services.AddScoped<EntrarListaAbonoUseCase>();
 builder.Services.AddScoped<EntrarListaTurnoUseCase>();
 builder.Services.AddScoped<IValidadorListaDeEsperaAbono, ValidadorListaDeEsperaAbono>();
 builder.Services.AddScoped<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaTurno>();
+builder.Services.AddScoped<SalirListaEsperaTurnoUseCase>();
+builder.Services.AddScoped<SalirListaEsperaAbonoUseCase>();
+builder.Services.AddScoped<estaEnListaEsperaTurnoUseCase>();
+
+builder.Services.AddScoped<EstaEnListaEsperaAbonoUseCase>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.

@@ -9,29 +9,40 @@ function AlumnosPage() {
   const [soloSuspendidos, setSoloSuspendidos] = useState(false);
   const [busqueda, setBusqueda] = useState("");
 
-  const fetchAlumnos = async (suspendidos = false) => {
-    setLoading(true);
-    setSeleccionado(null);
-    try {
-      const url = suspendidos ? "/usuarios/suspendidos" : "/usuarios";
-      const response = await apiClient.get(url);
-      setAlumnos(response.data);
-    } catch {
-      setError("Error al cargar los alumnos.");
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  const fetchAlumnos = async (filtro = "todos") => {
+  setLoading(true);
+  setSeleccionado(null);
+
+  try {
+    let url = "/usuarios";
+
+    if (filtro === "suspendidos") {
+      url = "/usuarios/suspendidos";
+    } 
+
+    const response = await apiClient.get(url);
+    setAlumnos(response.data);
+  } catch {
+    setError("Error al cargar los alumnos.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchAlumnos();
   }, []);
 
   const toggleFiltro = () => {
-    const nuevo = !soloSuspendidos;
-    setSoloSuspendidos(nuevo);
-    fetchAlumnos(nuevo);
-  };
+  const nuevo = !soloSuspendidos;
+
+  setSoloSuspendidos(nuevo);
+  setSoloListaEspera(false);
+
+  fetchAlumnos(nuevo ? "suspendidos" : "todos");
+};
+
 
   if (loading) return <p>Cargando...</p>;
   if (error) return <div className="alert alert-error">{error}</div>;
@@ -57,6 +68,8 @@ const alumnosFiltrados = alumnos.filter(alumno =>
           >
             {soloSuspendidos ? "Ver todos" : "Ver suspendidos"}
           </button>
+          
+   
         </div>
 
         <table className="tabla">

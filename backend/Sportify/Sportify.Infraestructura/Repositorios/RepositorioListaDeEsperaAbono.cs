@@ -22,17 +22,29 @@ public class RepositorioListaDeEsperaAbono : IRepositorioListaDeEsperaAbono
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> eliminarEspera(ListaDeEsperaAbono e)
-    {
-        _context.ListaDeEsperaAbono.Remove(e);
-        await _context.SaveChangesAsync();
-        return true;
-    }
+public async Task<bool> eliminarEspera(Guid idUsuario, Guid idDeporte)
+{
+    var entrada = await _context.ListaDeEsperaAbono
+        .FirstOrDefaultAsync(x =>
+            x.idUsuario == idUsuario &&
+            x.idDeporte == idDeporte);
 
-    public async Task<bool> existeEnEspera(ListaDeEsperaAbono e)
-    {
-        return await _context.ListaDeEsperaAbono.AnyAsync(l => l.idUsuario == e.idUsuario && l.idDeporte == e.idDeporte);
-    }
+    if (entrada == null)
+        return false;
+
+    _context.ListaDeEsperaAbono.Remove(entrada);
+    await _context.SaveChangesAsync();
+
+    return true;
+}
+
+    public async Task<bool> existeEnEspera(Guid idUsuario, Guid idDeporte)
+{
+    return await _context.ListaDeEsperaAbono
+        .AnyAsync(l =>
+            l.idUsuario == idUsuario &&
+            l.idDeporte == idDeporte);
+}
 
     public async Task<System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idDeporte)
     {
