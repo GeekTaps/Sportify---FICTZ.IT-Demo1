@@ -91,6 +91,8 @@ builder.Services.AddScoped<SuspenderTurnoAdminUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 builder.Services.AddTransient<IValidadorHorario, ValidadorHorario>();
 
+//scoped de Pagos?? por que no existía que onda (zega)
+builder.Services.AddScoped<RegistrarPagoSenaUseCase>();
 //Scoped de Reservas
 builder.Services.AddScoped<ReservaListadoActivasUseCase>();
 builder.Services.AddScoped<ReservaListadoAnterioresUseCase>();

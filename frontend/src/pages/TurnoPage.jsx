@@ -252,7 +252,7 @@ function TurnoPage() {
     setEsErrorReserva(false);
 
     try {
-      const response = await fetch("http://localhost:5266/api/pagos/procesar-pago-local", {
+      const response = await fetch("http://localhost:5266/api/pagos/pagar-sena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

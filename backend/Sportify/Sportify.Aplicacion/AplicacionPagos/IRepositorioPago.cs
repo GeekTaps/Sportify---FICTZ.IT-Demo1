@@ -8,4 +8,5 @@ public interface IRepositorioPago
     public Task<List<Pago>> listarPagosUsuario(Guid idUsuario);
     public Task<List<Pago>> listarPagosReserva(Guid idReserva);
     public Task registrarPago (Pago pagoRealizado);
+    public Task registrarPagoSena(Pago pagoRealizado);
 }
