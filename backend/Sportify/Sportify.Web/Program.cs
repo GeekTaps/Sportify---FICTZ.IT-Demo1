@@ -168,6 +168,9 @@ RepositoriosSQLites.Inicializar(app.Services);
 // Sembrar cuentas de administrador por defecto
 await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
 
+// Sembrar cuentas de usuario normales
+await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
