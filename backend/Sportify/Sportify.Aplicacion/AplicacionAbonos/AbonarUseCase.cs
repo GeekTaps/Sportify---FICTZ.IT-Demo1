@@ -56,12 +56,14 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             if (turnoBase == null || turnoBase.IdHorario == null)
                 throw new ValidacionException("Turno base inválido o no es recurrente.");
 
-            Guid idHorario = turnoBase.IdHorario.Value;
+            Guid idHorario = turnoBase.IdHorario;
             var horario = await _repositorioHorario.ObtenerHorarioPorId(idHorario);
             if (horario == null) throw new ValidacionException("Horario no encontrado.");
 
             bool estaAbonado = await _repositorioAbono.ExisteAbonoActivo(Guid.Parse(usuario.Id), idHorario);
             if (estaAbonado) throw new ValidacionException("Ya estás abonado a este horario.");
+
+
 
             // Buscar clases que corresponden a este mes (y primeros 10 días del siguiente si estamos después del 20)
             var hoy = DateTime.Now.Date;
@@ -87,14 +89,8 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             int creditosADescontar = 0;
             if (creditoEntity != null && creditoEntity.Cantidad > 0)
             {
-                if (creditoEntity.Cantidad >= precioTotalOriginal)
-                {
-                    creditosADescontar = (int)precioTotalOriginal;
-                }
-                else
-                {
-                    creditosADescontar = creditoEntity.Cantidad;
-                }
+                // El máximo de créditos a descontar es la cantidad de clases a las que se está abonando
+                creditosADescontar = Math.Min(creditoEntity.Cantidad, turnosDelAbono.Count);
                 
                 // Actualizar creditoEntity usando UsarCredito() varias veces
                 for (int i = 0; i < creditosADescontar; i++)

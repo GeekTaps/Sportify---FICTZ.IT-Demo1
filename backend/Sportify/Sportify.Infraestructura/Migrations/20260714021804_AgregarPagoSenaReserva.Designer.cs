@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sportify.Infraestructura.Data;
 
@@ -10,9 +11,11 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260714021804_AgregarPagoSenaReserva")]
+    partial class AgregarPagoSenaReserva
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -222,7 +225,7 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("idHorario")
+                    b.Property<Guid>("idDeporte")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("idUsuario")

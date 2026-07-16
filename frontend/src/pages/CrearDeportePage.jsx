@@ -7,6 +7,7 @@ function CrearDeportePage() {
   const [deportes, setDeportes] = useState([]);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [precio, setPrecio] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,7 @@ function CrearDeportePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() }),
+        body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim(), precio: precio.trim() }),
       });
 
       const body = await response.json().catch(() => null);
@@ -76,6 +77,8 @@ function CrearDeportePage() {
         setNombre={setNombre}
         descripcion={descripcion}
         setDescripcion={setDescripcion}
+        precio={precio}
+        setPrecio={setPrecio}
         onSubmit={registrarDeporte}
         loading={loading}
         error={error}

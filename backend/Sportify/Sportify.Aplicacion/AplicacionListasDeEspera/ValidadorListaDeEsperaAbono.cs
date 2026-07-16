@@ -11,9 +11,14 @@ namespace Sportify.Aplicacion.AplicacionListasDeEspera;
 
 public class ValidadorListaDeEsperaAbono : IValidadorListaDeEsperaAbono
 {
-    public async Task<bool> validarAgregarEnEspera(ListaDeEsperaAbono e, IRepositorioListaDeEsperaAbono repositorioListaDeEsperaAbono) // = chequear si existe
-    {
-        return !await repositorioListaDeEsperaAbono.existeEnEspera(e);
-    }
+   public async Task<bool> validarAgregarEnEspera(
+    ListaDeEsperaAbono e,
+    IRepositorioListaDeEsperaAbono repositorioListaDeEsperaAbono)
+{
+    return !await repositorioListaDeEsperaAbono.existeEnEspera(
+        e.idUsuario,
+        e.idDeporte
+    );
+}
 
 }

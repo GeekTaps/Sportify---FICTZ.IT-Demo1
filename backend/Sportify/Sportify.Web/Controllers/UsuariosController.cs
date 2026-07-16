@@ -19,14 +19,17 @@ public class UsuariosController : ControllerBase
     private readonly UserManager<UsuarioIdentity> userManager;
     private readonly ReactivarAlumnoUseCase reactivarAlumnoUseCase;
     private readonly ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase;
-    
-    public UsuariosController(RegistrarUsuarioUseCase registrarUsuarioUseCase, UserManager<UsuarioIdentity> userManager, ReactivarAlumnoUseCase reactivarAlumnoUseCase, ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase)
+    private readonly ListarUsuariosEnListaEsperaAbonoUseCase listarUsuariosEnListaDeEsperaAbonoUseCase;
+    private readonly ListarUsuariosEnListaEsperaTurnoUseCase listarUsuariosEnListaDeEsperaTurnoUseCase;
+
+    public UsuariosController(RegistrarUsuarioUseCase registrarUsuarioUseCase, UserManager<UsuarioIdentity> userManager, ReactivarAlumnoUseCase reactivarAlumnoUseCase, ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase, ListarUsuariosEnListaEsperaAbonoUseCase listarUsuariosEnListaDeEsperaUseCase, ListarUsuariosEnListaEsperaTurnoUseCase listarUsuariosEnListaDeEsperaTurnoUseCase)
     {
         this.registrarUsuarioUseCase = registrarUsuarioUseCase;
         this.userManager = userManager;
         this.reactivarAlumnoUseCase = reactivarAlumnoUseCase;
         this.listarUsuariosSuspendidosUseCase = listarUsuariosSuspendidosUseCase;
-        
+        this.listarUsuariosEnListaDeEsperaAbonoUseCase = listarUsuariosEnListaDeEsperaUseCase;
+        this.listarUsuariosEnListaDeEsperaTurnoUseCase = listarUsuariosEnListaDeEsperaTurnoUseCase;
     }
 
     [HttpGet]
@@ -157,4 +160,17 @@ public async Task<IActionResult> Reactivar(string email)
         return BadRequest(new { message = ex.Message });
     }
 }
+[HttpGet("lista-espera-abono/{idDeporte}")]
+public async Task<IActionResult> ListarListaEsperaAbono(Guid idDeporte)
+{
+    var usuarios = await listarUsuariosEnListaDeEsperaAbonoUseCase.Ejecutar(idDeporte);
+    return Ok(usuarios);
+}
+[HttpGet("lista-espera-turno/{idTurno}")]
+public async Task<IActionResult> ListarListaEsperaTurno(Guid idTurno)
+{
+    var usuarios = await listarUsuariosEnListaDeEsperaTurnoUseCase.Ejecutar(idTurno);
+    return Ok(usuarios);
+}
+
 }

@@ -40,7 +40,7 @@ public class EntrarListaAbonoUseCase
         if (info.HasConflict)
             throw new EntidadNotFoundException("Ya tenés una reserva en ese horario");
 
-        var entrada = new ListaDeEsperaAbono(idUsuario, turno.IdDeporte);
+        var entrada = new ListaDeEsperaAbono(idUsuario, turno.IdDeporte,turno.IdHorario);
 
         if (await _validadorLista.validarAgregarEnEspera(entrada, _repositorioLista))
         {

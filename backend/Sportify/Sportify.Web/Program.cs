@@ -71,6 +71,8 @@ builder.Services.AddScoped<ListarUsuariosSuspendidosUseCase>();
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 builder.Services.AddScoped<ReactivarAlumnoUseCase>();
+builder.Services.AddScoped<ListarUsuariosEnListaEsperaTurnoUseCase>();
+builder.Services.AddScoped<ListarUsuariosEnListaEsperaAbonoUseCase>();
 
 builder.Services.AddScoped<BajaLogicaUsuarioUseCase>();
 builder.Services.AddTransient<IRepositorioCreditos, RepositorioCreditos>();
@@ -81,6 +83,7 @@ builder.Services.AddScoped<RegistrarEmpleadoUseCase>();
 
 //Scoped de Turnos
 builder.Services.AddScoped<TurnoListadoUseCase>();
+builder.Services.AddScoped<TurnoListadoAnterioresUseCase>();
 builder.Services.AddScoped<TurnoAltaUseCase>();
 builder.Services.AddScoped<TurnoModificacionUseCase>();
 builder.Services.AddScoped<TurnoAltaMensualUseCase>();
@@ -90,8 +93,12 @@ builder.Services.AddScoped<SuspenderTurnoAdminUseCase>();
 builder.Services.AddTransient<IValidadorTurno, ValidadorTurno>();
 builder.Services.AddTransient<IValidadorHorario, ValidadorHorario>();
 
+//scoped de Pagos?? por que no existía que onda (zega)
+builder.Services.AddScoped<RegistrarPagoSenaUseCase>();
 //Scoped de Reservas
-builder.Services.AddScoped<ReservaListadoUseCase>();
+builder.Services.AddScoped<ReservaListadoActivasUseCase>();
+builder.Services.AddScoped<ReservaListadoAnterioresUseCase>();
+builder.Services.AddScoped<ReservaListadoCompletoUseCase>();
 builder.Services.AddScoped<ReservaAltaUseCase>();
 builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
@@ -117,6 +124,11 @@ builder.Services.AddScoped<EntrarListaAbonoUseCase>();
 builder.Services.AddScoped<EntrarListaTurnoUseCase>();
 builder.Services.AddScoped<IValidadorListaDeEsperaAbono, ValidadorListaDeEsperaAbono>();
 builder.Services.AddScoped<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaTurno>();
+builder.Services.AddScoped<SalirListaEsperaTurnoUseCase>();
+builder.Services.AddScoped<SalirListaEsperaAbonoUseCase>();
+builder.Services.AddScoped<estaEnListaEsperaTurnoUseCase>();
+
+builder.Services.AddScoped<EstaEnListaEsperaAbonoUseCase>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
@@ -155,6 +167,9 @@ RepositoriosSQLites.Inicializar(app.Services);
 
 // Sembrar cuentas de administrador por defecto
 await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
+
+// Sembrar cuentas de usuario normales
+await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
