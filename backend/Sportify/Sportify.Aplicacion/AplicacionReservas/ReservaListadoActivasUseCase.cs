@@ -39,9 +39,6 @@ public class ReservaListadoActivasUseCase
         })
         .ToList();
 
-        if(reservasActivas.Count == 0){
-            throw new ListadoVacioException("No Contás Con Reservas Activas");
-        }
         return reservasActivas;
     }
 }

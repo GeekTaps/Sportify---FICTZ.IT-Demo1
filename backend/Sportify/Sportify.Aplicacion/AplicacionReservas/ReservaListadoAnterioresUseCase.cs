@@ -42,10 +42,6 @@ public class ReservaListadoAnterioresUseCase
         })
         .ToList();
 
-        if (reservasAnteriores.Count == 0) {
-            throw new ListadoVacioException("No Contás Con Reservas Anteriores");
-        }
-
         foreach (var r in reservasAnteriores)
         {
             r.Asistio = await repositorioAsistencias.AsistioATurno(idUsuario, r.idTurno);

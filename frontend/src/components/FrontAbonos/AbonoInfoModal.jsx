@@ -26,7 +26,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
-          <div className="alert alert-warning">Ya estás abonado a este turno.</div>
+          <div className="alert alert-warning">Ya estás abonado a este horario</div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
             <button onClick={onClose} className="btn btn-secondary">Cerrar</button>
           </div>
@@ -37,22 +37,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
 
 
 
-  // Escenario 3: Pasado el día 10
-  if (isPast10thDay && hasFewClasses) {
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
-          <div className="alert alert-warning">
-            Para abonarte este mes, debés hacerlo dentro de los primeros 10 días, o cuando queden al menos 3 clases en el mes.
-          </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
-            <button onClick={onClose} className="btn btn-secondary">Cerrar</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   // HARDCODEO DE PAGOS: este bloque reemplaza la creación de preferencia por un pago local inmediato.
   const handlePagarAbono = async () => {
@@ -138,9 +123,27 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
           <strong>Precio total a pagar:</strong> ${precioTotal}
         </p>
 
-        {noCupo && (
+        {hasConflict && (
           <div className="alert alert-warning" style={{ margin: "15px 0" }}>
-            Por el momento no hay más cupos para abonarse a esta actividad.
+            Ya tenés una reserva en este horario
+          </div>
+        )}
+
+        <div className="alert alert-info" style={{ margin: "15px 0" }}>
+          Al abonarte, reservás tus clases para todo el mes. Tenés 10 días para renovar tu abono al principio de cada mes
+        </div>
+
+        {noCupo ? (
+          <div className="alert alert-warning" style={{ margin: "15px 0" }}>
+            Por el momento no hay más cupos para este horario
+          </div>
+        ) : precioTotal === 0 ? (
+          <div className="alert alert-success" style={{ margin: "15px 0" }}>
+            Tenés suficientes créditos para cubrir el abono
+          </div>
+        ) : (
+          <div className="alert alert-info" style={{ margin: "15px 0" }}>
+            Para confirmar tu lugar, procedé al pago
           </div>
         )}
 
@@ -158,7 +161,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
               onClick={handlePagarAbono}
               disabled={loading}
             >
-              {loading ? "Procesando..." : "Confirmar y Pagar"}
+              {loading ? "Procesando..." : (precioTotal === 0 ? "Confirmar Abono" : "mercado pago")}
             </button>
           ) : (
             <button

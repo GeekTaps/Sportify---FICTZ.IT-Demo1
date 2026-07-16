@@ -120,14 +120,7 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _ReservaListadoCompletoUseCase.Ejecutar(id);
-                if (reservas == null || reservas.Count == 0) {
-                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
-                }
                 return Ok(reservas);
-            }
-            catch (ListadoVacioException ex)
-            {
-                return NotFound(new { mensaje = ex.Message });
             }
             catch (Exception ex)
             {
@@ -143,14 +136,7 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _ReservaListadoActivasUseCase.Ejecutar(id);
-                if (reservas == null || reservas.Count == 0) {
-                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
-                }
                 return Ok(reservas);
-            }
-            catch (ListadoVacioException ex)
-            {
-                return NotFound(new { mensaje = ex.Message });
             }
             catch (Exception ex)
             {
@@ -166,14 +152,7 @@ namespace Sportify.Web.Controllers
             try
             {
                 var reservas = await _ReservaListadoAnterioresUseCase.Ejecutar(id);
-                if (reservas == null || reservas.Count == 0) {
-                    throw new ListadoVacioException("el usuario seleccionado no posee reservas");
-                }
                 return Ok(reservas);
-            }
-            catch (ListadoVacioException ex)
-            {
-                return NotFound(new { mensaje = ex.Message });
             }
             catch (Exception ex)
             {

@@ -175,6 +175,10 @@ await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
 // Sembrar cuentas de usuario normales
 await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
 
+// Sembrar deportes y créditos
+await RepositoriosSQLites.SeedDeportes(app.Services);
+await RepositoriosSQLites.SeedCreditos(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
