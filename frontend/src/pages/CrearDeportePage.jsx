@@ -1,10 +1,7 @@
 import { useState } from "react";
 import RegistrarDeporteForm from "../components/FrontDeportes/RegistrarDeporteForm";
-import BotonMostrarListadoDeportes from "../components/FrontDeportes/BotonMostrarListadoDeportes";
-import BotonModificarDeporte from "../components/FrontDeportes/BotonModificarDeporte";
 
 function CrearDeportePage() {
-  const [deportes, setDeportes] = useState([]);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
@@ -12,30 +9,20 @@ function CrearDeportePage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const cargarDeportes = async () => {
-    try {
-      const response = await fetch("http://localhost:5266/api/deportes");
-      if (!response.ok) {
-        throw new Error(`Error HTTP ${response.status}`);
-      }
-      const data = await response.json();
-      setDeportes(data);
-    } catch (error) {
-      console.error("Error al cargar deportes:", error);
-    }
-  };
 
-  const modificarDeporte = (id) => {
-    window.location.href = `/deportes/modificar/${id}`;
-  };
 
   const registrarDeporte = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!nombre.trim() || !descripcion.trim()) {
-      setError("complete los campos para registrar un deporte");
+    if (!nombre.trim() || !descripcion.trim() || !precio.toString().trim()) {
+      setError("Completá todos los campos");
+      return;
+    }
+
+    if (Number(precio) < 1) {
+      setError("El precio debe ser positivo");
       return;
     }
 
@@ -55,7 +42,7 @@ function CrearDeportePage() {
         setSuccess("deporte registrado correctamente");
         setNombre("");
         setDescripcion("");
-        cargarDeportes();
+        setPrecio("");
       } else {
         setError(body?.message ?? "Error al registrar el deporte. Intenta nuevamente.");
       }
@@ -85,16 +72,6 @@ function CrearDeportePage() {
         success={success}
       />
 
-      <BotonMostrarListadoDeportes onClick={cargarDeportes} />
-
-      <ul>
-        {deportes.map((d) => (
-          <li key={d.id} style={{ marginBottom: "12px" }}>
-            <strong>{d.nombre}</strong> - {d.descripcion}
-            <BotonModificarDeporte onClick={() => modificarDeporte(d.id)} />
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
