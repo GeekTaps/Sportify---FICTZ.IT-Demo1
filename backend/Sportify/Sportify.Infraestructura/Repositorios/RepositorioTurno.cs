@@ -108,4 +108,37 @@ public class RepositorioTurno : IRepositorioTurno
         }
         await archivo.SaveChangesAsync();
     }
+
+    public async Task<List<Turno>> ListarTurnosPorHorario(Guid idHorario)
+    {
+        return await archivo.Turnos
+            .Where(t => t.IdHorario == idHorario)
+            .OrderBy(t => t.Fecha)
+            .ToListAsync();
+    }
+
+    public async Task<bool> HayLugarParaAbono(Guid idHorario)
+    {
+        var hoy = DateTime.Now.Date;
+
+        var maxFecha = new DateTime(
+            hoy.Year,
+            hoy.Month,
+            DateTime.DaysInMonth(hoy.Year, hoy.Month));
+
+        if (hoy.Day >= 20)
+            maxFecha = maxFecha.AddDays(10);
+
+        var turnos = await archivo.Turnos
+            .Where(t =>
+                t.IdHorario == idHorario &&
+                t.Fecha.Date >= hoy &&
+                t.Fecha.Date <= maxFecha)
+            .ToListAsync();
+
+        if (!turnos.Any())
+            throw new Exception("No existen turnos para ese horario.");
+
+        return turnos.All(t => t.cupo > 0);
+    }
 }

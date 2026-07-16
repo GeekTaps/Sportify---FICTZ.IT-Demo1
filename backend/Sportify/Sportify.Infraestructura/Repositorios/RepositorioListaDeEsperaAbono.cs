@@ -46,11 +46,39 @@ public async Task<bool> eliminarEspera(Guid idUsuario, Guid idDeporte)
             l.idDeporte == idDeporte);
 }
 
-    public async Task<System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idHorario)
+    public async Task<List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idHorario)
+{
+    // Traigo las entradas de la lista de espera de ese horario,
+    // ordenadas por fecha de inscripción (el primero anotado va primero).
+    var entradas = await _context.ListaDeEsperaAbono
+        .Where(x => x.idHorario == idHorario)
+        .OrderBy(x => x.fecha)
+        .ToListAsync();
+
+    var usuarios = new List<Sportify.Dominio.Usuario.Usuario>();
+
+    foreach (var entrada in entradas)
     {
-        // Not implemented fully due to not needing it for this specific feature yet
-        return new System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>();
+        var usuario = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == entrada.idUsuario.ToString());
+
+        if (usuario != null)
+        {
+            usuarios.Add(new Sportify.Dominio.Usuario.Usuario(
+                usuario.Id,
+                usuario.NombreCompleto,
+                usuario.Email,
+                usuario.Dni,
+                "",
+                "",
+                usuario.FechaNacimiento,
+                usuario.Creditos
+            ));
+        }
     }
+
+    return usuarios;
+}
 
     public async Task<System.Collections.Generic.List<Sportify.Dominio.Turnos.Horario>> listarHorarios(Guid idUsuario)
     {

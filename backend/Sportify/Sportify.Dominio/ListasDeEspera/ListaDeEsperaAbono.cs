@@ -3,7 +3,7 @@
             public class ListaDeEsperaAbono{
                 public Guid id { get; private set; }
                 public Guid idUsuario { get; private set; }
-                public Guid idDeporte { get; private set; }
+                public Guid idDeporte { get; private set; } //esto esta al pedo, no lo borro por si las duda
                 public DateTime fecha { get; private set; }
                 public Guid idHorario { get; private set; }
 

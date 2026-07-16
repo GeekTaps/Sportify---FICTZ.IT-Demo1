@@ -20,13 +20,16 @@ function TurnoPage() {
   const [infoHistoricaTurno, setInfoHistoricaTurno] = useState(null);
   //lista espera
   const [usuariosListaEspera, setUsuariosListaEspera] = useState([]);
-const [loadingListaEspera, setLoadingListaEspera] = useState(false);
-const [mostrarListaEspera, setMostrarListaEspera] = useState(false);
-const [usuariosListaEsperaAbono, setUsuariosListaEsperaAbono] = useState([]);
-const [mostrarListaEsperaAbono, setMostrarListaEsperaAbono] = useState(false);
-const [loadingListaEsperaAbono, setLoadingListaEsperaAbono] = useState(false);
-const [estaEnListaEsperaTurno, setEstaEnListaEsperaTurno] = useState(false);
-const [estaEnListaEsperaAbono, setEstaEnListaEsperaAbono] = useState(false);
+  const [loadingListaEspera, setLoadingListaEspera] = useState(false);
+  const [mostrarListaEspera, setMostrarListaEspera] = useState(false);
+  const [usuariosListaEsperaAbono, setUsuariosListaEsperaAbono] = useState([]);
+  const [mostrarListaEsperaAbono, setMostrarListaEsperaAbono] = useState(false);
+  const [loadingListaEsperaAbono, setLoadingListaEsperaAbono] = useState(false);
+  const [estaEnListaEsperaTurno, setEstaEnListaEsperaTurno] = useState(false);
+  const [estaEnListaEsperaAbono, setEstaEnListaEsperaAbono] = useState(false);
+  const [tokenConfirmacionAbono, setTokenConfirmacionAbono] = useState("");
+  const [idHorarioConfirmacionAbono, setIdHorarioConfirmacionAbono] = useState("");
+  const [confirmandoAbono, setConfirmandoAbono] = useState(false);
 
   // Estados de reserva
   const [loadingReserva, setLoadingReserva] = useState(false);
@@ -52,6 +55,13 @@ const [estaEnListaEsperaAbono, setEstaEnListaEsperaAbono] = useState(false);
   const esTurnoConfirmablePorLink = Boolean(tokenConfirmacionEspera && modalTurno && (
     String(modalTurno.id) === String(idTurnoConfirmacionEspera) || String(modalTurno.Id) === String(idTurnoConfirmacionEspera)
   ));
+
+  const esAbonoConfirmablePorLink = Boolean(
+  tokenConfirmacionAbono &&
+  modalTurno &&
+  String(modalTurno.idHorario ?? modalTurno.IdHorario) ===
+    String(idHorarioConfirmacionAbono)
+);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -81,6 +91,18 @@ const [estaEnListaEsperaAbono, setEstaEnListaEsperaAbono] = useState(false);
       navigate("/turnos", { replace: true });
     }
   }, [location, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+
+    const token = params.get("confirmarAbono");
+    const idHorario = params.get("idHorario");
+
+    if (token && idHorario) {
+        setTokenConfirmacionAbono(token);
+        setIdHorarioConfirmacionAbono(idHorario);
+    }
+  }, []);
 const refrescarEstadoListas = async () => {
   const resAbono = await fetch(
     `http://localhost:5266/api/ListasDeEspera/esta-en-lista-abono?email=${encodeURIComponent(user.email)}&idDeporte=${modalTurno.idDeporte}&idHorario=${modalTurno.idHorario}`
@@ -115,6 +137,20 @@ const refrescarEstadoListas = async () => {
       abrirModal(turnoEncontrado);
     }
   }, [turnos, idTurnoConfirmacionEspera]);
+
+  useEffect(() => {
+    if (!turnos.length || !idHorarioConfirmacionAbono) return;
+
+    const turnoEncontrado = turnos.find(
+        (t) =>
+            String(t.idHorario ?? t.IdHorario) ===
+            String(idHorarioConfirmacionAbono)
+    );
+
+    if (turnoEncontrado) {
+        abrirModal(turnoEncontrado);
+    }
+  }, [turnos, idHorarioConfirmacionAbono]);
 
   const modificarTurno = (id) => {
     navigate(`/turnos/modificar/${id}`);
@@ -434,6 +470,51 @@ const cargarListaEspera = async () => {
     }
   };
 
+  const handleConfirmarAbonoDesdeEspera = async () => {
+  if (!tokenConfirmacionAbono || !modalTurno?.idHorario) return;
+
+  setConfirmandoAbono(true);
+  setMensajeReserva("");
+  setEsErrorReserva(false);
+
+  try {
+    const response = await fetch(
+      "http://localhost:5266/api/ListasDeEspera/confirmar-abono",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: tokenConfirmacionAbono,
+          idHorario: modalTurno.idHorario,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setEsErrorReserva(false);
+      setMensajeReserva(data.mensaje || "Abono confirmado correctamente.");
+      setReservaExitosa(true);
+      cargarTurnos();
+    } else {
+      setEsErrorReserva(true);
+      setMensajeReserva(
+        data.message ||
+        data.mensaje ||
+        "No se pudo confirmar el abono."
+      );
+    }
+  } catch {
+    setEsErrorReserva(true);
+    setMensajeReserva("Error de conexión con el servidor.");
+  } finally {
+    setConfirmandoAbono(false);
+  }
+};
+
   const handleEntrarListaEspera = async () => {
     setLoadingReserva(true);
     setMensajeReserva("");
@@ -617,7 +698,35 @@ const response = await fetch(
                 {!reservaExitosa ? (
                   <>
                     {modalTurno.cupo > 0 ? (
+                      
   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+
+    {esTurnoConfirmablePorLink && (
+      <button
+        onClick={handleConfirmarReservaDesdeEspera}
+        disabled={loadingReserva || confirmandoEspera}
+        className="btn btn-success"
+        style={{ width: "100%" }}
+      >
+        {confirmandoEspera 
+          ? "Confirmando..." 
+          : "Confirmar reserva y pagar seña"}
+      </button>
+    )}
+
+    {esAbonoConfirmablePorLink && (
+      <button
+        onClick={handleConfirmarAbonoDesdeEspera}
+        disabled={confirmandoAbono}
+        className="btn btn-success"
+        style={{ width: "100%" }}
+      >
+        {confirmandoAbono
+          ? "Confirmando..."
+          : "Confirmar abono"}
+      </button>
+    )}
+
     <button
       onClick={handleReservar}
       disabled={loadingReserva || loadingAbono}
@@ -626,6 +735,7 @@ const response = await fetch(
     >
       {loadingReserva ? "Procesando..." : "Reservar turno"}
     </button>
+
 
     {modalTurno.idHorario && (
       <button
@@ -641,9 +751,13 @@ const response = await fetch(
         {loadingAbono ? "Cargando..." : "Abonarse"}
       </button>
     )}
+
   </div>
+
 ) : (
+
   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+
     {estaEnListaEsperaTurno ? (
       <button
         onClick={handleSalirListaEspera}
@@ -662,8 +776,9 @@ const response = await fetch(
       </button>
     )}
 
-    {modalTurno.idHorario &&
-      (estaEnListaEsperaAbono ? (
+
+    {modalTurno.idHorario && (
+      estaEnListaEsperaAbono ? (
         <button
           onClick={handleSalirListaEsperaAbono}
           className="btn btn-danger"
@@ -684,70 +799,13 @@ const response = await fetch(
         >
           {loadingAbono ? "Cargando..." : "Abonarse"}
         </button>
-      ))}
+      )
+    )}
+
   </div>
+
 )}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                        {esTurnoConfirmablePorLink && (
-                          <button
-                            onClick={handleConfirmarReservaDesdeEspera}
-                            disabled={loadingReserva || confirmandoEspera}
-                            className="btn btn-success"
-                            style={{ width: "100%" }}
-                          >
-                            {confirmandoEspera ? "Confirmando..." : "Confirmar reserva y pagar seña"}
-                          </button>
-                        )}
-                        <button
-                          onClick={handleReservar}
-                          disabled={loadingReserva || loadingAbono}
-                          className="btn btn-primary"
-                          style={{ width: "100%" }}
-                        >
-                          {loadingReserva ? "Procesando..." : "Reservar turno"}
-                        </button>
-                        {modalTurno.idHorario && (
-                          <button
-                            onClick={handleInfoAbono}
-                            disabled={loadingReserva || loadingAbono}
-                            className="btn btn-secondary"
-                            style={{ width: "100%", background: "var(--c-azul-medio)", color: "white" }}
-                          >
-                            {loadingAbono ? "Cargando..." : "Abonarse"}
-                          </button>
-                        )}
-                      </div>
-                    )
-                      : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                          {esTurnoConfirmablePorLink && (
-                            <button onClick={handleConfirmarReservaDesdeEspera} className="btn btn-success" style={{ width: "100%" }} disabled={confirmandoEspera}>
-                              {confirmandoEspera ? "Confirmando..." : "Confirmar reserva y pagar seña"}
-                            </button>
-                          )}
-                          <button onClick={handleEntrarListaEspera} className="btn btn-secondary" style={{ width: "100%" }}>
-                            Entrar a lista de espera
-                          </button>
-                          {modalTurno.idHorario && (
-                            <button
-                              onClick={handleInfoAbono}
-                              disabled={loadingReserva || loadingAbono}
-                              className="btn btn-secondary"
-                              style={{ width: "100%", background: "var(--c-azul-medio)", color: "white" }}
-                            >
-                              {loadingAbono ? "Cargando..." : "Abonarse"}
-                            </button>
-                          )}
-                        </div>
-                      )
-                      /* :   
-                      (
-                          <div className="alert alert-warning">
-                            Por el momento no hay más cupos para esta actividad
-                          </div>
-                        )
-                      */
-                    }
+
                     {mensajeReserva && (
                       <div className={`alert ${esErrorReserva ? 'alert-error' : 'alert-success'}`} style={{ marginTop: "15px" }}>
                         {mensajeReserva}
