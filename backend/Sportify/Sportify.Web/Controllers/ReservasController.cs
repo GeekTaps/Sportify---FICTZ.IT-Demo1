@@ -288,7 +288,7 @@ namespace Sportify.Web.Controllers
                     return NotFound(new { mensaje = "Usuario no encontrado." });
                 }
 
-                if (user.Suspendido)
+                if (user.Suspendido || user.SuspendidoPermanente)
                 {
                     return BadRequest(new { mensaje = "Tu cuenta está suspendida. Ya no es posible reservar más clases hasta el mes siguiente y no se devolverá el valor de las señas depositadas en caso de cancelar." });
                 }
@@ -405,7 +405,7 @@ namespace Sportify.Web.Controllers
 
                 var horasAnticipacion = (fechaTurno - DateTime.Now).TotalHours;
 
-                bool estabaSuspendido = user.Suspendido;
+                bool estabaSuspendido = user.Suspendido || user.SuspendidoPermanente;
                 string mensajeBase = "Reserva cancelada exitosamente.";
                 string advertencia = null;
                 

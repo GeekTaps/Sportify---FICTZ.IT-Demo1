@@ -138,7 +138,7 @@ public async Task<IActionResult> Login([FromBody] LoginDTO dto)
 public IActionResult ListarSuspendidos()
 {
     var usuarios = userManager.Users
-         .Where(u => u.Suspendido && !u.EsAdmin)
+         .Where(u => (u.Suspendido || u.SuspendidoPermanente) && !u.EsAdmin)
         .Select(user => new
         {
             id = user.Id,
@@ -167,12 +167,17 @@ public async Task<IActionResult> Reactivar(string email)
     }
 }
 [HttpPost("suspender/{email}")]
-public async Task<IActionResult> SuspenderPermanente(string email)
+public async Task<IActionResult> SuspenderPermanente(string email, [FromQuery] bool cancelarReservas = false)
 {
     try
     {
-        await suspenderCuentaUseCase.Ejecutar(email);
-        return Ok(new { message = "Alumno suspendido correctamente." });
+        await suspenderCuentaUseCase.Ejecutar(email, cancelarReservas);
+        
+        string mensaje = cancelarReservas 
+            ? "Usuario suspendido. Reservas canceladas." 
+            : "Usuario suspendido.";
+            
+        return Ok(new { message = mensaje });
     }
     catch (Exception ex)
     {

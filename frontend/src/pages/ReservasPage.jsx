@@ -275,7 +275,7 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
-                  {console.log(reservaSeleccionada)}
+                {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
@@ -291,7 +291,7 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
+                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
@@ -358,7 +358,7 @@ function ReservasPage() {
 
                     {reservaSeleccionada.horasAnticipacion >= 0 && (
                       <>
-                        {reservaSeleccionada.suspendido ? (
+                        {(reservaSeleccionada.suspendido || reservaSeleccionada.suspendidoPermanente) ? (
                           <div className="alert alert-error">
                             Tu cuenta está suspendida. En caso de cancelar, no se
                             devolverá el valor de la seña.
