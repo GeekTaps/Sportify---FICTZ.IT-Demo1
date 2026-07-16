@@ -541,7 +541,7 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
-        private async Task NotificarSiguienteEnEspera(Guid idTurno, string nombreTurno)
+        public async Task NotificarSiguienteEnEspera(Guid idTurno, string nombreTurno)
         {
             try
             {
@@ -564,6 +564,15 @@ namespace Sportify.Web.Controllers
                     <p>Este enlace vence en 2 horas.</p>";
 
                 await _servicioEmail.MandarMail(siguienteUsuario.Mail, "¡Se liberó un lugar para tu turno!", body);
+
+                var entrada = (await _repositorioListaDeEsperaTurno.listarEntradas(idTurno))
+                    .FirstOrDefault(e => e.idUsuario == Guid.Parse(siguienteUsuario.Id));
+
+                if (entrada != null)
+                {
+                    entrada.MarcarComoNotificado();
+                    await _repositorioListaDeEsperaTurno.Modificar(entrada);
+                }
                 Console.WriteLine($"Mail de lista de espera enviado a {siguienteUsuario.Mail} para el turno {idTurno}");
             }
             catch (Exception ex)
@@ -572,7 +581,7 @@ namespace Sportify.Web.Controllers
             }
         }
 
-        private async Task NotificarSiguienteEnEsperaAbono(Guid idHorario, string nombreHorario)
+        public async Task NotificarSiguienteEnEsperaAbono(Guid idHorario, string nombreHorario)
         {
             try
             {
@@ -602,6 +611,15 @@ namespace Sportify.Web.Controllers
                     "¡Se liberó un lugar para tu abono!",
                     body
                 );
+
+                var entrada = (await _repositorioListaDeEsperaTurno.listarEntradas(idHorario))
+                    .FirstOrDefault(e => e.idUsuario == Guid.Parse(siguienteUsuario.Id));
+
+                if(entrada != null)
+                {
+                    entrada.MarcarComoNotificado();
+                    await _repositorioListaDeEsperaTurno.Modificar(entrada);
+                }
 
                 Console.WriteLine($"Mail de lista de espera de abonados enviado a {siguienteUsuario.Mail} para el horario {idHorario}");
             }
