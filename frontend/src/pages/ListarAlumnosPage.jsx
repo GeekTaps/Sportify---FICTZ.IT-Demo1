@@ -111,6 +111,8 @@ const alumnosFiltrados = alumnos.filter(alumno =>
           <p><strong>Email:</strong> {seleccionado.email}</p>
           <p><strong>DNI:</strong> {seleccionado.dni}</p>
           <p><strong>Fecha de nacimiento:</strong> {new Date(seleccionado.fechaNacimiento).toLocaleDateString("es-AR")}</p>
+          {seleccionado.suspendido && <p style={{color: "var(--c-rojo-hover)", fontWeight: "bold"}}>Suspendido temporalmente (moroso)</p>}
+          {seleccionado.suspendidoPermanente && <p style={{color: "var(--c-rojo-hover)", fontWeight: "bold"}}>Suspendido permanentemente</p>}
           <button
             className="btn btn-outline"
             style={{ marginTop: "1rem", width: "100%" }}
@@ -118,14 +120,33 @@ const alumnosFiltrados = alumnos.filter(alumno =>
           >
             Cerrar
           </button>
-          {seleccionado.suspendido && (
+          
+          <button
+            className="btn btn-danger"
+            style={{ marginTop: "0.5rem", width: "100%" }}
+            onClick={async () => {
+              if (seleccionado.suspendidoPermanente) {
+                alert("Este usuario ya está suspendido");
+                return;
+              }
+              if (window.confirm("¿Estás seguro de que deseas suspender permanentemente a este usuario?")) {
+                await apiClient.post(`/usuarios/suspender/${seleccionado.email}`);
+                setSeleccionado(null);
+                fetchAlumnos(soloSuspendidos ? "suspendidos" : "todos");
+              }
+            }}
+          >
+            Suspender
+          </button>
+
+          {(seleccionado.suspendido || seleccionado.suspendidoPermanente) && (
   <button
     className="btn btn-primary"
     style={{ marginTop: "0.5rem", width: "100%" }}
     onClick={async () => {
       await apiClient.post(`/usuarios/reactivar/${seleccionado.email}`);
       setSeleccionado(null);
-      fetchAlumnos(soloSuspendidos);
+      fetchAlumnos(soloSuspendidos ? "suspendidos" : "todos");
     }}
   >
     Reactivar alumno

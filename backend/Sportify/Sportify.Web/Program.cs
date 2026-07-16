@@ -71,6 +71,7 @@ builder.Services.AddScoped<ListarUsuariosSuspendidosUseCase>();
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 builder.Services.AddScoped<ReactivarAlumnoUseCase>();
+builder.Services.AddScoped<SuspenderCuentaUseCase>();
 builder.Services.AddScoped<ListarUsuariosEnListaEsperaTurnoUseCase>();
 builder.Services.AddScoped<ListarUsuariosEnListaEsperaAbonoUseCase>();
 

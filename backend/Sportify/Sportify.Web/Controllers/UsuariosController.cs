@@ -21,8 +21,9 @@ public class UsuariosController : ControllerBase
     private readonly ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase;
     private readonly ListarUsuariosEnListaEsperaAbonoUseCase listarUsuariosEnListaDeEsperaAbonoUseCase;
     private readonly ListarUsuariosEnListaEsperaTurnoUseCase listarUsuariosEnListaDeEsperaTurnoUseCase;
+    private readonly SuspenderCuentaUseCase suspenderCuentaUseCase;
 
-    public UsuariosController(RegistrarUsuarioUseCase registrarUsuarioUseCase, UserManager<UsuarioIdentity> userManager, ReactivarAlumnoUseCase reactivarAlumnoUseCase, ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase, ListarUsuariosEnListaEsperaAbonoUseCase listarUsuariosEnListaDeEsperaUseCase, ListarUsuariosEnListaEsperaTurnoUseCase listarUsuariosEnListaDeEsperaTurnoUseCase)
+    public UsuariosController(RegistrarUsuarioUseCase registrarUsuarioUseCase, UserManager<UsuarioIdentity> userManager, ReactivarAlumnoUseCase reactivarAlumnoUseCase, ListarUsuariosSuspendidosUseCase listarUsuariosSuspendidosUseCase, ListarUsuariosEnListaEsperaAbonoUseCase listarUsuariosEnListaDeEsperaUseCase, ListarUsuariosEnListaEsperaTurnoUseCase listarUsuariosEnListaDeEsperaTurnoUseCase, SuspenderCuentaUseCase suspenderCuentaUseCase)
     {
         this.registrarUsuarioUseCase = registrarUsuarioUseCase;
         this.userManager = userManager;
@@ -30,6 +31,7 @@ public class UsuariosController : ControllerBase
         this.listarUsuariosSuspendidosUseCase = listarUsuariosSuspendidosUseCase;
         this.listarUsuariosEnListaDeEsperaAbonoUseCase = listarUsuariosEnListaDeEsperaUseCase;
         this.listarUsuariosEnListaDeEsperaTurnoUseCase = listarUsuariosEnListaDeEsperaTurnoUseCase;
+        this.suspenderCuentaUseCase = suspenderCuentaUseCase;
     }
 
     [HttpGet]
@@ -46,6 +48,7 @@ public class UsuariosController : ControllerBase
             dni = user.Dni,
             fechaNacimiento = user.FechaNacimiento,
             suspendido = user.Suspendido,
+            suspendidoPermanente = user.SuspendidoPermanente,
             
         }
         ).ToList();
@@ -96,6 +99,7 @@ public async Task<IActionResult> GetUserInfo(string email)
     {
         email = user.Email,
         suspendido = user.Suspendido,
+        suspendidoPermanente = user.SuspendidoPermanente,
     });
 }
 
@@ -126,6 +130,7 @@ public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         email = user.Email,
         nombreCompleto = user.NombreCompleto,
         suspendido = user.Suspendido,
+        suspendidoPermanente = user.SuspendidoPermanente,
         esAdmin = user.EsAdmin
     });
 }
@@ -142,7 +147,8 @@ public IActionResult ListarSuspendidos()
             esAdmin = user.EsAdmin,
             dni = user.Dni,
             fechaNacimiento = user.FechaNacimiento,
-            suspendido = user.Suspendido
+            suspendido = user.Suspendido,
+            suspendidoPermanente = user.SuspendidoPermanente
         }).ToList();
 
     return Ok(usuarios);
@@ -154,6 +160,19 @@ public async Task<IActionResult> Reactivar(string email)
     {
         await reactivarAlumnoUseCase.Ejecutar(email);
         return Ok(new { message = "Alumno reactivado correctamente." });
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { message = ex.Message });
+    }
+}
+[HttpPost("suspender/{email}")]
+public async Task<IActionResult> SuspenderPermanente(string email)
+{
+    try
+    {
+        await suspenderCuentaUseCase.Ejecutar(email);
+        return Ok(new { message = "Alumno suspendido correctamente." });
     }
     catch (Exception ex)
     {

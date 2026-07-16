@@ -227,13 +227,23 @@ public  async Task ReactivarAlumno(string mail)
     UsuarioIdentity? usuarioBuscado =
         await userManager.FindByEmailAsync(mail);
     usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
+    usuarioBuscado.SuspendidoPermanente = false;
     await userManager.UpdateAsync(usuarioBuscado);
     
+}
+public async Task SuspenderAlumnoPermanente(string mail)
+{
+    UsuarioIdentity? usuarioBuscado = await userManager.FindByEmailAsync(mail);
+    if (usuarioBuscado == null) throw new ValidacionException("Usuario no encontrado");
+    if (usuarioBuscado.SuspendidoPermanente) throw new ValidacionException("Este usuario ya está suspendido");
+    
+    usuarioBuscado.SuspendidoPermanente = true;
+    await userManager.UpdateAsync(usuarioBuscado);
 }
 public async Task<List<Usuario>> ListarUsuariosSuspendidos()
 {
     List<UsuarioIdentity> usuariosIdentity =
-        await userManager.Users.Where(u => u.Suspendido).ToListAsync();
+        await userManager.Users.Where(u => u.Suspendido || u.SuspendidoPermanente).ToListAsync();
 
     List<Usuario> usuarios = usuariosIdentity
         .Select(u => new Usuario(
