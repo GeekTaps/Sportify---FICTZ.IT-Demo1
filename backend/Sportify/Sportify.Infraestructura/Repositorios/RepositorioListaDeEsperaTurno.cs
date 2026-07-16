@@ -27,6 +27,12 @@ public class RepositorioListaDeEsperaTurno : IRepositorioListaDeEsperaTurno
         await archivo.SaveChangesAsync();
     }
 
+    public async Task Modificar(ListaDeEsperaTurno espera)
+    {
+        archivo.ListaDeEsperaTurno.Update(espera);
+        await archivo.SaveChangesAsync();
+    }
+
     public async Task<Usuario>? siguienteEnEspera(Guid idTurno)
     {
         ListaDeEsperaTurno e = await archivo.ListaDeEsperaTurno.Where(x => x.idTurno == idTurno).OrderBy(x => x.fecha).FirstOrDefaultAsync();
@@ -83,6 +89,19 @@ public class RepositorioListaDeEsperaTurno : IRepositorioListaDeEsperaTurno
         return await archivo.Turnos.Where(t => ids.Contains(t.Id)).ToListAsync();
     }
 
+    public async Task<List<ListaDeEsperaTurno>> listarEntradas(Guid idTurno)
+    {
+        return await archivo.ListaDeEsperaTurno
+            .Where(e => e.idTurno == idTurno)
+            .OrderBy(e => e.fecha)
+            .ToListAsync();
+    }
 
+    public async Task<List<ListaDeEsperaTurno>> listarEntradasNotificadas()
+    {
+        return await archivo.ListaDeEsperaTurno
+            .Where(x => x.Notificado)
+            .ToListAsync();
+    }
 
 }

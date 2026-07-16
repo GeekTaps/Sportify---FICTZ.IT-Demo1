@@ -454,45 +454,57 @@ namespace Sportify.Web.Controllers
 
                 //a partir de aca es lo de notificar a los que estan en la lista de espera adecuada
                 
+                var usuariosEnEsperaTurno =
+                await _repositorioListaDeEsperaTurno.listarUsuarios(turno.Id);
+
+                bool hayEsperaTurno =
+                    usuariosEnEsperaTurno.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
+
+                bool hayLugarParaAbono = false;
+                bool hayEsperaAbono = false;
+
+                if (turno.IdHorario != Guid.Empty)
+                {
+                    hayLugarParaAbono =
+                    await _repositorioTurno.HayLugarParaAbono(turno.IdHorario);
+
+                    var usuariosEnEsperaAbono =
+                        await _repositorioListaDeEsperaAbono.listarUsuarios(turno.IdHorario);
+
+                    hayEsperaAbono =
+                        usuariosEnEsperaAbono.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
+                }
+
                 if (reserva.abonado)
                 {
-                    if (turno.IdHorario == Guid.Empty)
+                    if (hayLugarParaAbono && hayEsperaAbono)
                     {
-                        throw new Exception("El turno abonado no tiene un horario asociado.");
+                        await NotificarSiguienteEnEsperaAbono(
+                         turno.IdHorario,
+                            turno.nombreTurno
+                        );
                     }
-
-                    bool hayLugarParaAbono =
-                        await _repositorioTurno.HayLugarParaAbono(turno.IdHorario);
-
-                    if (hayLugarParaAbono)
-                    {
-                        var usuariosEnEsperaAbono =
-                            await _repositorioListaDeEsperaAbono.listarUsuarios(turno.IdHorario);
-
-                        var hayEsperaAbono =
-                            usuariosEnEsperaAbono.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
-
-                        if (hayEsperaAbono)
-                        {
-                            await NotificarSiguienteEnEsperaAbono(
-                                turno.IdHorario,
-                                turno.nombreTurno
-                            );
-                        }
-                    }   
-                }
-                else
-                {
-                    var usuariosEnEspera =
-                        await _repositorioListaDeEsperaTurno.listarUsuarios(turno.Id);
-
-                    var hayEspera =
-                        usuariosEnEspera.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
-
-                    if (hayEspera)
+                    else if (hayEsperaTurno)
                     {
                         await NotificarSiguienteEnEspera(
                             turno.Id,
+                            turno.nombreTurno
+                        );
+                    }
+                }
+                else
+                {
+                    if (hayEsperaTurno)
+                    {
+                        await NotificarSiguienteEnEspera(
+                            turno.Id,
+                            turno.nombreTurno
+                        );
+                    }
+                    else if (hayLugarParaAbono && hayEsperaAbono)
+                    {
+                        await NotificarSiguienteEnEsperaAbono(
+                            turno.IdHorario,
                             turno.nombreTurno
                         );
                     }
@@ -529,7 +541,7 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
-        private async Task NotificarSiguienteEnEspera(Guid idTurno, string nombreTurno)
+        public async Task NotificarSiguienteEnEspera(Guid idTurno, string nombreTurno)
         {
             try
             {
@@ -552,6 +564,15 @@ namespace Sportify.Web.Controllers
                     <p>Este enlace vence en 2 horas.</p>";
 
                 await _servicioEmail.MandarMail(siguienteUsuario.Mail, "¡Se liberó un lugar para tu turno!", body);
+
+                var entrada = (await _repositorioListaDeEsperaTurno.listarEntradas(idTurno))
+                    .FirstOrDefault(e => e.idUsuario == Guid.Parse(siguienteUsuario.Id));
+
+                if (entrada != null)
+                {
+                    entrada.MarcarComoNotificado();
+                    await _repositorioListaDeEsperaTurno.Modificar(entrada);
+                }
                 Console.WriteLine($"Mail de lista de espera enviado a {siguienteUsuario.Mail} para el turno {idTurno}");
             }
             catch (Exception ex)
@@ -560,7 +581,7 @@ namespace Sportify.Web.Controllers
             }
         }
 
-        private async Task NotificarSiguienteEnEsperaAbono(Guid idHorario, string nombreHorario)
+        public async Task NotificarSiguienteEnEsperaAbono(Guid idHorario, string nombreHorario)
         {
             try
             {
@@ -590,6 +611,15 @@ namespace Sportify.Web.Controllers
                     "¡Se liberó un lugar para tu abono!",
                     body
                 );
+
+                var entrada = (await _repositorioListaDeEsperaTurno.listarEntradas(idHorario))
+                    .FirstOrDefault(e => e.idUsuario == Guid.Parse(siguienteUsuario.Id));
+
+                if(entrada != null)
+                {
+                    entrada.MarcarComoNotificado();
+                    await _repositorioListaDeEsperaTurno.Modificar(entrada);
+                }
 
                 Console.WriteLine($"Mail de lista de espera de abonados enviado a {siguienteUsuario.Mail} para el horario {idHorario}");
             }

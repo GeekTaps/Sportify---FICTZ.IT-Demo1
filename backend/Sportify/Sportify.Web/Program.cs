@@ -16,6 +16,8 @@ using Sportify.Aplicacion.AplicacionAsistencias;
 using Sportify.Aplicacion.AplicacionAbonos;
 using Sportify.Aplicacion.AplicacionListasDeEspera;
 using Sportify.Aplicacion.AplicacionEstadisticas;
+using Sportify.Web;
+using Sportify.Web.Controllers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -104,6 +106,7 @@ builder.Services.AddScoped<ReservaAltaUseCase>();
 builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
+builder.Services.AddScoped<ReservasController>();
 
 //Mails papá
 builder.Services.Configure<ModeloMail>(
@@ -128,8 +131,8 @@ builder.Services.AddScoped<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaT
 builder.Services.AddScoped<SalirListaEsperaTurnoUseCase>();
 builder.Services.AddScoped<SalirListaEsperaAbonoUseCase>();
 builder.Services.AddScoped<estaEnListaEsperaTurnoUseCase>();
-
 builder.Services.AddScoped<EstaEnListaEsperaAbonoUseCase>();
+builder.Services.AddHostedService<ListaEsperaBackgroundService>(); //el servicio para avisar al siguinte pasada las 2 hs
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.

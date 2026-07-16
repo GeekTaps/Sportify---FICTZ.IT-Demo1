@@ -11,6 +11,9 @@ public interface IRepositorioListaDeEsperaTurno{
     public Task<Usuario>? siguienteEnEspera(Guid idTurno);
     public Task<bool> eliminarEspera(Guid idUsuario, Guid idTurno);
     public Task<bool> existeEnEspera(Guid idUsuario, Guid idTurno);
+    public Task<List<ListaDeEsperaTurno>> listarEntradas(Guid idTurno);
+    public Task Modificar(ListaDeEsperaTurno espera);
+    public Task<List<ListaDeEsperaTurno>> listarEntradasNotificadas();
     public Task<List<Usuario>> listarUsuarios(Guid idTurno); // lista los usuarios esperando para un turno dado
     public Task<List<Turno>> listarTurnos(Guid idUsuario); // dado un usuario, lista los turnos para los que espera
 }
