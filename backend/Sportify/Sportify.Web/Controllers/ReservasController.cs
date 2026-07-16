@@ -454,45 +454,57 @@ namespace Sportify.Web.Controllers
 
                 //a partir de aca es lo de notificar a los que estan en la lista de espera adecuada
                 
+                var usuariosEnEsperaTurno =
+                await _repositorioListaDeEsperaTurno.listarUsuarios(turno.Id);
+
+                bool hayEsperaTurno =
+                    usuariosEnEsperaTurno.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
+
+                bool hayLugarParaAbono = false;
+                bool hayEsperaAbono = false;
+
+                if (turno.IdHorario != Guid.Empty)
+                {
+                    hayLugarParaAbono =
+                    await _repositorioTurno.HayLugarParaAbono(turno.IdHorario);
+
+                    var usuariosEnEsperaAbono =
+                        await _repositorioListaDeEsperaAbono.listarUsuarios(turno.IdHorario);
+
+                    hayEsperaAbono =
+                        usuariosEnEsperaAbono.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
+                }
+
                 if (reserva.abonado)
                 {
-                    if (turno.IdHorario == Guid.Empty)
+                    if (hayLugarParaAbono && hayEsperaAbono)
                     {
-                        throw new Exception("El turno abonado no tiene un horario asociado.");
+                        await NotificarSiguienteEnEsperaAbono(
+                         turno.IdHorario,
+                            turno.nombreTurno
+                        );
                     }
-
-                    bool hayLugarParaAbono =
-                        await _repositorioTurno.HayLugarParaAbono(turno.IdHorario);
-
-                    if (hayLugarParaAbono)
-                    {
-                        var usuariosEnEsperaAbono =
-                            await _repositorioListaDeEsperaAbono.listarUsuarios(turno.IdHorario);
-
-                        var hayEsperaAbono =
-                            usuariosEnEsperaAbono.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
-
-                        if (hayEsperaAbono)
-                        {
-                            await NotificarSiguienteEnEsperaAbono(
-                                turno.IdHorario,
-                                turno.nombreTurno
-                            );
-                        }
-                    }   
-                }
-                else
-                {
-                    var usuariosEnEspera =
-                        await _repositorioListaDeEsperaTurno.listarUsuarios(turno.Id);
-
-                    var hayEspera =
-                        usuariosEnEspera.Any(u => !string.IsNullOrWhiteSpace(u?.Mail));
-
-                    if (hayEspera)
+                    else if (hayEsperaTurno)
                     {
                         await NotificarSiguienteEnEspera(
                             turno.Id,
+                            turno.nombreTurno
+                        );
+                    }
+                }
+                else
+                {
+                    if (hayEsperaTurno)
+                    {
+                        await NotificarSiguienteEnEspera(
+                            turno.Id,
+                            turno.nombreTurno
+                        );
+                    }
+                    else if (hayLugarParaAbono && hayEsperaAbono)
+                    {
+                        await NotificarSiguienteEnEsperaAbono(
+                            turno.IdHorario,
                             turno.nombreTurno
                         );
                     }
