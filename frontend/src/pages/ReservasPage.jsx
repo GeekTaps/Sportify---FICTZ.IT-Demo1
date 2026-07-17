@@ -134,12 +134,14 @@ function ReservasPage() {
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
+
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
+      
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -287,7 +289,7 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
-                {console.log(reservaSeleccionada)}
+                  {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
@@ -306,17 +308,44 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
+                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
+                
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
+                {reservaSeleccionada.pagoSeña && !reservaSeleccionada.paga && (
+  <button
+    className="btn btn-primary"
+    style={{ width: "100%", marginTop: "0.5rem" }}
+    onClick={async () => {
+      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idReserva: reservaSeleccionada.idReserva,
+          email: user.email
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.mensaje);
+        cerrarModal();
+        cargarReservasActivas();
+      } else {
+        alert(data.message || "Error al confirmar.");
+      }
+    }}
+  >
+    Pagar confirmación de reserva
+  </button>
+)}
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
                   </p>
                 )}
-                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= -1 && (
+                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     {!mostrarQR ? (
                       <button
@@ -373,7 +402,7 @@ function ReservasPage() {
 
                     {reservaSeleccionada.horasAnticipacion >= 0 && (
                       <>
-                        {(reservaSeleccionada.suspendido || reservaSeleccionada.suspendidoPermanente) ? (
+                        {reservaSeleccionada.suspendido ? (
                           <div className="alert alert-error">
                             Tu cuenta está suspendida. En caso de cancelar, no se
                             devolverá el valor de la seña.

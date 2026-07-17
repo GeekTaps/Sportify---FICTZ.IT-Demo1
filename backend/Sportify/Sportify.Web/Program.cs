@@ -107,6 +107,7 @@ builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
 builder.Services.AddScoped<ReservasController>();
+builder.Services.AddScoped<RegistrarDevolucionSeñaUseCase>();
 
 //Mails papá
 builder.Services.Configure<ModeloMail>(

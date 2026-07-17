@@ -252,6 +252,35 @@ public async Task<IActionResult> PagarSena([FromBody] PagoRequest request)
                 });
             }
         }
+                [HttpPost("confirmar-reserva")]
+public async Task<IActionResult> ConfirmarReserva([FromBody] ConfirmarReservaRequest request)
+{
+    try
+    {
+        var reserva = await _repositorioReserva.buscarReserva(request.IdReserva);
+        if (reserva == null) return NotFound(new { message = "Reserva no encontrada." });
+
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null) return NotFound(new { message = "Usuario no encontrado." });
+
+        var listTurnos = await _repositorioTurno.ListarTurnos();
+        var turno = listTurnos.Find(t => t.Id == reserva.idTurno);
+        if (turno == null) return NotFound(new { message = "Turno no encontrado." });
+
+        decimal montoRestante = Math.Round((decimal)(turno.Precio * 0.5), 2);
+
+    
+        var pago = new Pago(reserva.id, Guid.Parse(user.Id), montoRestante);
+        await _registrarPagoUseCase.Ejecutar(pago);
+
+        return Ok(new { mensaje = "Reserva confirmada correctamente." });
+    }
+  catch (Exception ex)
+{
+    Console.WriteLine($"Error confirmar reserva: {ex.Message} - {ex.InnerException?.Message}");
+    return StatusCode(500, new { message = "Error al confirmar la reserva.", error = ex.Message });
+}
+}
 
         [HttpPost("registrar")]
         public async Task<IActionResult> RegistrarPago([FromBody] RegistrarPagoRequest request)

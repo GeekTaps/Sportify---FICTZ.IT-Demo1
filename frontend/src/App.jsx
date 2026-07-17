@@ -73,6 +73,17 @@ function Navigation() {
                         <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
                     </>
                 )}
+                                {user?.esEmpleado && (
+                    <>
+                        <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
+                        <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
+                        <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+
+                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
+                        <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
+                    </>
+                )}
 
                 {!user && (
                     <>

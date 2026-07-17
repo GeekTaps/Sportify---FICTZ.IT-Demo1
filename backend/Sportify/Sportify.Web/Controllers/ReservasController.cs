@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Sportify.Infraestructura.Identity;
+using Sportify.Aplicacion.AplicacionPagos;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionDeportes;
 using Sportify.Web.DTOs;
@@ -16,7 +17,9 @@ using Sportify.Aplicacion.AplicacionAsistencias;
 using Sportify.Aplicacion.AplicacionListasDeEspera;
 using Sportify.Aplicacion.Mails;
 using System.Security.Cryptography;
+using Sportify.Dominio.Pagos;
 using System.Text;
+
 using System.Text.Json;
 
 
@@ -31,6 +34,8 @@ namespace Sportify.Web.Controllers
         // Declaramos los casos de uso (Use Cases) como dependencias de solo lectura.
         // Esto sigue el principio de Inyección de Dependencias, aislando la lógica de negocio del controlador.
         private readonly ReservaAltaUseCase _reservaAltaUseCase;
+        private readonly RegistrarDevolucionSeñaUseCase _registrarDevolucionSeñaUseCase;
+        private readonly RegistrarPagoUseCase _registrarPagoUseCase;
         private readonly ReservaBajaUseCase _reservaBajaUseCase;
         private readonly ReservaBusquedaUseCase _reservaBusquedaUseCase;
         private readonly ReservaListadoCompletoUseCase _ReservaListadoCompletoUseCase;
@@ -55,6 +60,8 @@ namespace Sportify.Web.Controllers
             ReservaListadoCompletoUseCase reservaListadoCompletoUseCase,
             ReservaListadoActivasUseCase reservaListadoActivasUseCase,
             ReservaListadoAnterioresUseCase reservaListadoAnterioresUseCase,
+            RegistrarDevolucionSeñaUseCase registrarDevolucionSeñaUseCase,
+            RegistrarPagoUseCase registrarPagoUseCase,
             UserManager<UsuarioIdentity> userManager,
             IRepositorioTurno repositorioTurno,
             IRepositorioDeporte repositorioDeporte,
@@ -71,6 +78,7 @@ namespace Sportify.Web.Controllers
             _ReservaListadoCompletoUseCase = reservaListadoCompletoUseCase;
             _ReservaListadoActivasUseCase = reservaListadoActivasUseCase;
             _ReservaListadoAnterioresUseCase = reservaListadoAnterioresUseCase;
+            _registrarDevolucionSeñaUseCase = registrarDevolucionSeñaUseCase;
             _userManager = userManager;
             _repositorioTurno = repositorioTurno;
             _repositorioDeporte = repositorioDeporte;
@@ -407,6 +415,15 @@ namespace Sportify.Web.Controllers
 }
                             }}
                             else{
+                                    decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
+
+    var pagoDevolucion = new Pago(
+        reserva.id,
+        Guid.Parse(user.Id),
+        montoSeña
+    );
+
+    await _registrarDevolucionSeñaUseCase.Ejecutar(pagoDevolucion);
                         mensajeBase += " Seña devuelta.";}}
                     
                 }
@@ -493,6 +510,9 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = ex.Message });
             }
         }
+
+    
+
 
         // DELETE: api/Reservas/{id}
         // Endpoint para dar de baja (eliminar) una reserva ya existente a partir de su ID.
@@ -668,6 +688,8 @@ namespace Sportify.Web.Controllers
             return Convert.FromBase64String(value.Replace("-", "+").Replace("_", "/"));
         }
     }
+
+
 
     // DTO (Data Transfer Object) para recibir únicamente los datos requeridos para la creación de una reserva.
     // Esto previene un "over-posting" y permite desacoplar los modelos de Dominio de las peticiones HTTP.

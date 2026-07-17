@@ -14,5 +14,6 @@ public interface IRepositorioReserva{
     public Task<int> ContarReservasPorTurno(Guid idTurno);
     public Task<List<Guid>> BuscarUsuariosConPagosPendientes();
     public  Task MarcarComoSeña(Guid idReserva);
+    public Task MarcarComoPagada(Guid idReserva);
 
 }
