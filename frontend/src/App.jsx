@@ -23,6 +23,8 @@ import SuspenderTurnoAdmin from "./pages/SuspenderTurnoAdmin"
 import IngresarMailPage from './pages/IngresarMailPage'
 import SimulacionDia11Page from './pages/SimulacionDia11Page'
 import ListarAlumnosPage from './pages/ListarAlumnosPage';
+import MisAsistenciasPage from "./pages/ListarmisAsistencias";
+import AdminAsistenciasPage from "./pages/ListarAsistenciasDeUsuario";
 
 import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
@@ -70,6 +72,7 @@ function Navigation() {
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                         <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
                         <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
+                        <NavLink to="/admin/asistencias" className={navLinkClass}>Asistencias</NavLink>
                     </>
                 )}
 
@@ -90,6 +93,7 @@ function Navigation() {
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
                         <NavLink to="/mis-pagos" className={navLinkClass}>Mis Pagos</NavLink>
+                        <NavLink to="/mis-asistencias" className={navLinkClass}>Mis Asistencias</NavLink>
                     </>
                 )}
                 {user && (
@@ -167,6 +171,8 @@ function App() {
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                             <Route path="/estadisticas" element={<EstadisticasPage />} />
+                            <Route path="/mis-asistencias" element={<MisAsistenciasPage />} />
+                            <Route path="/admin/asistencias" element={<AdminAsistenciasPage />} />
                         </Routes>
                     </main>
                     
