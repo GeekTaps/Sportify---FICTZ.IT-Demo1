@@ -46,6 +46,16 @@ public class RepositorioAsistencias : IRepositorioAsistencias
             .FirstOrDefaultAsync(a => a.IdUsuario == idUsuario && a.IdTurno == idTurno);
         return asistencia != null && asistencia.Presente;
     }
+
+    public async Task<List<Asistencia>> ListarAsistenciasPorClase(Guid idTurno)
+    {
+        // Devuelve solo las asistencias marcadas como presentes para la clase seleccionada.
+        var asistencias = await archivo.Asistencias
+            .Where(a => a.IdTurno == idTurno && a.Presente)
+            .ToListAsync();
+    
+        return asistencias;
+    }
     
     public async Task<List<Asistencia>> ListarAsistenciasPorUsuario(Guid idUsuario)
     {

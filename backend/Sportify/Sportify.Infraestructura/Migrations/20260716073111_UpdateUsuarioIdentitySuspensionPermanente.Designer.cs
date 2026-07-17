@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sportify.Infraestructura.Data;
 
@@ -10,9 +11,11 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260716073111_UpdateUsuarioIdentitySuspensionPermanente")]
+    partial class UpdateUsuarioIdentitySuspensionPermanente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -219,12 +222,6 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("FechaNotificacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Notificado")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
 
@@ -247,12 +244,6 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaNotificacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Notificado")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");

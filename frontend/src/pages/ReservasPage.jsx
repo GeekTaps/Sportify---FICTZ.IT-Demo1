@@ -134,14 +134,12 @@ function ReservasPage() {
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
-
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
-      console.log("JSON que viene de .NET:", data);
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -277,7 +275,7 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
-                  {console.log(reservaSeleccionada)}
+                {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
@@ -293,7 +291,7 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
+                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
@@ -303,7 +301,7 @@ function ReservasPage() {
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
                   </p>
                 )}
-                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
+                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= -1 && (
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     {!mostrarQR ? (
                       <button
@@ -360,7 +358,7 @@ function ReservasPage() {
 
                     {reservaSeleccionada.horasAnticipacion >= 0 && (
                       <>
-                        {reservaSeleccionada.suspendido ? (
+                        {(reservaSeleccionada.suspendido || reservaSeleccionada.suspendidoPermanente) ? (
                           <div className="alert alert-error">
                             Tu cuenta está suspendida. En caso de cancelar, no se
                             devolverá el valor de la seña.

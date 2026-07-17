@@ -116,20 +116,23 @@ public async Task<IActionResult> PagarSena([FromBody] PagoRequest request)
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null) return NotFound(new { message = "Usuario no encontrado." });
 
-        var reservasUsuario = await _repositorioReserva.listarReservasUsuario(Guid.Parse(user.Id));
-        var reserva = reservasUsuario.FirstOrDefault(r => r.idTurno == request.IdTurno && !r.eliminada);
-        if (reserva == null) return NotFound(new { message = "Reserva no encontrada." });
-
         var listTurnos = await _repositorioTurno.ListarTurnos();
         var turno = listTurnos.Find(t => t.Id == request.IdTurno);
         if (turno == null) return NotFound(new { message = "Turno no encontrado." });
+        if (turno.cupo <= 0) return BadRequest(new { message = "No hay cupo disponible para este turno." });
 
         decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
 
-        await _repositorioReserva.MarcarComoSeña(reserva.id);
+        turno.cupo--;
+        await _repositorioTurno.ModificarTurno(turno, turno.Id);
 
-       var pago = new Pago(reserva.id, Guid.Parse(user.Id), montoSeña);
-await _registrarPagoSenaUseCase.Ejecutar(pago);
+        var nuevaReserva = new Sportify.Dominio.Reservas.Reserva(Guid.Parse(user.Id), turno.Id, false, (double)turno.Precio, turno.nombreTurno);
+        await _reservaAltaUseCase.Ejecutar(nuevaReserva);
+
+        await _repositorioReserva.MarcarComoSeña(nuevaReserva.id);
+
+        var pago = new Pago(nuevaReserva.id, Guid.Parse(user.Id), montoSeña);
+        await _registrarPagoSenaUseCase.Ejecutar(pago);
 
         return Ok(new { mensaje = "Seña registrada correctamente.", monto = montoSeña });
     }
@@ -211,7 +214,24 @@ await _registrarPagoSenaUseCase.Ejecutar(pago);
                 foreach (var pago in pagos)
                 {
                     var reserva = await _repositorioReserva.buscarReserva(pago.idReserva);
-                    var tituloReserva = reserva != null ? reserva.titulo : "Reserva Eliminada";
+                    string tituloReserva = "Reserva Eliminada";
+
+                    if (reserva != null)
+                    {
+                        tituloReserva = reserva.titulo;
+                        if (reserva.abonado)
+                        {
+                            var listTurnos = await _repositorioTurno.ListarTurnos();
+                            var turno = listTurnos.Find(t => t.Id == reserva.idTurno);
+                            if (turno != null)
+                            {
+                                var nombreLimpio = turno.nombreTurno.Split('-')[0].Trim();
+                                var culture = new System.Globalization.CultureInfo("es-ES");
+                                var diaSemana = culture.TextInfo.ToTitleCase(culture.DateTimeFormat.GetDayName(turno.Fecha.DayOfWeek));
+                                tituloReserva = $"Abono {nombreLimpio} - {diaSemana} - {turno.horaInicio:HH:mm}hs";
+                            }
+                        }
+                    }
 
                     resultado.Add(new
                     {

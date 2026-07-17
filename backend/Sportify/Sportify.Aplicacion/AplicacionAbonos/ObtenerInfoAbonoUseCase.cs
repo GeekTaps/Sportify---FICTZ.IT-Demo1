@@ -36,8 +36,8 @@ public class ObtenerInfoAbonoUseCase
         var response = new AbonoInfoDTO();
         
         var turno = await _repositorioTurno.ObtenerTurnoPorId(idTurno);
-        if (turno == null || !turno.IdHorario.HasValue) 
-            throw new Exception("Turno no encontrado o no pertenece a un horario fijo.");
+        if (turno == null) 
+            throw new Exception("Turno no encontrado.");
 
         var usuario = await _repositorioUsuarios.ObtenerPorMail(email);
         if (usuario == null) 
@@ -46,7 +46,7 @@ public class ObtenerInfoAbonoUseCase
         Guid idUsuario = Guid.Parse(usuario.Id);
 
         // 1. IsAlreadySubscribed
-        response.IsAlreadySubscribed = await _repositorioAbono.ExisteAbonoActivo(idUsuario, turno.IdHorario.Value);
+        response.IsAlreadySubscribed = await _repositorioAbono.ExisteAbonoActivo(idUsuario, turno.IdHorario);
 
         // 2. HasConflict (Check if user has any reservation overlapping with the Turno's time)
         var reservasUsuario = await _repositorioReserva.listarReservasUsuario(idUsuario);
@@ -69,13 +69,9 @@ public class ObtenerInfoAbonoUseCase
 
         // Fetch all turnos for this Horario
         var turnosDelHorario = todosLosTurnos
-            .Where(t => t.IdHorario == turno.IdHorario.Value && t.Fecha >= now)
+            .Where(t => t.IdHorario == turno.IdHorario && t.Fecha >= now)
             .OrderBy(t => t.Fecha)
             .ToList();
-
-        // 4. HasFewClasses: next 30 days
-        var turnosProximos30Dias = turnosDelHorario.Count(t => t.Fecha <= now.AddDays(30));
-        response.HasFewClasses = turnosProximos30Dias < 3;
 
         // Determine relevant classes for pricing and cupo (current month + first 10 days of next month)
         // If we are in July, next month is August.
@@ -84,9 +80,13 @@ public class ObtenerInfoAbonoUseCase
 
         var clasesAbono = turnosDelHorario.Where(t => t.Fecha <= dateLimit).ToList();
 
-        // 5. NoCupo
-        // If ANY of the relevant classes is full, the abono is full
-        response.NoCupo = clasesAbono.Any(t => t.cupo == 0);
+        // Count available classes (not suspended, not eliminated, with cupo > 0)
+        var clasesDisponibles = clasesAbono.Count(t => t.mostrarEnHome && t.cupo > 0);
+        
+        // 4. HasFewClasses / NoCupo
+        // If there are less than 3 available classes up to the 10th of next month, we block it.
+        response.NoCupo = clasesDisponibles < 3;
+        response.HasFewClasses = response.NoCupo;
 
         // Populate info
         var nombreLimpio = turno.nombreTurno.Split('-')[0].Trim();

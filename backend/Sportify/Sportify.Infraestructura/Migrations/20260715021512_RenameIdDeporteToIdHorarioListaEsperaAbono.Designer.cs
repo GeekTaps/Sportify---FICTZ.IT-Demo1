@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sportify.Infraestructura.Data;
 
@@ -10,9 +11,11 @@ using Sportify.Infraestructura.Data;
 namespace Sportify.Infraestructura.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260715021512_RenameIdDeporteToIdHorarioListaEsperaAbono")]
+    partial class RenameIdDeporteToIdHorarioListaEsperaAbono
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -219,16 +222,7 @@ namespace Sportify.Infraestructura.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("FechaNotificacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Notificado")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("fecha")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("idDeporte")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("idHorario")
@@ -247,12 +241,6 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("FechaNotificacion")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Notificado")
-                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("fecha")
                         .HasColumnType("TEXT");
@@ -318,9 +306,6 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<bool>("paga")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("pagoSeña")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("titulo")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -366,7 +351,7 @@ namespace Sportify.Infraestructura.Migrations
                     b.Property<Guid>("IdDeporte")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("IdHorario")
+                    b.Property<Guid?>("IdHorario")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("ListaEsperaHabilitada")
@@ -495,9 +480,6 @@ namespace Sportify.Infraestructura.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Suspendido")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("SuspendidoPermanente")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("TwoFactorEnabled")

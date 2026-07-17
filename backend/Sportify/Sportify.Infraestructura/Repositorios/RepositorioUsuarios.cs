@@ -24,9 +24,11 @@ public class RepositorioUsuarios : IRepositorioUsuarios
 {
 
     private readonly UserManager<UsuarioIdentity> userManager;
-    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager)
+    private readonly ApplicationDbContext archivo;
+    public RepositorioUsuarios(UserManager<UsuarioIdentity> userManager, ApplicationDbContext archivo)
 {
     this.userManager = userManager;
+    this.archivo = archivo;
 }
     
 public async Task<bool> BuscarId(string id)
@@ -225,13 +227,23 @@ public  async Task ReactivarAlumno(string mail)
     UsuarioIdentity? usuarioBuscado =
         await userManager.FindByEmailAsync(mail);
     usuarioBuscado.Suspendido = false;              //:D esto parece muy sencillo
+    usuarioBuscado.SuspendidoPermanente = false;
     await userManager.UpdateAsync(usuarioBuscado);
     
+}
+public async Task SuspenderAlumnoPermanente(string mail)
+{
+    UsuarioIdentity? usuarioBuscado = await userManager.FindByEmailAsync(mail);
+    if (usuarioBuscado == null) throw new ValidacionException("Usuario no encontrado");
+    if (usuarioBuscado.SuspendidoPermanente) throw new ValidacionException("Este usuario ya está suspendido");
+    
+    usuarioBuscado.SuspendidoPermanente = true;
+    await userManager.UpdateAsync(usuarioBuscado);
 }
 public async Task<List<Usuario>> ListarUsuariosSuspendidos()
 {
     List<UsuarioIdentity> usuariosIdentity =
-        await userManager.Users.Where(u => u.Suspendido).ToListAsync();
+        await userManager.Users.Where(u => u.Suspendido || u.SuspendidoPermanente).ToListAsync();
 
     List<Usuario> usuarios = usuariosIdentity
         .Select(u => new Usuario(
@@ -257,5 +269,56 @@ public async Task DescontarCreditos(string id, int cantidad)
         if (usuario.Creditos < 0) usuario.Creditos = 0;
         await userManager.UpdateAsync(usuario);
     }
+}
+public async Task<List<Usuario>> ListarUsuariosEnListaEsperaTurno(Guid idTurno)
+{
+    var ids = await archivo.ListaDeEsperaTurno
+        .Where(x => x.idTurno == idTurno)
+        .Select(x => x.idUsuario.ToString())
+        .ToListAsync();
+
+    var usuariosIdentity = await userManager.Users
+        .Where(u => !u.EsAdmin)
+        .ToListAsync();
+
+    return usuariosIdentity
+        .Where(u => ids.Contains(u.Id, StringComparer.OrdinalIgnoreCase))
+        .Select(u => new Usuario(
+            u.Id,
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            "",
+            u.FechaNacimiento,
+            u.Creditos
+        ))
+        .ToList();
+}
+
+public async Task<List<Usuario>> ListarUsuariosEnListaEsperaAbono(Guid idDeporte)
+{
+    var ids = await archivo.ListaDeEsperaAbono
+        .Where(x => x.idDeporte == idDeporte)
+        .Select(x => x.idUsuario.ToString())
+        .ToListAsync();
+
+    var usuariosIdentity = await userManager.Users
+        .Where(u => !u.EsAdmin)
+        .ToListAsync();
+
+    return usuariosIdentity
+        .Where(u => ids.Contains(u.Id, StringComparer.OrdinalIgnoreCase))
+        .Select(u => new Usuario(
+            u.Id,
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            "",
+            u.FechaNacimiento,
+            u.Creditos
+        ))
+        .ToList();
 }
 }

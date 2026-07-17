@@ -42,10 +42,22 @@ public class RepositorioTurno : IRepositorioTurno
         Turno? turno = await archivo.Turnos.FindAsync(idTurno); //busca el turno por su id
         if (turno != null)
         {
-            turno = nuevoTurno; //modifica el turno encontrado con los nuevos datos
+            turno.cupo = nuevoTurno.cupo;
+            turno.cupoMaximo = nuevoTurno.cupoMaximo;
+            turno.IdDeporte = nuevoTurno.IdDeporte;
+            turno.nombreTurno = nuevoTurno.nombreTurno;
+            turno.nommbreProfesor = nuevoTurno.nommbreProfesor;
+            turno.Fecha = nuevoTurno.Fecha;
+            turno.horaInicio = nuevoTurno.horaInicio;
+            turno.horaFin = nuevoTurno.horaFin;
+            turno.Precio = nuevoTurno.Precio;
+            turno.ListaEsperaHabilitada = nuevoTurno.ListaEsperaHabilitada;
+            turno.mostrarEnHome = nuevoTurno.mostrarEnHome;
+            turno.IdHorario = nuevoTurno.IdHorario;
             await archivo.SaveChangesAsync(); //guarda los cambios en la base de datos
+            return true;
         }
-        return turno != null; //devuelve true si se modifico el turno, false si no se encontro el turno
+        return false; //devuelve true si se modifico el turno, false si no se encontro el turno
     }
 
     public async Task<bool> BuscarTurnoPorId(Guid idTurno) //metodo para obtener un turno por su id
@@ -100,6 +112,7 @@ public class RepositorioTurno : IRepositorioTurno
         }
         await archivo.SaveChangesAsync();
     }
+<<<<<<< HEAD
     public async Task<List<Asistencia>> FiltrarAsistencias(List<Asistencia> asistencias)
     {
     // 1. Obtenemos las variables de comparación
@@ -132,5 +145,34 @@ public class RepositorioTurno : IRepositorioTurno
                    || (turno.Fecha == fechaActual && turno.horaFin > horaActual);
         })
         .ToList();
+=======
+
+    public async Task<List<Turno>> ListarTurnosPorHorario(Guid idHorario)
+    {
+        return await archivo.Turnos
+            .Where(t => t.IdHorario == idHorario)
+            .OrderBy(t => t.Fecha)
+            .ToListAsync();
+    }
+
+    public async Task<bool> HayLugarParaAbono(Guid idHorario)
+    {
+        var now = DateTime.Now;
+
+        var startOfNextMonth = new DateTime(now.Year, now.Month, 1).AddMonths(1);
+        var dateLimit = startOfNextMonth.AddDays(9).AddHours(23).AddMinutes(59);
+
+        var turnos = await archivo.Turnos
+            .Where(t =>
+                t.IdHorario == idHorario &&
+                t.Fecha >= now &&
+                t.Fecha <= dateLimit)
+            .ToListAsync();
+
+        if (!turnos.Any())
+            return false;
+
+        return turnos.Count(t => t.mostrarEnHome && t.cupo > 0) >= 3;
+>>>>>>> 5ce4ebbec9bb847585c5bf6dd54494461132b615
     }
 }

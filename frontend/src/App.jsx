@@ -31,6 +31,7 @@ import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
 
 import EstadisticasPage from './pages/EstadisticasPage';
+import SimulacionMercadoPagoPage from './pages/SimulacionMercadoPagoPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -71,7 +72,7 @@ function Navigation() {
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                         <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
-                        <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
                         <NavLink to="/admin/asistencias" className={navLinkClass}>Asistencias</NavLink>
                     </>
                 )}
@@ -131,7 +132,7 @@ function Footer() {
                 <img src={logoLetras} alt="Sportify" className="footer-logo" />
                 <p className="footer-tagline">Tu plataforma de deportes y reservas</p>
                 <hr className="footer-divider" />
-                <p className="footer-copy">© 2026 Sportify · FICTZ.IT Demo 1</p>
+                <p className="footer-copy">© 2026 Sportify · FICTZ.IT Demo 2</p>
             </div>
         </footer>
     );
@@ -171,6 +172,7 @@ function App() {
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                             <Route path="/estadisticas" element={<EstadisticasPage />} />
+                            <Route path="/pagar/mercado-pago" element={<SimulacionMercadoPagoPage />} />
                             <Route path="/mis-asistencias" element={<MisAsistenciasPage />} />
                             <Route path="/admin/asistencias" element={<AdminAsistenciasPage />} />
                         </Routes>

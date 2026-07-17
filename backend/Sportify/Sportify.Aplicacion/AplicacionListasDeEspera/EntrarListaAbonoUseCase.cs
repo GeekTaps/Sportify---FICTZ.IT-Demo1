@@ -4,6 +4,7 @@ using Sportify.Dominio.ListasDeEspera;
 using Sportify.Aplicacion;
 using Sportify.Aplicacion.AplicacionAbonos;
 using Sportify.Aplicacion.AplicacionTurnos;
+using Sportify.Aplicacion.Mails;
 
 namespace Sportify.Aplicacion.AplicacionListasDeEspera;
 
@@ -13,17 +14,20 @@ public class EntrarListaAbonoUseCase
     private readonly IValidadorListaDeEsperaAbono _validadorLista;
     private readonly IRepositorioTurno _repositorioTurno;
     private readonly ObtenerInfoAbonoUseCase _obtenerInfoAbonoUseCase;
+    private readonly IServicioEmail _servicioEmail;
 
     public EntrarListaAbonoUseCase(
         IRepositorioListaDeEsperaAbono repositorioLista,
         IValidadorListaDeEsperaAbono validadorLista,
         IRepositorioTurno repositorioTurno,
-        ObtenerInfoAbonoUseCase obtenerInfoAbonoUseCase)
+        ObtenerInfoAbonoUseCase obtenerInfoAbonoUseCase,
+        IServicioEmail servicioEmail)
     {
         _repositorioLista = repositorioLista;
         _validadorLista = validadorLista;
         _repositorioTurno = repositorioTurno;
         _obtenerInfoAbonoUseCase = obtenerInfoAbonoUseCase;
+        _servicioEmail = servicioEmail;
     }
 
     public async Task Ejecutar(Guid idUsuario, Guid idTurno, string emailUsuario)
@@ -40,11 +44,20 @@ public class EntrarListaAbonoUseCase
         if (info.HasConflict)
             throw new EntidadNotFoundException("Ya tenés una reserva en ese horario");
 
-        var entrada = new ListaDeEsperaAbono(idUsuario, turno.IdDeporte);
+        var entrada = new ListaDeEsperaAbono(idUsuario, turno.IdDeporte,turno.IdHorario);
 
         if (await _validadorLista.validarAgregarEnEspera(entrada, _repositorioLista))
         {
             await _repositorioLista.agregarEnEspera(entrada);
+            
+            var usuarios = await _repositorioLista.listarUsuarios(turno.IdHorario);
+            if (usuarios.Count == 10)
+            {
+                string subject = "¡Alta demanda en Lista de Espera de Abonos!";
+                string body = $"El horario '{turno.nombreTurno}' ha alcanzado 10 usuarios en su lista de espera para abonados.";
+                
+                await _servicioEmail.MandarMail("adminsportify@gmail.com", subject, body);
+            }
         }
         else
         {
