@@ -311,6 +311,7 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
+                  <strong>Estado del pago:</strong>{" "}
                   {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
 
@@ -414,11 +415,15 @@ function ReservasPage() {
                           <>
                             {reservaSeleccionada.horasAnticipacion > 48 ? (
                               <div className="alert alert-success">
-                                En caso de cancelar, se devolverá el valor completo de la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, vas a tener un crédito para reservar otra clase hasta el 11 del mes siguiente."
+                                  : "En caso de cancelar, se devolverá el valor completo de la seña."}
                               </div>
                             ) : (
                               <div className="alert alert-warning">
-                                En caso de cancelar, no se devolverá la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, no serás reembolsado."
+                                  : "En caso de cancelar, no se devolverá la seña."}
                               </div>
                             )}
 
