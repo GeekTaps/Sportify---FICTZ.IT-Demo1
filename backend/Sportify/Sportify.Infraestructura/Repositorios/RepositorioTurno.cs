@@ -8,6 +8,10 @@ using Sportify.Dominio;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Microsoft.EntityFrameworkCore;
 using Sportify.Dominio.Turnos;
+using Sportify.Dominio.Asistencias;
+using Sportify.Aplicacion.AplicacionAsistencias;
+
+
 public class RepositorioTurno : IRepositorioTurno
 {
     private readonly ApplicationDbContext archivo;
@@ -95,5 +99,38 @@ public class RepositorioTurno : IRepositorioTurno
             }
         }
         await archivo.SaveChangesAsync();
+    }
+    public async Task<List<Asistencia>> FiltrarAsistencias(List<Asistencia> asistencias)
+    {
+    // 1. Obtenemos las variables de comparación
+    DateTime fechaActual = DateTime.Now.Date;
+    TimeOnly horaActual = TimeOnly.FromDateTime(DateTime.Now);
+
+    // 2. Extraemos todos los IDs de turnos únicos que tienen las asistencias
+    var idsTurnos = asistencias.Select(a => a.IdTurno).Distinct().ToList();
+
+    // 3. Consultamos de un solo viaje todos los turnos que necesitamos
+    // (Asumo que tenés un método en tu servicio/repositorio para traer varios turnos, o los traés todos juntos)
+    var tareasTurnos = idsTurnos.Select(id => this.TraerTurnoPorId(id));
+    var turnosConsultados = await Task.WhenAll(tareasTurnos);
+
+    // 4. Creamos un diccionario (ID -> Turno) para buscar al instante (Complejidad O(1))
+    var diccionarioTurnos = turnosConsultados
+        .Where(t => t != null)
+        .ToDictionary(t => t.Id, t => t);
+
+    // 5. Filtramos la lista usando el diccionario y aplicando la lógica del día/hora
+    return asistencias
+        .Where(a => 
+        {
+            // Buscamos el turno en el diccionario en memoria
+            if (!diccionarioTurnos.TryGetValue(a.IdTurno, out var turno))
+                return false; // Si el turno no existe, lo descartamos
+
+            //retorna una lista de asistencias que corresponden a turnos futuros, es decir, que la fecha del turno sea mayor a la fecha actual o que la fecha del turno sea igual a la fecha actual y la hora de fin del turno sea mayor a la hora actual
+            return turno.Fecha > fechaActual 
+                   || (turno.Fecha == fechaActual && turno.horaFin > horaActual);
+        })
+        .ToList();
     }
 }

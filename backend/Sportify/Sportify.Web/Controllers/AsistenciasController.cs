@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sportify.Aplicacion.AplicacionAsistencias;
 using System;
 using System.Threading.Tasks;
+using Sportify.Dominio.Asistencias;
 
 namespace Sportify.Web.Controllers
 {
@@ -11,10 +12,13 @@ namespace Sportify.Web.Controllers
     {
         private readonly AsistenciaPasarPresente asistenciaPasarPresente;
         private readonly AsistenciaAlta asistenciaAlta;
-        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta)
+        private readonly AsistenciaListarAsistenciasDeUsuarioUseCase _listarAsistenciasUseCase;
+
+        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, AsistenciaListarAsistenciasDeUsuarioUseCase listarAsistenciasUseCase)
         {
             this.asistenciaPasarPresente = asistenciaPasarPresente;
             this.asistenciaAlta = asistenciaAlta;
+            this._listarAsistenciasUseCase = listarAsistenciasUseCase; 
         }
 
         [HttpPut("confirmar-presente")] // api/Asistencias/confirmar-presente
@@ -41,6 +45,19 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", error = ex.Message });
             }
         }
+       [HttpGet("usuario/{idUsuario}")]
+       public async Task<ActionResult<List<Asistencia>>> ObtenerAsistenciasPorUsuario(Guid idUsuario)
+       {
+            try
+            {
+                var asistencias = await _listarAsistenciasUseCase.Ejecutar(idUsuario);
+                return Ok(asistencias);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+       }
     }
 
     public class ConfirmarAsistenciaRequest

@@ -3,7 +3,26 @@ import { AuthContext } from '../context/AuthContext';
 import ItemAsistencia from '../components/ItemsAsistencia'; // 🌟 IMPORTADO DESDE COMPONENTS
 
 const ListarmisAsistencias = () => {
-  // ... (mismo useEffect y lógica que te pasé antes) ...
+    const [usuarios, setUsuarios] = useState([]);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState('');
+    const [asistencias, setAsistencias] = useState([]);
+    const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
+    const [cargandoAsistencias, setCargandoAsistencias] = useState(false);
+    
+    useEffect(() => {
+      const obtenerUsuarios = async () => {
+        try {
+          const response = await fetch('/api/usuarios');
+          const data = await response.json();
+          setUsuarios(data);
+        } catch (error) {
+          console.error("Error al cargar usuarios:", error);
+        } finally {
+          setCargandoUsuarios(false);
+        }
+      };
+      obtenerUsuarios();
+    }, []);
 
   return (
     <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '1.5rem' }}>
