@@ -65,13 +65,10 @@ namespace Sportify.Aplicacion.AplicacionAbonos
 
 
 
-            // Buscar clases que corresponden a este mes (y primeros 10 días del siguiente si estamos después del 20)
+            // Buscar clases que corresponden a este mes y hasta el día 10 del siguiente mes inclusive
             var hoy = DateTime.Now.Date;
-            var maxFecha = new DateTime(hoy.Year, hoy.Month, DateTime.DaysInMonth(hoy.Year, hoy.Month));
-            if (hoy.Day >= 20)
-            {
-                maxFecha = maxFecha.AddDays(10);
-            }
+            var startOfNextMonth = new DateTime(hoy.Year, hoy.Month, 1).AddMonths(1);
+            var maxFecha = startOfNextMonth.AddDays(9); // Hasta el 10 del mes siguiente inclusive
 
             var todosLosTurnos = await _repositorioTurno.ListarTurnos();
             var turnosDelAbono = todosLosTurnos
@@ -112,8 +109,9 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             {
                 if (t.cupo > 0)
                 {
-                    var nuevaReserva = new Reserva(Guid.Parse(usuario.Id), t.Id, false, t.Precio, t.nombreTurno);
+                    var nuevaReserva = new Reserva(Guid.Parse(usuario.Id), t.Id, true, t.Precio, t.nombreTurno);
                     nuevaReserva.marcarComoAbonado();
+                    nuevaReserva.marcarComoPagada();
                     await _reservaAltaUseCase.Ejecutar(nuevaReserva);
 
                     if (idPrimeraReserva == null)

@@ -301,7 +301,7 @@ function ReservasPage() {
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
                   </p>
                 )}
-                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
+                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= -1 && (
                   <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                     {!mostrarQR ? (
                       <button
