@@ -103,6 +103,13 @@
     reserva.marcarComoSeña();
     await archivo.SaveChangesAsync();
 }
+public async Task MarcarComoPagada(Guid idReserva)
+{
+    Reserva? reserva = await archivo.Reservas.FindAsync(idReserva);
+    if (reserva == null) throw new Exception("Reserva no encontrada.");
+    reserva.marcarComoPagada();
+    await archivo.SaveChangesAsync();
+}
     
 
     }

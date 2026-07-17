@@ -295,9 +295,36 @@ function ReservasPage() {
                 <p>
                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
+                
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
+                {reservaSeleccionada.pagoSeña && !reservaSeleccionada.paga && (
+  <button
+    className="btn btn-primary"
+    style={{ width: "100%", marginTop: "0.5rem" }}
+    onClick={async () => {
+      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idReserva: reservaSeleccionada.idReserva,
+          email: user.email
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.mensaje);
+        cerrarModal();
+        cargarReservasActivas();
+      } else {
+        alert(data.message || "Error al confirmar.");
+      }
+    }}
+  >
+    Pagar confirmación de reserva
+  </button>
+)}
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
