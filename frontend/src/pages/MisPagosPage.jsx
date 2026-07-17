@@ -73,12 +73,14 @@ function MisPagosPage() {
             {pagos.map((p) => (
               <li key={p.id} className="reserva-card">
                 <div className="reserva-card-info">
-                  <h3>Pago #{p.id.substring(0, 8)}</h3>
+                  <h3>{p.monto < 0 ? "Devolución" : "Pago"} #{p.id.substring(0, 8)}</h3>
                   <p>
                     <strong>Reserva:</strong> {p.tituloReserva || "Sin título"}
                   </p>
                   <p>
-                    <strong>Monto:</strong> ${p.monto}
+                    <strong>Monto:</strong> <span style={{ color: p.monto < 0 ? "var(--success)" : "inherit", fontWeight: p.monto < 0 ? "bold" : "normal" }}>
+                      {p.monto < 0 ? `-$${Math.abs(p.monto)}` : `$${p.monto}`}
+                    </span>
                   </p>
                   <p>
                     <strong>Fecha:</strong> {new Date(p.fecha).toLocaleString()}

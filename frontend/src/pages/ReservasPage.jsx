@@ -1,9 +1,13 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import GeneradorQR from "../components/GeneradorQr";
 
 function ReservasPage() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [reservas, setReservas] = useState([]);
   const [mensaje, setMensaje] = useState("");
 
@@ -131,6 +135,22 @@ function ReservasPage() {
       setMensaje("Debes iniciar sesión para ver tus reservas");
     }
   }, [user, viendoHistorial]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const pagoStatus = params.get("pago");
+    if (pagoStatus === "exitoso") {
+      alert("Pago de confirmación exitoso.");
+      navigate("/reservas", { replace: true });
+      cargarReservasActivas();
+    } else if (pagoStatus === "rechazado") {
+      alert("El pago fue rechazado.");
+      navigate("/reservas", { replace: true });
+    } else if (pagoStatus === "error_interno") {
+      alert("Ocurrió un error al procesar el pago.");
+      navigate("/reservas", { replace: true });
+    }
+  }, [location, navigate]);
 
   const abrirModal = async (idReserva) => {
     setLoadingDetalles(true);
@@ -322,23 +342,10 @@ function ReservasPage() {
                   <button
                     className="btn btn-primary"
                     style={{ width: "100%", marginTop: "0.5rem" }}
-                    onClick={async () => {
-                      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          idReserva: reservaSeleccionada.idReserva,
-                          email: user.email
-                        })
-                      });
-                      const data = await response.json();
-                      if (response.ok) {
-                        alert(data.mensaje);
-                        cerrarModal();
-                        cargarReservasActivas();
-                      } else {
-                        alert(data.message || "Error al confirmar.");
-                      }
+                    onClick={() => {
+                      const montoAPagar = reservaSeleccionada.monto / 2;
+                      navigate(`/pagar/mercado-pago?tipo=confirmacion&idTurno=${reservaSeleccionada.idReserva}&email=${encodeURIComponent(user.email)}&monto=${montoAPagar}`);
+                      cerrarModal();
                     }}
                   >
                     Pagar confirmación de reserva

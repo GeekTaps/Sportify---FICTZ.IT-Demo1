@@ -417,14 +417,16 @@ namespace Sportify.Web.Controllers
                             else{
                                     decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
 
-    var pagoDevolucion = new Pago(
-        reserva.id,
-        Guid.Parse(user.Id),
-        montoSeña
-    );
+                                    var pagoDevolucion = new Pago(
+                                        reserva.id,
+                                        Guid.Parse(user.Id),
+                                        -montoSeña
+                                    );
 
-    await _registrarDevolucionSeñaUseCase.Ejecutar(pagoDevolucion);
-                        mensajeBase += " Seña devuelta.";}}
+                                    await _registrarDevolucionSeñaUseCase.Ejecutar(pagoDevolucion);
+                                    mensajeBase += " Seña devuelta.";
+                                }
+                            }
                     
                 }
 
