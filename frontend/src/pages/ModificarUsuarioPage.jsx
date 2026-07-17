@@ -22,6 +22,9 @@ function ModificarUsuarioPage() {
   const [originalDni, setOriginalDni] = useState("");
   const [originalEmail, setOriginalEmail] = useState("");
 
+  const [creditos, setCreditos] = useState([]);
+  const [abonos, setAbonos] = useState([]);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,6 +59,9 @@ function ModificarUsuarioPage() {
         setOriginalEmail(mail);
         setOriginalDni(documento);
         setOriginalFechaNacimiento(fecha);
+        
+        setCreditos(response.data.creditos ?? []);
+        setAbonos(response.data.abonos ?? []);
       } catch (err) {
         console.error("ERROR GET USER:", err.response?.data || err);
         setError("No se pudieron cargar los datos del usuario.");
@@ -143,6 +149,47 @@ function ModificarUsuarioPage() {
       <div className="page-header" style={{ textAlign: "left" }}>
         <h1>Modificar Datos</h1>
         <p>Actualizá tu información personal. Dejá en blanco lo que no quieras cambiar.</p>
+      </div>
+
+      <div style={{ marginBottom: "2rem", maxWidth: "440px" }}>
+        <h3>Mis Créditos</h3>
+        {creditos.length > 0 ? (
+          <ul style={{ paddingLeft: "20px", marginBottom: "1.5rem" }}>
+            {creditos.map((c, idx) => (
+              <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                <strong>{c.deporte}:</strong> {c.cantidad} crédito(s)
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ marginBottom: "1.5rem" }}>No tenés créditos disponibles.</p>
+        )}
+
+        <h3>Mis Abonos</h3>
+        {abonos.length > 0 ? (
+          <ul style={{ paddingLeft: "20px", marginBottom: "1.5rem" }}>
+            {abonos.map((a, idx) => {
+              const diasTraduccion = {
+                "Monday": "Lunes",
+                "Tuesday": "Martes",
+                "Wednesday": "Miércoles",
+                "Thursday": "Jueves",
+                "Friday": "Viernes",
+                "Saturday": "Sábado",
+                "Sunday": "Domingo"
+              };
+              const diaEspanol = diasTraduccion[a.dia] || a.dia;
+
+              return (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                  Abonado en {a.deporte} - {diaEspanol} - {a.hora}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p style={{ marginBottom: "1.5rem" }}>No tenés abonos activos.</p>
+        )}
       </div>
 
       <ModificarUsuarioForm

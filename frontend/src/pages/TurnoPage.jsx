@@ -81,7 +81,7 @@ function TurnoPage() {
 
     const abonoStatus = params.get("abono");
     if (abonoStatus === "exitoso") {
-      alert("Listo! Te abonaste exitosamente a la actividad.");
+      alert("Listo! Te abonaste exitosamente.");
       navigate("/turnos", { replace: true });
     } else if (abonoStatus === "rechazado") {
       navigate("/turnos", { replace: true });

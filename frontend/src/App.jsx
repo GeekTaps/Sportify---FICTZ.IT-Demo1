@@ -73,7 +73,7 @@ function Navigation() {
                         <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
                     </>
                 )}
-                                {user?.esEmpleado && (
+                {user?.esEmpleado && (
                     <>
                         <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
@@ -174,15 +174,15 @@ function App() {
                             <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
                             <Route path="/registrarEmpleado" element={<RegistrarEmpleadoPage />} />
-                            <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
+                            <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} />
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
-                            <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
+                            <Route path="/simular-dia-10" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                             <Route path="/estadisticas" element={<EstadisticasPage />} />
                             <Route path="/pagar/mercado-pago" element={<SimulacionMercadoPagoPage />} />
                         </Routes>
                     </main>
-                    
+
                     <BotonSimularDia11 />
 
                     <Footer />

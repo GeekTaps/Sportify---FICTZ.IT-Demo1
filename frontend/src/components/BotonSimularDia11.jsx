@@ -13,14 +13,14 @@ function BotonSimularDia11() {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-      <button 
-        onClick={() => navigate('/simular-dia-11')} 
-        style={{ 
-          padding: '12px 24px', 
-          backgroundColor: '#007bff', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '5px', 
+      <button
+        onClick={() => navigate('/simular-dia-10')}
+        style={{
+          padding: '12px 24px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
           cursor: 'pointer',
           fontSize: '16px',
           fontWeight: 'bold'
