@@ -73,10 +73,6 @@ public class ObtenerInfoAbonoUseCase
             .OrderBy(t => t.Fecha)
             .ToList();
 
-        // 4. HasFewClasses: next 30 days
-        var turnosProximos30Dias = turnosDelHorario.Count(t => t.Fecha <= now.AddDays(30));
-        response.HasFewClasses = turnosProximos30Dias < 3;
-
         // Determine relevant classes for pricing and cupo (current month + first 10 days of next month)
         // If we are in July, next month is August.
         var startOfNextMonth = new DateTime(now.Year, now.Month, 1).AddMonths(1);
@@ -84,9 +80,13 @@ public class ObtenerInfoAbonoUseCase
 
         var clasesAbono = turnosDelHorario.Where(t => t.Fecha <= dateLimit).ToList();
 
-        // 5. NoCupo
-        // If ANY of the relevant classes is full, the abono is full
-        response.NoCupo = clasesAbono.Any(t => t.cupo == 0);
+        // Count available classes (not suspended, not eliminated, with cupo > 0)
+        var clasesDisponibles = clasesAbono.Count(t => t.mostrarEnHome && t.cupo > 0);
+        
+        // 4. HasFewClasses / NoCupo
+        // If there are less than 3 available classes up to the 10th of next month, we block it.
+        response.NoCupo = clasesDisponibles < 3;
+        response.HasFewClasses = response.NoCupo;
 
         // Populate info
         var nombreLimpio = turno.nombreTurno.Split('-')[0].Trim();

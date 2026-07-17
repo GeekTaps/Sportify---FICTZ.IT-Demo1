@@ -69,7 +69,7 @@ function Navigation() {
                         <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>
                         <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
                         <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
-                        <NavLink to="/estadisticas" className={navLinkClass}>Estadísticas</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
                     </>
                 )}
 

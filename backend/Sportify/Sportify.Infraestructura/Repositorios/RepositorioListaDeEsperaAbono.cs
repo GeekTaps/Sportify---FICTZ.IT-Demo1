@@ -22,6 +22,12 @@ public class RepositorioListaDeEsperaAbono : IRepositorioListaDeEsperaAbono
         await _context.SaveChangesAsync();
     }
 
+    public async Task Modificar(ListaDeEsperaAbono espera)
+    {
+        _context.ListaDeEsperaAbono.Update(espera);
+        await _context.SaveChangesAsync();
+    }
+
 public async Task<bool> eliminarEspera(Guid idUsuario, Guid idDeporte)
 {
     var entrada = await _context.ListaDeEsperaAbono
@@ -39,17 +45,60 @@ public async Task<bool> eliminarEspera(Guid idUsuario, Guid idDeporte)
 }
 
     public async Task<bool> existeEnEspera(Guid idUsuario, Guid idDeporte)
-{
-    return await _context.ListaDeEsperaAbono
-        .AnyAsync(l =>
-            l.idUsuario == idUsuario &&
-            l.idDeporte == idDeporte);
-}
-
-    public async Task<System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idHorario)
     {
-        // Not implemented fully due to not needing it for this specific feature yet
-        return new System.Collections.Generic.List<Sportify.Dominio.Usuario.Usuario>();
+        return await _context.ListaDeEsperaAbono
+            .AnyAsync(l =>
+                l.idUsuario == idUsuario &&
+                l.idDeporte == idDeporte);
+    }
+
+    public async Task<List<ListaDeEsperaAbono>> listarEntradas(Guid idHorario)
+    {
+        return await _context.ListaDeEsperaAbono
+            .Where(x => x.idHorario == idHorario)
+            .OrderBy(x => x.fecha)
+            .ToListAsync();
+    }
+
+    public async Task<List<Sportify.Dominio.Usuario.Usuario>> listarUsuarios(Guid idHorario)
+    {
+        // Traigo las entradas de la lista de espera de ese horario,
+        // ordenadas por fecha de inscripción (el primero anotado va primero).
+        var entradas = await _context.ListaDeEsperaAbono
+            .Where(x => x.idHorario == idHorario)
+            .OrderBy(x => x.fecha)
+            .ToListAsync();
+
+        var usuarios = new List<Sportify.Dominio.Usuario.Usuario>();
+
+        foreach (var entrada in entradas)
+        {
+            var usuario = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == entrada.idUsuario.ToString());
+
+            if (usuario != null)
+            {
+                usuarios.Add(new Sportify.Dominio.Usuario.Usuario(
+                    usuario.Id,
+                    usuario.NombreCompleto,
+                    usuario.Email,
+                    usuario.Dni,
+                    "",
+                    "",
+                    usuario.FechaNacimiento,
+                    usuario.Creditos
+                ));
+            }
+        }
+
+        return usuarios;
+    }
+
+    public async Task<List<ListaDeEsperaAbono>> listarEntradasNotificadas()
+    {
+        return await _context.ListaDeEsperaAbono
+            .Where(x => x.Notificado)
+            .ToListAsync();
     }
 
     public async Task<System.Collections.Generic.List<Sportify.Dominio.Turnos.Horario>> listarHorarios(Guid idUsuario)

@@ -86,6 +86,20 @@ public class TurnosController : ControllerBase
         }
     }
 
+    [HttpGet("todos")]
+    public async Task<IActionResult> ObtenerTodosLosTurnos()
+    {
+        try
+        {
+            var resultado = await repositorioTurno.ListarTurnos();
+            return Ok(resultado);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
     [HttpGet("{id:guid}/info-historica")]
     public async Task<IActionResult> ObtenerInfoHistoricaTurno(Guid id)
     {

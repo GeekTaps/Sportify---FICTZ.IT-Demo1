@@ -21,9 +21,6 @@ public class ReservaListadoCompletoUseCase
     public async Task<List<Reserva>> Ejecutar(Guid idUsuario)
     {
         List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
-        if(reservas.Count == 0){
-            throw new ListadoVacioException("No Hiciste Ninguna Reserva Todavía");
-        }
         return reservas;
     }
 }

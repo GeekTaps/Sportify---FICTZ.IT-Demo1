@@ -15,13 +15,15 @@ public string NombreCompleto { get; set; } = "";
     public string Mail { get; set; }
     public string Dni { get; set; }
     public string PasswordActual { get; set; } = "";
-public string PasswordNueva { get; set; } = "";
+    public string PasswordNueva { get; set; } = "";
     public bool Suspendido { get; set; } = false;
+    public bool SuspendidoPermanente { get; set; } = false;
     public DateTime FechaNacimiento { get; set; }
     
     public Usuario(string nombre, string Mail, string Dni, string Contraseña, string? passwordNueva, DateTime fechaNacimiento)
     {
         this.Suspendido = false;
+        this.SuspendidoPermanente = false;
         this.NombreCompleto = nombre;
         this.Mail = Mail;
         this.Dni= Dni;

@@ -16,6 +16,8 @@ using Sportify.Aplicacion.AplicacionAsistencias;
 using Sportify.Aplicacion.AplicacionAbonos;
 using Sportify.Aplicacion.AplicacionListasDeEspera;
 using Sportify.Aplicacion.AplicacionEstadisticas;
+using Sportify.Web;
+using Sportify.Web.Controllers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +73,7 @@ builder.Services.AddScoped<ListarUsuariosSuspendidosUseCase>();
 builder.Services.AddScoped<modificarUsuarioUseCase>();
 builder.Services.AddTransient<IValidadorModificarUsuario, ValidadorModificarUsuario>();
 builder.Services.AddScoped<ReactivarAlumnoUseCase>();
+builder.Services.AddScoped<SuspenderCuentaUseCase>();
 builder.Services.AddScoped<ListarUsuariosEnListaEsperaTurnoUseCase>();
 builder.Services.AddScoped<ListarUsuariosEnListaEsperaAbonoUseCase>();
 
@@ -103,6 +106,7 @@ builder.Services.AddScoped<ReservaAltaUseCase>();
 builder.Services.AddScoped<ReservaBajaUseCase>();
 builder.Services.AddScoped<ReservaBusquedaUseCase>();
 builder.Services.AddTransient<IValidadorReserva, ValidadorReserva>();
+builder.Services.AddScoped<ReservasController>();
 
 //Mails papá
 builder.Services.Configure<ModeloMail>(
@@ -127,8 +131,8 @@ builder.Services.AddScoped<IValidadorListaDeEsperaTurno, ValidadorListaDeEsperaT
 builder.Services.AddScoped<SalirListaEsperaTurnoUseCase>();
 builder.Services.AddScoped<SalirListaEsperaAbonoUseCase>();
 builder.Services.AddScoped<estaEnListaEsperaTurnoUseCase>();
-
 builder.Services.AddScoped<EstaEnListaEsperaAbonoUseCase>();
+builder.Services.AddHostedService<ListaEsperaBackgroundService>(); //el servicio para avisar al siguinte pasada las 2 hs
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => //registra EF Core.
     options.UseSqlite( //le dice usar SQLite.
@@ -170,6 +174,10 @@ await RepositoriosSQLites.SeedUsuariosAdmin(app.Services);
 
 // Sembrar cuentas de usuario normales
 await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
+
+// Sembrar deportes y créditos
+await RepositoriosSQLites.SeedDeportes(app.Services);
+await RepositoriosSQLites.SeedCreditos(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

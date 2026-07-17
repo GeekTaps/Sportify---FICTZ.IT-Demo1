@@ -6,6 +6,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [esError, setEsError] = useState(false);
+  const [yaEstaAbonado, setYaEstaAbonado] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
 
   const {
@@ -26,7 +27,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
-          <div className="alert alert-warning">Ya estás abonado a este turno.</div>
+          <div className="alert alert-warning">Ya estás abonado a este horario</div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
             <button onClick={onClose} className="btn btn-secondary">Cerrar</button>
           </div>
@@ -35,16 +36,15 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
     );
   }
 
-
-
-  // Escenario 3: Pasado el día 10
-  if (isPast10thDay && hasFewClasses) {
+  // Escenario 2: Conflicto de horario (ya tiene reserva)
+  if (hasConflict) {
     return (
       <div className="modal-overlay" onClick={onClose}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
-          <div className="alert alert-warning">
-            Para abonarte este mes, debés hacerlo dentro de los primeros 10 días, o cuando queden al menos 3 clases en el mes.
+          <p><strong>Horario Fijo:</strong> {horario}</p>
+          <div className="alert alert-warning" style={{ margin: "15px 0" }}>
+            Ya tenés una reserva en este horario
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px" }}>
             <button onClick={onClose} className="btn btn-secondary">Cerrar</button>
@@ -53,6 +53,9 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
       </div>
     );
   }
+
+
+
 
   // HARDCODEO DE PAGOS: este bloque reemplaza la creación de preferencia por un pago local inmediato.
   const handlePagarAbono = async () => {
@@ -74,7 +77,12 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
         const data = await response.json();
         setEsError(false);
         setMensaje(data.mensaje || "Pago registrado correctamente.");
-      } else {
+        setYaEstaAbonado(true);
+      } else if (yaEstaAbonado) {
+        setEsError(true);
+        setMensaje("Ya estás abonado a este horario");
+      }
+      else {
         const errData = await response.json();
         setEsError(true);
         setMensaje(errData.message || "Error al procesar el pago local.");
@@ -107,7 +115,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
       if (response.ok) {
         setEsError(false);
         setMensaje(data.mensaje || "Te has anotado en la lista de espera exitosamente.");
-         if (onEntrarListaEspera) onEntrarListaEspera();
+        if (onEntrarListaEspera) onEntrarListaEspera();
       } else {
         setEsError(true);
         setMensaje(data.mensaje || "Ocurrió un error al intentar anotarte.");
@@ -128,19 +136,31 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
         <h2 style={{ marginTop: 0, color: "var(--c-azul-cobalto)" }}>Abono a {actividad}</h2>
         <p><strong>Horario Fijo:</strong> {horario}</p>
 
+        <p style={{ fontSize: "1.2rem" }}><strong>Precio completo:</strong> ${Number((precioTotal + (descuentoAplicado || 0)).toFixed(2))}</p>
         {descuentoAplicado > 0 && (
-          <p style={{ color: "green", fontWeight: "bold" }}>
-            ¡Tenés un descuento de ${descuentoAplicado}!
+          <p style={{ fontSize: "1.2rem", color: "green", fontWeight: "bold" }}>
+            <strong>Descuento:</strong> -${Number(descuentoAplicado.toFixed(2))}
           </p>
         )}
-
-        <p style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-          <strong>Precio total a pagar:</strong> ${precioTotal}
+        <p style={{ fontWeight: "bold", marginTop: "10px" }}>
+          <strong>Total a pagar:</strong> ${Number(precioTotal.toFixed(2))}
         </p>
 
-        {noCupo && (
+        <div className="alert alert-info" style={{ margin: "15px 0" }}>
+          Al abonarte, reservás tus clases para todo el mes. Tenés 10 días para renovar tu abono al principio de cada mes
+        </div>
+
+        {noCupo ? (
           <div className="alert alert-warning" style={{ margin: "15px 0" }}>
-            Por el momento no hay más cupos para abonarse a esta actividad.
+            Por el momento no hay más cupos para este horario
+          </div>
+        ) : precioTotal === 0 ? (
+          <div className="alert alert-success" style={{ margin: "15px 0" }}>
+            Tenés suficientes créditos para cubrir el abono
+          </div>
+        ) : (
+          <div className="alert alert-info" style={{ margin: "15px 0" }}>
+            Para confirmar tu lugar, procedé al pago
           </div>
         )}
 
@@ -158,7 +178,7 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
               onClick={handlePagarAbono}
               disabled={loading}
             >
-              {loading ? "Procesando..." : "Confirmar y Pagar"}
+              {loading ? "Procesando..." : (precioTotal === 0 ? "Confirmar Abono" : "mercado pago")}
             </button>
           ) : (
             <button

@@ -131,7 +131,7 @@ public static class RepositoriosSQLites
         var services = scope.ServiceProvider;
         var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
 
-        string[] emails = { "usuario1@mail.com", "usuario2@mail.com" };
+        string[] emails = { "usuario1@mail.com", "usuario2@mail.com", "usuario3@mail.com" };
         string password = "123456";
 
         foreach (var email in emails)
@@ -144,13 +144,68 @@ public static class RepositoriosSQLites
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,
-                    NombreCompleto = email == "usuario1@mail.com" ? "Usuario Uno" : "Usuario Dos",
-                    Dni = email == "usuario1@mail.com" ? "11111111" : "22222222",
+                    NombreCompleto = email == "usuario1@mail.com" ? "Usuario Uno" : (email == "usuario2@mail.com" ? "Usuario Dos" : "Usuario Tres"),
+                    Dni = email == "usuario1@mail.com" ? "11111111" : (email == "usuario2@mail.com" ? "22222222" : Guid.NewGuid().ToString().Substring(0, 8)),
                     EsAdmin = false
                 };
 
-                await userManager.CreateAsync(newUser, password);
+                try 
+                {
+                    await userManager.CreateAsync(newUser, password);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error creating user {email}: {ex}");
+                    throw;
+                }
             }
+        }
+    }
+
+    public static async Task SeedDeportes(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var db = services.GetRequiredService<ApplicationDbContext>();
+
+        string[] nombres = { "Futbol", "Tenis", "Voley", "Paddle" };
+        foreach (var nombre in nombres)
+        {
+            if (!await db.Deportes.AnyAsync(d => d.nombre == nombre))
+            {
+                var deporte = new Sportify.Dominio.Deportes.Deporte(nombre, $"Deporte: {nombre}", 2000);
+                await db.Deportes.AddAsync(deporte);
+            }
+        }
+        await db.SaveChangesAsync();
+    }
+
+    public static async Task SeedCreditos(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
+
+        var usuario3 = await userManager.FindByEmailAsync("usuario3@mail.com");
+        if (usuario3 != null)
+        {
+            var deportes = await db.Deportes.ToListAsync();
+            foreach (var deporte in deportes)
+            {
+                var credito = await db.Creditos.FirstOrDefaultAsync(c => c.UsuarioId == Guid.Parse(usuario3.Id) && c.DeporteId == deporte.id);
+                if (credito == null)
+                {
+                    credito = new Sportify.Dominio.Usuario.Credito(Guid.Parse(usuario3.Id), deporte.id);
+                    credito.Cantidad = 1000;
+                    await db.Creditos.AddAsync(credito);
+                }
+                else
+                {
+                    credito.Cantidad = 1000;
+                }
+            }
+            await db.SaveChangesAsync();
         }
     }
 }

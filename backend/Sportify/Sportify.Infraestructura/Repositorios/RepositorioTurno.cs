@@ -38,10 +38,22 @@ public class RepositorioTurno : IRepositorioTurno
         Turno? turno = await archivo.Turnos.FindAsync(idTurno); //busca el turno por su id
         if (turno != null)
         {
-            turno = nuevoTurno; //modifica el turno encontrado con los nuevos datos
+            turno.cupo = nuevoTurno.cupo;
+            turno.cupoMaximo = nuevoTurno.cupoMaximo;
+            turno.IdDeporte = nuevoTurno.IdDeporte;
+            turno.nombreTurno = nuevoTurno.nombreTurno;
+            turno.nommbreProfesor = nuevoTurno.nommbreProfesor;
+            turno.Fecha = nuevoTurno.Fecha;
+            turno.horaInicio = nuevoTurno.horaInicio;
+            turno.horaFin = nuevoTurno.horaFin;
+            turno.Precio = nuevoTurno.Precio;
+            turno.ListaEsperaHabilitada = nuevoTurno.ListaEsperaHabilitada;
+            turno.mostrarEnHome = nuevoTurno.mostrarEnHome;
+            turno.IdHorario = nuevoTurno.IdHorario;
             await archivo.SaveChangesAsync(); //guarda los cambios en la base de datos
+            return true;
         }
-        return turno != null; //devuelve true si se modifico el turno, false si no se encontro el turno
+        return false; //devuelve true si se modifico el turno, false si no se encontro el turno
     }
 
     public async Task<bool> BuscarTurnoPorId(Guid idTurno) //metodo para obtener un turno por su id
@@ -95,5 +107,38 @@ public class RepositorioTurno : IRepositorioTurno
             }
         }
         await archivo.SaveChangesAsync();
+    }
+
+    public async Task<List<Turno>> ListarTurnosPorHorario(Guid idHorario)
+    {
+        return await archivo.Turnos
+            .Where(t => t.IdHorario == idHorario)
+            .OrderBy(t => t.Fecha)
+            .ToListAsync();
+    }
+
+    public async Task<bool> HayLugarParaAbono(Guid idHorario)
+    {
+        var hoy = DateTime.Now.Date;
+
+        var maxFecha = new DateTime(
+            hoy.Year,
+            hoy.Month,
+            DateTime.DaysInMonth(hoy.Year, hoy.Month));
+
+        if (hoy.Day >= 20)
+            maxFecha = maxFecha.AddDays(10);
+
+        var turnos = await archivo.Turnos
+            .Where(t =>
+                t.IdHorario == idHorario &&
+                t.Fecha.Date >= hoy &&
+                t.Fecha.Date <= maxFecha)
+            .ToListAsync();
+
+        if (!turnos.Any())
+            throw new Exception("No existen turnos para ese horario.");
+
+        return turnos.All(t => t.cupo > 0);
     }
 }

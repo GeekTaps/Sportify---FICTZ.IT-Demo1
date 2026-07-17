@@ -141,7 +141,7 @@ function ReservasPage() {
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
-  
+      
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);

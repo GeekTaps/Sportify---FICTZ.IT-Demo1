@@ -24,6 +24,7 @@ public Task DescontarCreditos(string id, int cantidad);
 public  Task<List<Usuario>> ListarUsuariosEnListaEsperaAbono(Guid idDeporte);
 public  Task<List<Usuario>> ListarUsuariosEnListaEsperaTurno(Guid idTurno);
 public  Task ReactivarAlumno(string mail);
+public Task SuspenderAlumnoPermanente(string mail);
 
 
 }
