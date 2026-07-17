@@ -240,6 +240,7 @@ public async Task<IActionResult> PagarSena([FromBody] PagoRequest request)
                         fecha = pago.fecha,
                         tituloReserva = tituloReserva
                     });
+                }
                 // Ordenar por fecha más reciente primero
                 resultado = resultado.OrderByDescending(r => ((dynamic)r).fecha).ToList();
                 

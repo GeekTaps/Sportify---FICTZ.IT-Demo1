@@ -68,6 +68,22 @@ public class AbonosController : ControllerBase
         }
     }
 
+    [HttpPost("pagar-cuota-local")]
+    public async Task<IActionResult> PagarCuotaLocal([FromBody] AbonoPreferenceRequest request, [FromServices] PagarCuotaAbonoUseCase pagarCuotaAbonoUseCase)
+    {
+        try
+        {
+            // Opcionalmente podemos pasar el monto si lo recibiéramos, pero el caso de uso lo calcula si le pasamos null
+            await pagarCuotaAbonoUseCase.Ejecutar(request.Email, request.IdTurno, null);
+            return Ok(new { mensaje = "Abono confirmado correctamente." });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error en PagarCuotaLocal: " + ex.ToString());
+            return StatusCode(500, new { message = "Error al procesar la cuota del abono", error = ex.Message });
+        }
+    }
+
     /*
     // HARDCODEO DE PAGOS: bloque original de Mercado Pago preservado como referencia.
     [HttpPost("crear-preferencia")]

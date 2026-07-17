@@ -57,6 +57,9 @@ builder.Services.AddScoped<IRepositorioEstadisticas, RepositorioEstadisticas>();
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
 builder.Services.AddScoped<DeporteAltaUseCase>();
+builder.Services.AddTransient<ObtenerInfoAbonoUseCase>();
+builder.Services.AddTransient<PagarCuotaAbonoUseCase>();
+builder.Services.AddScoped<Sportify.Aplicacion.Mails.IServicioEmail, ServicioEmail>();
 builder.Services.AddScoped<DeporteBajaUseCase>();
 builder.Services.AddScoped<DeporteModificacionUseCase>();
 

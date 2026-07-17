@@ -338,19 +338,7 @@ function ReservasPage() {
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
-                {reservaSeleccionada.pagoSeña && !reservaSeleccionada.paga && (
-                  <button
-                    className="btn btn-primary"
-                    style={{ width: "100%", marginTop: "0.5rem" }}
-                    onClick={() => {
-                      const montoAPagar = reservaSeleccionada.monto / 2;
-                      navigate(`/pagar/mercado-pago?tipo=confirmacion&idTurno=${reservaSeleccionada.idReserva}&email=${encodeURIComponent(user.email)}&monto=${montoAPagar}`);
-                      cerrarModal();
-                    }}
-                  >
-                    Pagar confirmación de reserva
-                  </button>
-                )}
+
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
