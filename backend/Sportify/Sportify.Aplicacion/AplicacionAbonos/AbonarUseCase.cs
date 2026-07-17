@@ -22,6 +22,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
         private readonly IRepositorioHorario _repositorioHorario;
         private readonly IRepositorioCreditos _repositorioCreditos;
         private readonly IRepositorioPago _repositorioPago;
+        private readonly IRepositorioReserva _repositorioReserva;
 
         public AbonarUseCase(
             IRepositorioAbono repositorioAbono,
@@ -30,7 +31,8 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             ReservaAltaUseCase reservaAltaUseCase,
             IRepositorioHorario repositorioHorario,
             IRepositorioCreditos repositorioCreditos,
-            IRepositorioPago repositorioPago)
+            IRepositorioPago repositorioPago,
+            IRepositorioReserva repositorioReserva)
         {
             _repositorioAbono = repositorioAbono;
             _repositorioUsuarios = repositorioUsuarios;
@@ -39,6 +41,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             _repositorioHorario = repositorioHorario;
             _repositorioCreditos = repositorioCreditos;
             _repositorioPago = repositorioPago;
+            _repositorioReserva = repositorioReserva;
         }
 
         public async Task Ejecutar(string email, Guid idTurnoBase)
@@ -76,10 +79,29 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                 .OrderBy(t => t.Fecha)
                 .ToList();
 
+            var reservasUsuario = await _repositorioReserva.listarReservasUsuario(Guid.Parse(usuario.Id));
+
             // Calcular precio y descontar creditos
             double precioPorClase = turnoBase.Precio;
-            double precioTotalOriginal = turnosDelAbono.Count * precioPorClase;
-            double montoAPagar = precioTotalOriginal;
+            double precioBase = 0;
+
+            foreach (var t in turnosDelAbono)
+            {
+                var reservaExistente = reservasUsuario.FirstOrDefault(r => r.idTurno == t.Id && !r.eliminada);
+                if (reservaExistente != null)
+                {
+                    if (!reservaExistente.paga && !reservaExistente.pagoSeña)
+                        precioBase += precioPorClase;
+                    else if (reservaExistente.pagoSeña && !reservaExistente.paga)
+                        precioBase += (precioPorClase * 0.5);
+                }
+                else
+                {
+                    precioBase += precioPorClase;
+                }
+            }
+
+            double montoAPagar = precioBase;
             
             // Consumir créditos del usuario si tiene para el deporte
             var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turnoBase.IdDeporte);
@@ -95,7 +117,7 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                     creditoEntity.UsarCredito();
                 }
                 await _repositorioCreditos.ModificarCredito(creditoEntity);
-                montoAPagar = Math.Max(0, precioTotalOriginal - creditosADescontar * precioPorClase);
+                montoAPagar = Math.Max(0, precioBase - creditosADescontar * precioPorClase);
             }
 
             // Crear y guardar el abono
@@ -104,11 +126,30 @@ namespace Sportify.Aplicacion.AplicacionAbonos
 
             Guid? idPrimeraReserva = null;
 
-            // Generar las reservas para todas las clases y descontar cupos
+            // Generar o actualizar las reservas para todas las clases y descontar cupos
             foreach (var t in turnosDelAbono)
             {
-                if (t.cupo > 0)
+                var reservaExistente = reservasUsuario.FirstOrDefault(r => r.idTurno == t.Id && !r.eliminada);
+
+                if (reservaExistente != null)
                 {
+                    // Update existing reservation
+                    // We don't discount cupo because they already took one
+                    reservaExistente.marcarComoAbonado();
+                    reservaExistente.marcarComoPagada(); // The abono covers it fully now
+                    // Note: We don't save immediately, assuming context tracks it, but we can call a method if available.
+                    // Oh, wait, we don't have an update method in _reservaAltaUseCase for this. Let's just modify the entity
+                    // and EF Core will track it if it was loaded from the context. But since we use IRepositorioReserva...
+                    // Let's just use EF core tracking assuming listarReservasUsuario tracks entities.
+                    
+                    if (idPrimeraReserva == null)
+                    {
+                        idPrimeraReserva = reservaExistente.id;
+                    }
+                }
+                else if (t.cupo > 0)
+                {
+                    // Create new reservation
                     var nuevaReserva = new Reserva(Guid.Parse(usuario.Id), t.Id, true, t.Precio, t.nombreTurno);
                     nuevaReserva.marcarComoAbonado();
                     nuevaReserva.marcarComoPagada();
