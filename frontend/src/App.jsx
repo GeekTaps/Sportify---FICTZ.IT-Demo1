@@ -70,8 +70,7 @@ function Navigation() {
 
                 {user?.esAdmin && (
                     <>
-                        <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
-                        <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
+
                         <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
