@@ -22,6 +22,11 @@ function ModificarUsuarioPage() {
   const [originalDni, setOriginalDni] = useState("");
   const [originalEmail, setOriginalEmail] = useState("");
 
+  const [creditos, setCreditos] = useState([]);
+  const [abonos, setAbonos] = useState([]);
+  const [suspendido, setSuspendido] = useState(false);
+  const [suspendidoPermanente, setSuspendidoPermanente] = useState(false);
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,6 +61,11 @@ function ModificarUsuarioPage() {
         setOriginalEmail(mail);
         setOriginalDni(documento);
         setOriginalFechaNacimiento(fecha);
+        
+        setCreditos(response.data.creditos ?? []);
+        setAbonos(response.data.abonos ?? []);
+        setSuspendido(response.data.suspendido ?? false);
+        setSuspendidoPermanente(response.data.suspendidoPermanente ?? false);
       } catch (err) {
         console.error("ERROR GET USER:", err.response?.data || err);
         setError("No se pudieron cargar los datos del usuario.");
@@ -143,6 +153,58 @@ function ModificarUsuarioPage() {
       <div className="page-header" style={{ textAlign: "left" }}>
         <h1>Modificar Datos</h1>
         <p>Actualizá tu información personal. Dejá en blanco lo que no quieras cambiar.</p>
+      </div>
+
+      <div style={{ marginBottom: "2rem", maxWidth: "440px" }}>
+        <div style={{ marginBottom: "1.5rem", padding: "1rem", borderRadius: "8px", backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+          <h3 style={{ marginTop: 0, marginBottom: "0.5rem" }}>Estado de la Cuenta</h3>
+          <p style={{ margin: 0, fontWeight: "bold", color: suspendidoPermanente ? "var(--c-rojo-coral)" : (suspendido ? "var(--c-naranja)" : "var(--c-cian-brillante)") }}>
+            {suspendidoPermanente 
+              ? "Suspendido Indefinidamente" 
+              : suspendido 
+                ? "Suspendido Temporalmente (hasta el día 11)" 
+                : "Activo"}
+          </p>
+        </div>
+
+        <h3>Mis Créditos</h3>
+        {creditos.length > 0 ? (
+          <ul style={{ paddingLeft: "20px", marginBottom: "1.5rem" }}>
+            {creditos.map((c, idx) => (
+              <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                <strong>{c.deporte}:</strong> {c.cantidad} crédito(s)
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ marginBottom: "1.5rem" }}>No tenés créditos disponibles.</p>
+        )}
+
+        <h3>Mis Abonos</h3>
+        {abonos.length > 0 ? (
+          <ul style={{ paddingLeft: "20px", marginBottom: "1.5rem" }}>
+            {abonos.map((a, idx) => {
+              const diasTraduccion = {
+                "Monday": "Lunes",
+                "Tuesday": "Martes",
+                "Wednesday": "Miércoles",
+                "Thursday": "Jueves",
+                "Friday": "Viernes",
+                "Saturday": "Sábado",
+                "Sunday": "Domingo"
+              };
+              const diaEspanol = diasTraduccion[a.dia] || a.dia;
+
+              return (
+                <li key={idx} style={{ marginBottom: "0.5rem" }}>
+                  Abonado en {a.deporte} - {diaEspanol} - {a.hora}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p style={{ marginBottom: "1.5rem" }}>No tenés abonos activos.</p>
+        )}
       </div>
 
       <ModificarUsuarioForm

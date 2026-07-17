@@ -57,6 +57,7 @@ public class ObtenerInfoAbonoUseCase
             if (r.eliminada) return false;
             var tReserva = todosLosTurnos.FirstOrDefault(x => x.Id == r.idTurno);
             if (tReserva == null) return false;
+            if (tReserva.IdHorario == turno.IdHorario) return false; // No es conflicto, es parte del abono que van a adquirir
             // Check if tReserva conflicts with this specific Turno's date and time (overlap)
             return tReserva.Fecha.Date == turno.Fecha.Date && 
                    tReserva.horaInicio < turno.horaFin && 
@@ -80,8 +81,20 @@ public class ObtenerInfoAbonoUseCase
 
         var clasesAbono = turnosDelHorario.Where(t => t.Fecha <= dateLimit).ToList();
 
-        // Count available classes (not suspended, not eliminated, with cupo > 0)
-        var clasesDisponibles = clasesAbono.Count(t => t.mostrarEnHome && t.cupo > 0);
+        // Count available classes (not suspended, not eliminated, with cupo > 0 or already reserved by user)
+        int clasesDisponibles = 0;
+        foreach (var t in clasesAbono)
+        {
+            if (t.mostrarEnHome)
+            {
+                if (t.cupo > 0) clasesDisponibles++;
+                else 
+                {
+                    bool yaLoTiene = reservasUsuario.Any(r => r.idTurno == t.Id && !r.eliminada);
+                    if (yaLoTiene) clasesDisponibles++;
+                }
+            }
+        }
         
         // 4. HasFewClasses / NoCupo
         // If there are less than 3 available classes up to the 10th of next month, we block it.
@@ -100,11 +113,32 @@ public class ObtenerInfoAbonoUseCase
         int cantidadClases = clasesAbono.Count;
         double precioClase = turno.Precio;
 
+        double precioBase = 0;
+        foreach (var t in clasesAbono)
+        {
+            var reservaExistente = reservasUsuario.FirstOrDefault(r => r.idTurno == t.Id && !r.eliminada);
+            if (reservaExistente != null)
+            {
+                if (!reservaExistente.paga && !reservaExistente.pagoSeña)
+                {
+                    precioBase += precioClase; // pendiente total, abono lo cubre pagando el precio completo
+                }
+                else if (reservaExistente.pagoSeña && !reservaExistente.paga)
+                {
+                    precioBase += (precioClase * 0.5); // seña pagada, abono cubre la otra mitad
+                }
+                // Si ya está pagada completa, precioBase += 0; no se suma nada.
+            }
+            else
+            {
+                precioBase += precioClase; // clase nueva para el abono
+            }
+        }
+
         var creditoEntity = await _repositorioCreditos.ObtenerCredito(Guid.Parse(usuario.Id), turno.IdDeporte);
         int creditos = creditoEntity != null ? creditoEntity.Cantidad : 0;
         int creditosAplicables = Math.Min(creditos, cantidadClases);
 
-        double precioBase = cantidadClases * precioClase;
         response.PrecioTotal = (precioBase - (creditosAplicables*precioClase)) * 0.80;
         response.DescuentoAplicado = precioBase - response.PrecioTotal;
         if (response.PrecioTotal < 0){

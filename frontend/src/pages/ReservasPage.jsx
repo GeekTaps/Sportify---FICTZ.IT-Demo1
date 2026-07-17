@@ -1,9 +1,13 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import GeneradorQR from "../components/GeneradorQr";
 
 function ReservasPage() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [reservas, setReservas] = useState([]);
   const [mensaje, setMensaje] = useState("");
 
@@ -24,7 +28,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -58,7 +63,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -92,7 +98,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -129,17 +136,35 @@ function ReservasPage() {
     }
   }, [user, viendoHistorial]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const pagoStatus = params.get("pago");
+    if (pagoStatus === "exitoso") {
+      alert("Pago de confirmación exitoso.");
+      navigate("/reservas", { replace: true });
+      cargarReservasActivas();
+    } else if (pagoStatus === "rechazado") {
+      alert("El pago fue rechazado.");
+      navigate("/reservas", { replace: true });
+    } else if (pagoStatus === "error_interno") {
+      alert("Ocurrió un error al procesar el pago.");
+      navigate("/reservas", { replace: true });
+    }
+  }, [location, navigate]);
+
   const abrirModal = async (idReserva) => {
     setLoadingDetalles(true);
     setErrorModal("");
     setMensajeCancelacion(null);
     setReservaSeleccionada({ isLoading: true });
+
     try {
       const res = await fetch(
         `http://localhost:5266/api/Reservas/${idReserva}/detalles`
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
+
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -239,6 +264,18 @@ function ReservasPage() {
             >
               <div className="reserva-card-info">
                 <h3>{r.titulo}</h3>
+                <span className="reserva-badge" style={{
+                  background: r.abonado ? "var(--accent)" : "var(--border)",
+                  color: "var(--bg)",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                  fontSize: "0.8rem",
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                  display: "inline-block"
+                }}>
+                  {r.abonado ? "Abono" : "Individual"}
+                </span>
                 <p>
                   <strong>Pago:</strong>{" "}
                   {r.paga ? "Confirmado ✅" : r.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
@@ -281,6 +318,9 @@ function ReservasPage() {
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
                 </p>
                 <p>
+                  <strong>Tipo de reserva:</strong> {reservaSeleccionada.abonado ? "Abono (Clase de tu plan mensual)" : "Individual (Reserva única)"}
+                </p>
+                <p>
                   <strong>Fecha:</strong> {reservaSeleccionada.fecha}
                 </p>
                 <p>
@@ -291,11 +331,14 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
+                  <strong>Estado del pago:</strong>{" "}
                   {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
+
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
+
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
@@ -366,7 +409,7 @@ function ReservasPage() {
 
                     {reservaSeleccionada.horasAnticipacion >= 0 && (
                       <>
-                        {(reservaSeleccionada.suspendido || reservaSeleccionada.suspendidoPermanente) ? (
+                        {reservaSeleccionada.suspendido ? (
                           <div className="alert alert-error">
                             Tu cuenta está suspendida. En caso de cancelar, no se
                             devolverá el valor de la seña.
@@ -375,11 +418,15 @@ function ReservasPage() {
                           <>
                             {reservaSeleccionada.horasAnticipacion > 48 ? (
                               <div className="alert alert-success">
-                                En caso de cancelar, se devolverá el valor completo de la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, vas a tener un crédito para reservar otra clase hasta el 11 del mes siguiente."
+                                  : "En caso de cancelar, se devolverá el valor completo de la seña."}
                               </div>
                             ) : (
                               <div className="alert alert-warning">
-                                En caso de cancelar, no se devolverá la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, no serás reembolsado."
+                                  : "En caso de cancelar, no se devolverá la seña."}
                               </div>
                             )}
 

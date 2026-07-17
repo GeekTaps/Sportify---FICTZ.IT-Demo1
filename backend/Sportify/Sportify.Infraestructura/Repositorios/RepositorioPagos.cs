@@ -49,4 +49,10 @@ public class RepositorioPagos : IRepositorioPago
     archivo.Pagos.Add(pagoRealizado);
     await archivo.SaveChangesAsync();
 }
+public async Task registrarDevolucionSeña(Pago pagoRealizado)
+{
+    
+    archivo.Pagos.Add(pagoRealizado);
+    await archivo.SaveChangesAsync();
+}
 }

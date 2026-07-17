@@ -25,7 +25,6 @@ public class ReservaListadoActivasUseCase
     {
         List<Reserva> reservas = await repositorioReserva.listarReservasUsuario(idUsuario);
         var turnos = await repositorioTurno.ListarTurnos();
-
         List<Reserva> reservasActivas = reservas.Where(r => {
             if (r.eliminada) return false;
             var turno = turnos.FirstOrDefault(t => t.Id == r.idTurno);
@@ -38,7 +37,6 @@ public class ReservaListadoActivasUseCase
             return turno.Fecha.Date.Add(turno.horaInicio.ToTimeSpan());
         })
         .ToList();
-
         return reservasActivas;
     }
 }

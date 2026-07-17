@@ -76,6 +76,17 @@ function Navigation() {
                         <NavLink to="/admin/asistencias" className={navLinkClass}>Asistencias</NavLink>
                     </>
                 )}
+                {user?.esEmpleado && (
+                    <>
+                        <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
+                        <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
+                        <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+
+                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
+                        <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
+                        <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
+                    </>
+                )}
 
                 {!user && (
                     <>
@@ -167,9 +178,9 @@ function App() {
                             <Route path="/olvide-mi-contrasena" element={<OlvideMiContraseñaPage />} />
                             <Route path="/reset-password" element={<ResetearContraseñaPage />} />
                             <Route path="/registrarEmpleado" element={<RegistrarEmpleadoPage />} />
-                            <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} /> 
+                            <Route path="/suspender-turno-admin/:idTurno" element={<SuspenderTurnoAdmin />} />
                             <Route path="/ingresar-mail" element={<IngresarMailPage />} />
-                            <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
+                            <Route path="/simular-dia-10" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                             <Route path="/estadisticas" element={<EstadisticasPage />} />
                             <Route path="/pagar/mercado-pago" element={<SimulacionMercadoPagoPage />} />
@@ -177,7 +188,7 @@ function App() {
                             <Route path="/admin/asistencias" element={<AdminAsistenciasPage />} />
                         </Routes>
                     </main>
-                    
+
                     <BotonSimularDia11 />
 
                     <Footer />

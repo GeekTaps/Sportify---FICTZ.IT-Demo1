@@ -25,4 +25,11 @@ public class RepositorioAbono : IRepositorioAbono
         _context.Abonos.Add(abono);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<System.Collections.Generic.List<Sportify.Dominio.Abonos.Abono>> ObtenerAbonosActivosPorHorario(Guid idHorario)
+    {
+        return await _context.Abonos
+            .Where(a => a.IdHorario == idHorario && a.Activo && !a.Eliminado)
+            .ToListAsync();
+    }
 }
