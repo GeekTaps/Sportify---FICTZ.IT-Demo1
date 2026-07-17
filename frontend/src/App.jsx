@@ -59,11 +59,17 @@ function Navigation() {
             </div>
 
             <div className="navbar-links">
-                <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
-                <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
+{!user?.esEmpleado && (
+    <>
+        <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
+        <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
+    </>
+)}
 
                 {user?.esAdmin && (
                     <>
+                        <NavLink to="/deportes" className={navLinkClass}>Deportes</NavLink>
+                        <NavLink to="/turnos" className={navLinkClass}>Turnos</NavLink>
                         <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
                         <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
                         <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
@@ -75,13 +81,13 @@ function Navigation() {
                 )}
                                 {user?.esEmpleado && (
                     <>
-                        <NavLink to="/turnos/crear" className={navLinkClass}>Crear Turno</NavLink>
-                        <NavLink to="/deportes/crear" className={navLinkClass}>Crear Deporte</NavLink>
-                        <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+  
 
-                        <NavLink to="/registrarEmpleado" className={navLinkClass}>Registrar empleado</NavLink>
-                        <NavLink to="/alumnos" className={navLinkClass}>Alumnos</NavLink>
-                        <NavLink to="/estadisticas" className={navLinkClass}>Informes y estadísticas</NavLink>
+                        <NavLink to="/pagos/registrar" className={navLinkClass}>Registrar Pagos</NavLink>
+                       <NavLink to="/pagos/visualizar" className={navLinkClass}>Visualizar Pagos</NavLink>            
+
+
+   
                     </>
                 )}
 
@@ -98,7 +104,7 @@ function Navigation() {
                     </>
                 )}
 
-                {user && !user.esAdmin && (
+                {user && !user.esAdmin && !user.esEmpleado && (
                     <>
                         <NavLink to="/reservas" className={navLinkClass}>Mis Reservas</NavLink>
                         <NavLink to="/mis-pagos" className={navLinkClass}>Mis Pagos</NavLink>

@@ -19,7 +19,7 @@ function VisualizarPagos() {
       }
     };
 
-    if (user?.esAdmin) {
+    if (user?.esAdmin || user?.esEmpleado) {
       fetchUsuarios();
     }
   }, [user]);

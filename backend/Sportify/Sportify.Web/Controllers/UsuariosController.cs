@@ -131,7 +131,8 @@ public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         nombreCompleto = user.NombreCompleto,
         suspendido = user.Suspendido,
         suspendidoPermanente = user.SuspendidoPermanente,
-        esAdmin = user.EsAdmin
+        esAdmin = user.EsAdmin,
+        esEmpleado = user.EsEmpleado 
     });
 }
 [HttpGet("suspendidos")]

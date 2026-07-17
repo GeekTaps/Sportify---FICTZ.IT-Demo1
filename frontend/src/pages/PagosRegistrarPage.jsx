@@ -112,7 +112,7 @@ function PagosRegistrarPage() {
     }
   };
 
-  if (!user?.esAdmin) {
+  if (!user?.esAdmin && !user?.esEmpleado) {
     return (
       <div className="page-header">
         <h1>Acceso denegado</h1>
