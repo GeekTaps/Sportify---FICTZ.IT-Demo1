@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Sportify.Aplicacion.AplicacionAsistencias;
+using Sportify.Aplicacion.AplicacionReservas;
+using Sportify.Dominio.Asistencias;
+using Sportify.Infraestructura.Identity;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Sportify.Web.Controllers
 {
@@ -11,10 +15,49 @@ namespace Sportify.Web.Controllers
     {
         private readonly AsistenciaPasarPresente asistenciaPasarPresente;
         private readonly AsistenciaAlta asistenciaAlta;
-        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta)
+        private readonly IRepositorioAsistencias _repositorioAsistencias;
+        private readonly IRepositorioReserva _repositorioReserva;
+        private readonly UserManager<UsuarioIdentity> _userManager;
+
+        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, IRepositorioAsistencias repositorioAsistencias, IRepositorioReserva repositorioReserva, UserManager<UsuarioIdentity> userManager)
         {
             this.asistenciaPasarPresente = asistenciaPasarPresente;
             this.asistenciaAlta = asistenciaAlta;
+            this._repositorioAsistencias = repositorioAsistencias;
+            this._repositorioReserva = repositorioReserva;
+            this._userManager = userManager;
+        }
+
+        [HttpGet("clase/{idTurno:guid}")] // api/Asistencias/clase/{idTurno}
+        public async Task<IActionResult> ListarAsistenciasPorClase(Guid idTurno)
+        {
+            try
+            {
+                var reservas = await _repositorioReserva.ListarReservasPorTurno(idTurno);
+                var resultado = new List<object>();
+
+                foreach (var reserva in reservas)
+                {
+                    var usuario = await _userManager.FindByIdAsync(reserva.idUsuario.ToString());
+                    var nombreUsuario = usuario != null
+                        ? (!string.IsNullOrWhiteSpace(usuario.NombreCompleto) ? usuario.NombreCompleto : (!string.IsNullOrWhiteSpace(usuario.Email) ? usuario.Email : usuario.UserName))
+                        : "Desconocido";
+
+                    var presente = await _repositorioAsistencias.AsistioATurno(reserva.idUsuario, idTurno);
+
+                    resultado.Add(new {
+                        IdUsuario = reserva.idUsuario,
+                        Usuario = nombreUsuario,
+                        Presente = presente
+                    });
+                }
+
+                return Ok(resultado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", error = ex.Message });
+            }
         }
 
         [HttpPut("confirmar-presente")] // api/Asistencias/confirmar-presente
