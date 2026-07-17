@@ -326,10 +326,6 @@ namespace Sportify.Web.Controllers
 
                 if (turno.Precio > 0 && (creditosDelDeporte == null || creditosDelDeporte.Cantidad <= 0))
                 {
-                        turno.cupo--;
-    await _repositorioTurno.ModificarTurno(turno, turno.Id);
-     var reservanueva = new Reserva(Guid.Parse(user.Id), turno.Id, false, turno.Precio, turno.nombreTurno); //zega estuvo aqui
-       await _reservaAltaUseCase.Ejecutar(reservanueva);
                     return Ok(new { mensaje = "Requiere pago" });
                 }
 

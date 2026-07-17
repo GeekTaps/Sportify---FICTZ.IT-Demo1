@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-// HARDCODEO DE PAGOS: se deja comentado el import original de Mercado Pago como referencia.
-// import { Wallet } from '@mercadopago/sdk-react';
+import { useNavigate } from 'react-router-dom';
+import mpLogo from '../../assets/logo-mercadopago-sin-letras.png';
 
 const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [esError, setEsError] = useState(false);
@@ -172,13 +173,38 @@ const AbonoInfoModal = ({ info, turnoId, userEmail, onClose, onEntrarListaEspera
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
           {!noCupo ? (
-            /* HARDCODEO DE PAGOS: este botón reemplaza al widget de Mercado Pago por un pago local directo. */
+            /* SIMULACION MERCADO PAGO */
             <button
-              className="btn btn-primary"
-              onClick={handlePagarAbono}
+              className="btn"
+              onClick={() => {
+                if (precioTotal === 0) {
+                  handlePagarAbono(); // If price is 0, we can just process it locally
+                } else {
+                  // Navigate to the simulated Mercado Pago checkout page
+                  navigate(`/pagar/mercado-pago?tipo=abono&idTurno=${turnoId}&email=${encodeURIComponent(userEmail)}&monto=${Number(precioTotal.toFixed(2))}`);
+                }
+              }}
               disabled={loading}
+              style={{
+                width: "100%", 
+                backgroundColor: precioTotal === 0 ? "var(--primary)" : "#009ee3", 
+                color: "white", 
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                border: "none",
+                padding: "12px",
+                borderRadius: "6px"
+              }}
             >
-              {loading ? "Procesando..." : (precioTotal === 0 ? "Confirmar Abono" : "mercado pago")}
+              {loading ? "Procesando..." : (precioTotal === 0 ? "Confirmar Abono" : (
+                <>
+                  <img src={mpLogo} alt="Mercado Pago" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                  Pagar con Mercado Pago
+                </>
+              ))}
             </button>
           ) : (
             <button

@@ -29,6 +29,7 @@ import ConfirmarAsistencia from './pages/ConfirmarAsistencia'
 
 
 import EstadisticasPage from './pages/EstadisticasPage';
+import SimulacionMercadoPagoPage from './pages/SimulacionMercadoPagoPage';
 
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate } from "react-router-dom";
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -178,6 +179,7 @@ function App() {
                             <Route path="/simular-dia-11" element={<SimulacionDia11Page />} />
                             <Route path="/confirmar-asistencia/:alumnoId/:turnoId" element={<ConfirmarAsistencia />} />
                             <Route path="/estadisticas" element={<EstadisticasPage />} />
+                            <Route path="/pagar/mercado-pago" element={<SimulacionMercadoPagoPage />} />
                         </Routes>
                     </main>
                     

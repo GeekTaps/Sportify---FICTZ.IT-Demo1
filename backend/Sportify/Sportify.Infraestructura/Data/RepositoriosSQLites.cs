@@ -93,7 +93,7 @@ public static class RepositoriosSQLites
         var services = scope.ServiceProvider;
         var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
 
-        string[] emails = { "admin@mail.com", "admin2@mail.com", "admin3@mail.com" };
+        string[] emails = { "admin@mail.com", "admin2@mail.com", "admin3@mail.com", "adminsportify@gmail.com" };
         string password = "123456";
 
         foreach (var email in emails)
