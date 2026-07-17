@@ -224,8 +224,9 @@ namespace Sportify.Web.Controllers
                     Suspendido = suspendido,
                     Paga = reserva.paga,
                     Monto = reserva.monto,
-                     PagoSeña = reserva.pagoSeña,         
-                    Asistio = asistio
+                    PagoSeña = reserva.pagoSeña,         
+                    Asistio = asistio,
+                    Abonado = reserva.abonado
                 };
 
                 return Ok(dto);

@@ -239,6 +239,18 @@ function ReservasPage() {
             >
               <div className="reserva-card-info">
                 <h3>{r.titulo}</h3>
+                <span className="reserva-badge" style={{
+                  background: r.abonado ? "var(--accent)" : "var(--border)",
+                  color: "var(--bg)",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                  fontSize: "0.8rem",
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                  display: "inline-block"
+                }}>
+                  {r.abonado ? "Abono" : "Individual"}
+                </span>
                 <p>
                   <strong>Pago:</strong>{" "}
                   {r.paga ? "Confirmado ✅" : r.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
@@ -279,6 +291,9 @@ function ReservasPage() {
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
+                </p>
+                <p>
+                  <strong>Tipo de reserva:</strong> {reservaSeleccionada.abonado ? "Abono (Clase de tu plan mensual)" : "Individual (Reserva única)"}
                 </p>
                 <p>
                   <strong>Fecha:</strong> {reservaSeleccionada.fecha}
