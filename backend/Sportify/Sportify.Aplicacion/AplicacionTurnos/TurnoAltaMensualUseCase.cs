@@ -13,12 +13,21 @@ namespace Sportify.Aplicacion.AplicacionTurnos
         private readonly IRepositorioTurno repositorioTurno;
         private readonly IRepositorioDeporte repositorioDeporte;
         private readonly IRepositorioHorario repositorioHorario;
+        private readonly Sportify.Aplicacion.AplicacionAbonos.IRepositorioAbono repositorioAbono;
+        private readonly Sportify.Aplicacion.AplicacionReservas.ReservaAltaUseCase reservaAltaUseCase;
 
-        public TurnoAltaMensualUseCase(IRepositorioTurno repositorioTurno, IRepositorioDeporte repositorioDeporte, IRepositorioHorario repositorioHorario)
+        public TurnoAltaMensualUseCase(
+            IRepositorioTurno repositorioTurno, 
+            IRepositorioDeporte repositorioDeporte, 
+            IRepositorioHorario repositorioHorario,
+            Sportify.Aplicacion.AplicacionAbonos.IRepositorioAbono repositorioAbono,
+            Sportify.Aplicacion.AplicacionReservas.ReservaAltaUseCase reservaAltaUseCase)
         {
             this.repositorioTurno = repositorioTurno;
             this.repositorioDeporte = repositorioDeporte;
             this.repositorioHorario = repositorioHorario;
+            this.repositorioAbono = repositorioAbono;
+            this.reservaAltaUseCase = reservaAltaUseCase;
         }
 
         public async Task Ejecutar(Guid idDeporte, string diaSemanaStr, string horaInicioStr, int cupo, double precio, string nombreProfesor, bool listaEsperaHabilitada)
@@ -131,10 +140,35 @@ namespace Sportify.Aplicacion.AplicacionTurnos
                 }
             }
 
-            // Guardar todos los turnos
+            // Obtener los abonados activos para el horario
+            var abonadosActivos = await repositorioAbono.ObtenerAbonosActivosPorHorario(horario.id);
+
+            // Guardar todos los turnos y crear reservas para abonados
             foreach (var nuevo in turnosNuevos)
             {
                 await repositorioTurno.AltaTurno(nuevo);
+
+                foreach (var abono in abonadosActivos)
+                {
+                    if (nuevo.cupo > 0)
+                    {
+                        var nuevaReserva = new Sportify.Dominio.Reservas.Reserva(
+                            abono.IdUsuario,
+                            nuevo.Id,
+                            false, // No está paga
+                            nuevo.Precio,
+                            nuevo.nombreTurno
+                        );
+                        nuevaReserva.marcarComoAbonado();
+                        
+                        // Guardar la reserva
+                        await reservaAltaUseCase.Ejecutar(nuevaReserva);
+
+                        // Descontar cupo
+                        nuevo.cupo--;
+                        await repositorioTurno.ModificarTurno(nuevo, nuevo.Id);
+                    }
+                }
             }
         }
     }

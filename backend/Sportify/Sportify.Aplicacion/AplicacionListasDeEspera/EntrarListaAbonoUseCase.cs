@@ -39,7 +39,7 @@ public class EntrarListaAbonoUseCase
         var info = await _obtenerInfoAbonoUseCase.Ejecutar(idTurno, emailUsuario);
         
         if (info.IsAlreadySubscribed)
-            throw new EntidadNotFoundException("Ya estás abonado a este turno");
+            throw new EntidadNotFoundException("Ya estás abonado a este horario");
             
         if (info.HasConflict)
             throw new EntidadNotFoundException("Ya tenés una reserva en ese horario");
