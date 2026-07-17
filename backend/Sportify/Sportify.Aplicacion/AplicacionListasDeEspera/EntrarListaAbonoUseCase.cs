@@ -50,14 +50,17 @@ public class EntrarListaAbonoUseCase
         {
             await _repositorioLista.agregarEnEspera(entrada);
             
-            var usuarios = await _repositorioLista.listarUsuarios(turno.IdHorario);
-            if (usuarios.Count == 10)
-            {
-                string subject = "¡Alta demanda en Lista de Espera de Abonos!";
-                string body = $"El horario '{turno.nombreTurno}' ha alcanzado 10 usuarios en su lista de espera para abonados.";
+                var entradas = await _repositorioLista.listarEntradas(turno.IdHorario);
+                Console.WriteLine($"[DEBUG] Entradas en lista de espera de abono para horario {turno.IdHorario}: {entradas.Count}");
                 
-                await _servicioEmail.MandarMail("adminsportify@gmail.com", subject, body);
-            }
+                if (entradas.Count == 10)
+                {
+                    string subject = "¡Alta demanda en Lista de Espera de Abonos!";
+                    string body = $"El horario '{turno.nombreTurno}' ha alcanzado 10 usuarios en su lista de espera para abonados.";
+                    
+                    Console.WriteLine($"[DEBUG] Enviando mail a adminsportify@gmail.com por alcanzar 10 usuarios");
+                    await _servicioEmail.MandarMail("adminsportify@gmail.com", subject, body);
+                }
         }
         else
         {

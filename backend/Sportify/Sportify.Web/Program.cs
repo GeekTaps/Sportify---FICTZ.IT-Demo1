@@ -179,6 +179,9 @@ await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
 await RepositoriosSQLites.SeedDeportes(app.Services);
 await RepositoriosSQLites.SeedCreditos(app.Services);
 
+// Sembrar demo de lista de espera
+await RepositoriosSQLites.SeedTurnoDemoListaEspera(app.Services);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
