@@ -8,11 +8,11 @@ const ListarmisAsistencias = () => {
     const [asistencias, setAsistencias] = useState([]);
     const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
     const [cargandoAsistencias, setCargandoAsistencias] = useState(false);
-    
+
     useEffect(() => {
       const obtenerUsuarios = async () => {
         try {
-          const response = await fetch('/api/usuarios');
+          const response = await fetch('http://localhost:5266/api/usuarios');
           const data = await response.json();
           setUsuarios(data);
         } catch (error) {

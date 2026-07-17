@@ -321,4 +321,24 @@ public async Task<List<Usuario>> ListarUsuariosEnListaEsperaAbono(Guid idDeporte
         ))
         .ToList();
 }
+
+public async Task<List<Usuario>> ListarClientes()
+{
+    var usuariosIdentity = await userManager.Users
+        .Where(u => !u.EsAdmin && !u.EsEmpleado && !u.Borrado)
+        .ToListAsync();
+
+    return usuariosIdentity
+        .Select(u => new Usuario(
+            u.Id,
+            u.NombreCompleto,
+            u.Email,
+            u.Dni,
+            "",
+            "",
+            u.FechaNacimiento,
+            u.Creditos
+        ))
+        .ToList();
+}
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ItemAsistencia from '../components/ItemsAsistencia'; // 🌟 IMPORTADO DESDE COMPONENTS
+import ItemAsistencia from '../components/ItemsAsistencia';
 
 const ListarAsistenciasDeUsuario = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -8,15 +8,27 @@ const ListarAsistenciasDeUsuario = () => {
   const [cargandoUsuarios, setCargandoUsuarios] = useState(true);
   const [cargandoAsistencias, setCargandoAsistencias] = useState(false);
 
-  // 1. Cargar la lista de todos los usuarios registrados al montar el componente
+  // 1. Cargar la lista de usuarios al montar el componente
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        const response = await fetch('http://localhost:5266/api/usuarios');
+        const response = await fetch('http://localhost:5266/api/usuarios/traer-clientes');
+        
+        if (!response.ok) {
+          throw new Error(`Error en el servidor: ${response.status}`);
+        }
+
         const data = await response.json();
-        setUsuarios(data);
+
+        // Aplicamos el filtro aquí mismo para asegurar que solo queden clientes reales
+        const clientesFiltrados = Array.isArray(data) 
+          ? data.filter(u => !u.esAdmin && !u.esEmpleado && !u.borrado) 
+          : [];
+
+        setUsuarios(clientesFiltrados);
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
+        setUsuarios([]);
       } finally {
         setCargandoUsuarios(false);
       }
@@ -24,7 +36,7 @@ const ListarAsistenciasDeUsuario = () => {
     obtenerUsuarios();
   }, []);
 
-  // 2. Cargar las asistencias del usuario seleccionado cuando este cambie
+  // 2. Cargar las asistencias del usuario seleccionado
   useEffect(() => {
     const obtenerAsistenciasDeUsuario = async () => {
       if (!usuarioSeleccionado) {
@@ -34,10 +46,14 @@ const ListarAsistenciasDeUsuario = () => {
       setCargandoAsistencias(true);
       try {
         const response = await fetch(`/api/asistencias/usuario/${usuarioSeleccionado}`);
+        if (!response.ok) {
+          throw new Error(`Error al buscar asistencias: ${response.status}`);
+        }
         const data = await response.json();
-        setAsistencias(data);
+        setAsistencias(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Error al cargar asistencias del usuario:", error);
+        console.error("Error al cargar asistencias:", error);
+        setAsistencias([]);
       } finally {
         setCargandoAsistencias(false);
       }
@@ -46,12 +62,10 @@ const ListarAsistenciasDeUsuario = () => {
     obtenerAsistenciasDeUsuario();
   }, [usuarioSeleccionado]);
 
-
   return (
     <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '1.5rem', fontFamily: 'sans-serif' }}>
       <h2 style={{ color: '#0d47a1', marginBottom: '1.5rem', textAlign: 'center' }}>Control de Asistencias de Alumnos</h2>
 
-      {/* Selector de Usuario */}
       <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
         <label htmlFor="user-select" style={{ display: 'block', fontSize: '1.1rem', marginBottom: '8px', fontWeight: 'bold' }}>
           Seleccionar un Alumno:
@@ -63,15 +77,7 @@ const ListarAsistenciasDeUsuario = () => {
             id="user-select"
             value={usuarioSeleccionado}
             onChange={(e) => setUsuarioSeleccionado(e.target.value)}
-            style={{
-              padding: '12px',
-              fontSize: '1rem',
-              width: '100%',
-              maxWidth: '400px',
-              borderRadius: '8px',
-              border: '1px solid #ccc',
-              outline: 'none'
-            }}
+            style={{ padding: '12px', fontSize: '1rem', width: '100%', maxWidth: '400px', borderRadius: '8px', border: '1px solid #ccc' }}
           >
             <option value="">-- Seleccione un usuario --</option>
             {usuarios.map(u => (
@@ -85,22 +91,20 @@ const ListarAsistenciasDeUsuario = () => {
 
       <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2rem 0' }} />
 
-      {/* Listado de asistencias filtradas */}
       {usuarioSeleccionado && (
         <div>
           {cargandoAsistencias ? (
             <p style={{ textAlign: 'center' }}>Consultando historial...</p>
           ) : asistencias.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#666' }}>Este alumno no registra asistencias en turnos transcurridos.</p>
+            <p style={{ textAlign: 'center', color: '#666' }}>Este alumno no registra asistencias.</p>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0 }}>
               {asistencias.map((asistencia) => (
-                // 🌟 USAMOS EL MISMO COMPONENTE REUTILIZABLE ACÁ:
                 <ItemAsistencia 
                   key={asistencia.id}
-                  nombreTurno={asistencia.turno.nombre}
-                  fecha={asistencia.turno.fecha}
-                  horario={asistencia.turno.horario}
+                  nombreTurno={asistencia.turno?.nombre}
+                  fecha={asistencia.turno?.fecha}
+                  horario={asistencia.turno?.horario}
                   asiste={asistencia.asiste}
                 />
               ))}

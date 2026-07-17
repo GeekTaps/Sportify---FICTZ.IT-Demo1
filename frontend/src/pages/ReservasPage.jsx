@@ -301,40 +301,48 @@ function ReservasPage() {
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
                   </p>
                 )}
-                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= -1 && (
-                  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                    {!mostrarQR ? (
-                      <button
-                        onClick={() => setMostrarQR(true)}
-                        className="btn"
-                        style={{
-                          background: '#0d47a1', // Un azul más intenso/oscuro que el original
-                          color: 'white',
-                          width: '100%',
-                          padding: '18px 30px',  // Más padding para darle altura y presencia
-                          fontSize: '1.25rem',   // Texto más grande
-                          fontWeight: 'bold',    // Texto en negrita
-                          borderRadius: '16px',  // Bordes bien redondeados
-                          border: 'none',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' // Una sutil sombra
-                        }}
-                      >
-                        Mostrar QR de Asistencia
-                      </button>
-                    ) : (
-                      <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
-                        <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
+               {!mensajeCancelacion && (
+                <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                  {reservaSeleccionada.horasAnticipacion <= 1 && reservaSeleccionada.horasAnticipacion >= -1 ? (
+                    <>
+                      {!mostrarQR ? (
                         <button
-                          onClick={() => setMostrarQR(false)}
-                          style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
+                          onClick={() => setMostrarQR(true)}
+                          className="btn"
+                          style={{
+                            background: '#0d47a1',
+                            color: 'white',
+                            width: '100%',
+                            padding: '18px 30px',
+                            fontSize: '1.25rem',
+                            fontWeight: 'bold',
+                            borderRadius: '16px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}
                         >
-                          Ocultar QR
+                          Mostrar QR de Asistencia
                         </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      ) : (
+                        <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
+                          <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
+                          <button
+                            onClick={() => setMostrarQR(false)}
+                            style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
+                          >
+                            Ocultar QR
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="alert alert-info" style={{ fontSize: '0.9rem', padding: '10px' }}>
+                      El QR de asistencia podrá ser generado 1 hora antes del inicio de la clase.
+                    </div>
+                  )}
+                </div>
+              )}
 
                 {mensajeCancelacion ? (
                   <div style={{ marginTop: "1rem" }}>
