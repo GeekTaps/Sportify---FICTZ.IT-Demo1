@@ -2,6 +2,7 @@ namespace Sportify.Aplicacion.AplicacionTurnos;
 using System;
 using System.Threading.Tasks;
 using Sportify.Dominio.Turnos;
+using Sportify.Dominio.Asistencias;
 public interface IRepositorioTurno
 {
     Task AltaTurno(Turno turno); //firma del metodo para crear un turno
@@ -16,4 +17,5 @@ public interface IRepositorioTurno
     Task<Turno> TraerTurnoPorId(Guid idTurno); //firma del metodo para obtener un turno por su id
     Task actualizarMostrarEnHome(); //firma del metodo para actualizar el campo mostrarEnHome de los turnos, se ejecuta cada vez que se obtiene el listado de turnos, para mostrar solo los turnos que corresponden en la pagina principal (home)
     Task<bool> HayLugarParaAbono(Guid idHorario); //firma del metodo para verificar que todos los turnos de una misma actividad (deporte, dia de semana y horario) tengan cupo disponible, para poder mandarles el mail a los de la lista de espera.
+    Task<List<Asistencia>> FiltrarAsistencias(List<Asistencia> asistencias); //firma del metodo para filtrar las asistencias de un usuario, para mostrar solo las asistencias que corresponden a turnos futuros
 }  

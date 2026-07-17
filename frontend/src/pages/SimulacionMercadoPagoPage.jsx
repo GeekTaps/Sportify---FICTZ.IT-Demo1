@@ -81,6 +81,12 @@ function SimulacionMercadoPagoPage() {
       } else if (tipo === 'abono') {
         endpoint = 'http://localhost:5266/api/abonos/procesar-pago-local';
         bodyData = { ...bodyData, montoPago: monto };
+      } else if (tipo === 'cuota_abono') {
+        endpoint = 'http://localhost:5266/api/abonos/pagar-cuota-local';
+        bodyData = { idTurno, email: emailInput };
+      } else if (tipo === 'confirmacion') {
+        endpoint = 'http://localhost:5266/api/pagos/confirmar-reserva';
+        bodyData = { idReserva: idTurno, email: emailInput };
       }
 
       const response = await fetch(endpoint, {
@@ -105,7 +111,11 @@ function SimulacionMercadoPagoPage() {
   };
 
   const handleVolver = () => {
-    navigate(`/turnos?${tipo === 'reserva' ? 'pago' : 'abono'}=${resultadoFinal}`, { replace: true });
+    if (tipo === 'confirmacion' || tipo === 'cuota_abono') {
+      navigate(`/reservas?pago=${resultadoFinal}`, { replace: true });
+    } else {
+      navigate(`/turnos?${tipo === 'reserva' ? 'pago' : 'abono'}=${resultadoFinal}`, { replace: true });
+    }
   };
 
   if (resultadoFinal) {

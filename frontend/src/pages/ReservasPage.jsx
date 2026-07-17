@@ -1,9 +1,13 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import GeneradorQR from "../components/GeneradorQr";
 
 function ReservasPage() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [reservas, setReservas] = useState([]);
   const [mensaje, setMensaje] = useState("");
 
@@ -24,7 +28,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -58,7 +63,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -92,7 +98,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -129,6 +136,22 @@ function ReservasPage() {
     }
   }, [user, viendoHistorial]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const pagoStatus = params.get("pago");
+    if (pagoStatus === "exitoso") {
+      alert("Pago de confirmación exitoso.");
+      navigate("/reservas", { replace: true });
+      cargarReservasActivas();
+    } else if (pagoStatus === "rechazado") {
+      alert("El pago fue rechazado.");
+      navigate("/reservas", { replace: true });
+    } else if (pagoStatus === "error_interno") {
+      alert("Ocurrió un error al procesar el pago.");
+      navigate("/reservas", { replace: true });
+    }
+  }, [location, navigate]);
+
   const abrirModal = async (idReserva) => {
     setLoadingDetalles(true);
     setErrorModal("");
@@ -141,7 +164,7 @@ function ReservasPage() {
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
-      
+
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -241,6 +264,18 @@ function ReservasPage() {
             >
               <div className="reserva-card-info">
                 <h3>{r.titulo}</h3>
+                <span className="reserva-badge" style={{
+                  background: r.abonado ? "var(--accent)" : "var(--border)",
+                  color: "var(--bg)",
+                  padding: "2px 8px",
+                  borderRadius: "12px",
+                  fontSize: "0.8rem",
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                  display: "inline-block"
+                }}>
+                  {r.abonado ? "Abono" : "Individual"}
+                </span>
                 <p>
                   <strong>Pago:</strong>{" "}
                   {r.paga ? "Confirmado ✅" : r.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
@@ -277,10 +312,13 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
-                  {console.log(reservaSeleccionada)}
+                {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
+                </p>
+                <p>
+                  <strong>Tipo de reserva:</strong> {reservaSeleccionada.abonado ? "Abono (Clase de tu plan mensual)" : "Individual (Reserva única)"}
                 </p>
                 <p>
                   <strong>Fecha:</strong> {reservaSeleccionada.fecha}
@@ -293,77 +331,61 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
+                  <strong>Estado del pago:</strong>{" "}
+                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
-                
+
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
-                {reservaSeleccionada.pagoSeña && !reservaSeleccionada.paga && (
-  <button
-    className="btn btn-primary"
-    style={{ width: "100%", marginTop: "0.5rem" }}
-    onClick={async () => {
-      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idReserva: reservaSeleccionada.idReserva,
-          email: user.email
-        })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.mensaje);
-        cerrarModal();
-        cargarReservasActivas();
-      } else {
-        alert(data.message || "Error al confirmar.");
-      }
-    }}
-  >
-    Pagar confirmación de reserva
-  </button>
-)}
+
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
                   </p>
                 )}
-                {!mensajeCancelacion && reservaSeleccionada.horasAnticipacion >= 0 && (
-                  <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                    {!mostrarQR ? (
-                      <button
-                        onClick={() => setMostrarQR(true)}
-                        className="btn"
-                        style={{
-                          background: '#0d47a1', // Un azul más intenso/oscuro que el original
-                          color: 'white',
-                          width: '100%',
-                          padding: '18px 30px',  // Más padding para darle altura y presencia
-                          fontSize: '1.25rem',   // Texto más grande
-                          fontWeight: 'bold',    // Texto en negrita
-                          borderRadius: '16px',  // Bordes bien redondeados
-                          border: 'none',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' // Una sutil sombra
-                        }}
-                      >
-                        Mostrar QR de Asistencia
-                      </button>
-                    ) : (
-                      <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
-                        <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
+               {!mensajeCancelacion && (
+                <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                  {reservaSeleccionada.horasAnticipacion <= 1 && reservaSeleccionada.horasAnticipacion >= -1 ? (
+                    <>
+                      {!mostrarQR ? (
                         <button
-                          onClick={() => setMostrarQR(false)}
-                          style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
+                          onClick={() => setMostrarQR(true)}
+                          className="btn"
+                          style={{
+                            background: '#0d47a1',
+                            color: 'white',
+                            width: '100%',
+                            padding: '18px 30px',
+                            fontSize: '1.25rem',
+                            fontWeight: 'bold',
+                            borderRadius: '16px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}
                         >
-                          Ocultar QR
+                          Mostrar QR de Asistencia
                         </button>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      ) : (
+                        <div style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
+                          <GeneradorQR idTurno={reservaSeleccionada.idTurno} />
+                          <button
+                            onClick={() => setMostrarQR(false)}
+                            style={{ background: 'none', border: 'none', color: '#666', textDecoration: 'underline', cursor: 'pointer', marginTop: '5px', fontSize: '0.85rem' }}
+                          >
+                            Ocultar QR
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="alert alert-info" style={{ fontSize: '0.9rem', padding: '10px' }}>
+                      El QR de asistencia podrá ser generado 1 hora antes del inicio de la clase.
+                    </div>
+                  )}
+                </div>
+              )}
 
                 {mensajeCancelacion ? (
                   <div style={{ marginTop: "1rem" }}>
@@ -396,11 +418,15 @@ function ReservasPage() {
                           <>
                             {reservaSeleccionada.horasAnticipacion > 48 ? (
                               <div className="alert alert-success">
-                                En caso de cancelar, se devolverá el valor completo de la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, vas a tener un crédito para reservar otra clase hasta el 11 del mes siguiente."
+                                  : "En caso de cancelar, se devolverá el valor completo de la seña."}
                               </div>
                             ) : (
                               <div className="alert alert-warning">
-                                En caso de cancelar, no se devolverá la seña.
+                                {reservaSeleccionada.abonado
+                                  ? "En caso de cancelar, no serás reembolsado."
+                                  : "En caso de cancelar, no se devolverá la seña."}
                               </div>
                             )}
 

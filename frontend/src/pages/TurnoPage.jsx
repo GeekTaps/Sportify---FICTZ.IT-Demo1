@@ -75,17 +75,15 @@ function TurnoPage() {
 
     // Revisar si volvimos de Mercado Pago con error (pagos estándar)
     if (params.get("pago") === "rechazado") {
-      alert("El pago no pudo completarse. Se ha cancelado la reserva y se restauró el cupo de la clase.");
       // Limpiar URL
       navigate("/turnos", { replace: true });
     }
 
     const abonoStatus = params.get("abono");
     if (abonoStatus === "exitoso") {
-      alert("Listo! Te abonaste exitosamente a la actividad.");
+      alert("Listo! Te abonaste exitosamente.");
       navigate("/turnos", { replace: true });
     } else if (abonoStatus === "rechazado") {
-      alert("El pago de tu abono no pudo completarse. Se canceló la operación.");
       navigate("/turnos", { replace: true });
     } else if (abonoStatus === "error_interno") {
       alert("Ocurrió un error al procesar el abono luego del pago.");
@@ -826,10 +824,10 @@ function TurnoPage() {
                             navigate(`/pagar/mercado-pago?tipo=reserva&idTurno=${modalTurno.id}&email=${encodeURIComponent(user.email)}&monto=${modalTurno.precio / 2}`);
                           }}
                           className="btn"
-                          style={{ 
-                            width: "100%", 
-                            backgroundColor: "#009ee3", 
-                            color: "white", 
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#009ee3",
+                            color: "white",
                             fontWeight: "bold",
                             display: "flex",
                             alignItems: "center",

@@ -6,48 +6,36 @@ using Sportify.Aplicacion.AplicacionUsuarios;
 using Sportify.Aplicacion.AplicacionTurnos;
 using Sportify.Aplicacion.AplicacionReservas;
 using Sportify.Dominio.Reservas;
-using Sportify.Dominio.Abonos;
 using Sportify.Aplicacion.Excepciones;
 using Sportify.Dominio.Pagos;
 using Sportify.Aplicacion.AplicacionPagos;
+using Sportify.Aplicacion.AplicacionAbonos;
 
 namespace Sportify.Aplicacion.AplicacionAbonos
 {
-    public class AbonarUseCase
+    public class PagarCuotaAbonoUseCase
     {
-        private readonly IRepositorioAbono _repositorioAbono;
         private readonly IRepositorioUsuarios _repositorioUsuarios;
         private readonly IRepositorioTurno _repositorioTurno;
-        private readonly ReservaAltaUseCase _reservaAltaUseCase;
         private readonly IRepositorioHorario _repositorioHorario;
         private readonly IRepositorioCreditos _repositorioCreditos;
         private readonly IRepositorioPago _repositorioPago;
         private readonly IRepositorioReserva _repositorioReserva;
 
-        public AbonarUseCase(
-            IRepositorioAbono repositorioAbono,
+        public PagarCuotaAbonoUseCase(
             IRepositorioUsuarios repositorioUsuarios,
             IRepositorioTurno repositorioTurno,
-            ReservaAltaUseCase reservaAltaUseCase,
             IRepositorioHorario repositorioHorario,
             IRepositorioCreditos repositorioCreditos,
             IRepositorioPago repositorioPago,
             IRepositorioReserva repositorioReserva)
         {
-            _repositorioAbono = repositorioAbono;
             _repositorioUsuarios = repositorioUsuarios;
             _repositorioTurno = repositorioTurno;
-            _reservaAltaUseCase = reservaAltaUseCase;
             _repositorioHorario = repositorioHorario;
             _repositorioCreditos = repositorioCreditos;
             _repositorioPago = repositorioPago;
             _repositorioReserva = repositorioReserva;
-        }
-
-        public async Task Ejecutar(string email, Guid idTurnoBase)
-        {
-            // HARDCODEO DE PAGOS: este overload permite registrar el pago con el monto mostrado sin usar Mercado Pago.
-            await Ejecutar(email, idTurnoBase, null);
         }
 
         public async Task Ejecutar(string email, Guid idTurnoBase, decimal? montoPago)
@@ -62,11 +50,6 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             Guid idHorario = turnoBase.IdHorario;
             var horario = await _repositorioHorario.ObtenerHorarioPorId(idHorario);
             if (horario == null) throw new ValidacionException("Horario no encontrado.");
-
-            bool estaAbonado = await _repositorioAbono.ExisteAbonoActivo(Guid.Parse(usuario.Id), idHorario);
-            if (estaAbonado) throw new ValidacionException("Ya estás abonado a este horario.");
-
-
 
             // Buscar clases que corresponden a este mes y hasta el día 10 del siguiente mes inclusive
             var hoy = DateTime.Now.Date;
@@ -108,10 +91,9 @@ namespace Sportify.Aplicacion.AplicacionAbonos
             int creditosADescontar = 0;
             if (creditoEntity != null && creditoEntity.Cantidad > 0)
             {
-                // El máximo de créditos a descontar es la cantidad de clases a las que se está abonando
+                // El máximo de créditos a descontar es la cantidad de clases pendientes
                 creditosADescontar = Math.Min(creditoEntity.Cantidad, turnosDelAbono.Count);
                 
-                // Actualizar creditoEntity usando UsarCredito() varias veces
                 for (int i = 0; i < creditosADescontar; i++)
                 {
                     creditoEntity.UsarCredito();
@@ -120,53 +102,30 @@ namespace Sportify.Aplicacion.AplicacionAbonos
                 montoAPagar = Math.Max(0, precioBase - creditosADescontar * precioPorClase);
             }
 
-            // Crear y guardar el abono
-            var abono = new Abono(Guid.Parse(usuario.Id), idHorario);
-            await _repositorioAbono.CrearAbono(abono);
+            // Aplicamos descuento si correspondía al total
+            montoAPagar = montoAPagar * 0.80;
 
             Guid? idPrimeraReserva = null;
 
-            // Generar o actualizar las reservas para todas las clases y descontar cupos
+            // Marcar las reservas pendientes del abono como pagadas
             foreach (var t in turnosDelAbono)
             {
                 var reservaExistente = reservasUsuario.FirstOrDefault(r => r.idTurno == t.Id && !r.eliminada);
 
                 if (reservaExistente != null)
                 {
-                    // Update existing reservation
-                    // We don't discount cupo because they already took one
                     reservaExistente.marcarComoAbonado();
-                    reservaExistente.marcarComoPagada(); // The abono covers it fully now
-                    // Note: We don't save immediately, assuming context tracks it, but we can call a method if available.
-                    // Oh, wait, we don't have an update method in _reservaAltaUseCase for this. Let's just modify the entity
-                    // and EF Core will track it if it was loaded from the context. But since we use IRepositorioReserva...
-                    // Let's just use EF core tracking assuming listarReservasUsuario tracks entities.
+                    reservaExistente.marcarComoPagada();
                     
                     if (idPrimeraReserva == null)
                     {
                         idPrimeraReserva = reservaExistente.id;
                     }
                 }
-                else if (t.cupo > 0)
-                {
-                    // Create new reservation
-                    var nuevaReserva = new Reserva(Guid.Parse(usuario.Id), t.Id, true, t.Precio, t.nombreTurno);
-                    nuevaReserva.marcarComoAbonado();
-                    nuevaReserva.marcarComoPagada();
-                    await _reservaAltaUseCase.Ejecutar(nuevaReserva);
-
-                    if (idPrimeraReserva == null)
-                    {
-                        idPrimeraReserva = nuevaReserva.id;
-                    }
-
-                    t.cupo--;
-                    await _repositorioTurno.ModificarTurno(t, t.Id);
-                }
             }
 
             decimal montoFinalPago = montoPago ?? (decimal)montoAPagar;
-            if (montoFinalPago > 0 && idPrimeraReserva.HasValue)
+            if (idPrimeraReserva.HasValue)
             {
                 var pago = new Pago(idPrimeraReserva.Value, Guid.Parse(usuario.Id), montoFinalPago);
                 await _repositorioPago.registrarPago(pago);

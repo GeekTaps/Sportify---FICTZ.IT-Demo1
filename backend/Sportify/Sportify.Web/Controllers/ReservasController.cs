@@ -232,8 +232,9 @@ namespace Sportify.Web.Controllers
                     Suspendido = suspendido,
                     Paga = reserva.paga,
                     Monto = reserva.monto,
-                     PagoSeña = reserva.pagoSeña,         
-                    Asistio = asistio
+                    PagoSeña = reserva.pagoSeña,         
+                    Asistio = asistio,
+                    Abonado = reserva.abonado
                 };
 
                 return Ok(dto);
@@ -416,14 +417,16 @@ namespace Sportify.Web.Controllers
                             else{
                                     decimal montoSeña = Math.Round((decimal)(turno.Precio * 0.5), 2);
 
-    var pagoDevolucion = new Pago(
-        reserva.id,
-        Guid.Parse(user.Id),
-        montoSeña
-    );
+                                    var pagoDevolucion = new Pago(
+                                        reserva.id,
+                                        Guid.Parse(user.Id),
+                                        -montoSeña
+                                    );
 
-    await _registrarDevolucionSeñaUseCase.Ejecutar(pagoDevolucion);
-                        mensajeBase += " Seña devuelta.";}}
+                                    await _registrarDevolucionSeñaUseCase.Ejecutar(pagoDevolucion);
+                                    mensajeBase += " Seña devuelta.";
+                                }
+                            }
                     
                 }
 

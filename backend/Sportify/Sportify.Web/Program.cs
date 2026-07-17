@@ -57,6 +57,9 @@ builder.Services.AddScoped<IRepositorioEstadisticas, RepositorioEstadisticas>();
 //Scoped de Deportes
 builder.Services.AddScoped<DeporteListadoUseCase>();
 builder.Services.AddScoped<DeporteAltaUseCase>();
+builder.Services.AddTransient<ObtenerInfoAbonoUseCase>();
+builder.Services.AddTransient<PagarCuotaAbonoUseCase>();
+builder.Services.AddScoped<Sportify.Aplicacion.Mails.IServicioEmail, ServicioEmail>();
 builder.Services.AddScoped<DeporteBajaUseCase>();
 builder.Services.AddScoped<DeporteModificacionUseCase>();
 
@@ -119,6 +122,7 @@ builder.Services.AddSwaggerGen();
 //Scoped de Asistencias
 builder.Services.AddScoped<AsistenciaPasarPresente>();
 builder.Services.AddScoped<AsistenciaAlta>();
+builder.Services.AddScoped<AsistenciaListarAsistenciasDeUsuarioUseCase>();
 
 //Scoped de Abonos
 builder.Services.AddScoped<AbonarUseCase>();
@@ -179,6 +183,9 @@ await RepositoriosSQLites.SeedUsuariosNormales(app.Services);
 // Sembrar deportes y créditos
 await RepositoriosSQLites.SeedDeportes(app.Services);
 await RepositoriosSQLites.SeedCreditos(app.Services);
+
+// Sembrar demo de lista de espera
+await RepositoriosSQLites.SeedTurnoDemoListaEspera(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -208,4 +208,83 @@ public static class RepositoriosSQLites
             await db.SaveChangesAsync();
         }
     }
+
+    public static async Task SeedTurnoDemoListaEspera(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Sportify.Infraestructura.Identity.UsuarioIdentity>>();
+
+        var dummyUsers = new List<Sportify.Infraestructura.Identity.UsuarioIdentity>();
+        for (int i = 1; i <= 8; i++)
+        {
+            var email = $"espera{i}@mail.com";
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new Sportify.Infraestructura.Identity.UsuarioIdentity
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    NombreCompleto = $"Usuario Espera {i}",
+                    Dni = $"9999990{i}",
+                    EsAdmin = false
+                };
+                await userManager.CreateAsync(user, "123456");
+            }
+            dummyUsers.Add(user);
+        }
+
+        var deporte = await db.Deportes.FirstOrDefaultAsync(d => d.nombre == "Futbol");
+        if (deporte == null) return;
+
+        var manana = DateTime.Now.Date.AddDays(1);
+        var horaInicio = new TimeOnly(18, 0);
+        var diaSemana = "Lunes"; // Adjust as needed
+
+        var horario = await db.Horarios.FirstOrDefaultAsync(h => h.idDeporte == deporte.id && h.diaSemana == diaSemana && h.hora == horaInicio);
+        if (horario == null)
+        {
+            horario = new Sportify.Dominio.Turnos.Horario(deporte.id, diaSemana, horaInicio);
+            await db.Horarios.AddAsync(horario);
+            await db.SaveChangesAsync();
+        }
+
+        var turno = await db.Turnos.FirstOrDefaultAsync(t => t.IdHorario == horario.id && t.Fecha == manana);
+        if (turno == null)
+        {
+            turno = new Sportify.Dominio.Turnos.Turno 
+            { 
+                Id = Guid.NewGuid(),
+                IdDeporte = deporte.id, 
+                nombreTurno = "Futbol Demo Lista de Espera", 
+                nommbreProfesor = "Profesor Demo", 
+                Fecha = manana, 
+                horaInicio = horaInicio, 
+                horaFin = new TimeOnly(20, 0), 
+                cupoMaximo = 10, 
+                Precio = 2000,
+                IdHorario = horario.id,
+                ListaEsperaHabilitada = true,
+                mostrarEnHome = true,
+                cupo = 0
+            };
+            await db.Turnos.AddAsync(turno);
+            await db.SaveChangesAsync();
+        }
+
+        foreach (var u in dummyUsers)
+        {
+            var userId = Guid.Parse(u.Id);
+            bool yaExiste = await db.ListaDeEsperaAbono.AnyAsync(l => l.idUsuario == userId && l.idHorario == horario.id);
+            if (!yaExiste)
+            {
+                var entrada = new Sportify.Dominio.ListasDeEspera.ListaDeEsperaAbono(userId, deporte.id, horario.id);
+                await db.ListaDeEsperaAbono.AddAsync(entrada);
+            }
+        }
+        await db.SaveChangesAsync();
+    }
 }

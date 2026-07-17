@@ -6,6 +6,7 @@ using Sportify.Dominio.Asistencias;
 using Sportify.Infraestructura.Identity;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sportify.Web.Controllers
 {
@@ -18,14 +19,15 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioAsistencias _repositorioAsistencias;
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly UserManager<UsuarioIdentity> _userManager;
-
-        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, IRepositorioAsistencias repositorioAsistencias, IRepositorioReserva repositorioReserva, UserManager<UsuarioIdentity> userManager)
+        private readonly AsistenciaListarAsistenciasDeUsuarioUseCase _listarAsistenciasUseCase;
+        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, IRepositorioAsistencias repositorioAsistencias, IRepositorioReserva repositorioReserva, UserManager<UsuarioIdentity> userManager, AsistenciaListarAsistenciasDeUsuarioUseCase listarAsistenciasUseCase)
         {
             this.asistenciaPasarPresente = asistenciaPasarPresente;
             this.asistenciaAlta = asistenciaAlta;
             this._repositorioAsistencias = repositorioAsistencias;
             this._repositorioReserva = repositorioReserva;
             this._userManager = userManager;
+            this._listarAsistenciasUseCase = listarAsistenciasUseCase;
         }
 
         [HttpGet("clase/{idTurno:guid}")] // api/Asistencias/clase/{idTurno}
@@ -84,6 +86,19 @@ namespace Sportify.Web.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", error = ex.Message });
             }
         }
+       [HttpGet("usuario/{idUsuario}")]
+       public async Task<ActionResult<List<Asistencia>>> ObtenerAsistenciasPorUsuario(Guid idUsuario)
+       {
+            try
+            {
+                var asistencias = await _listarAsistenciasUseCase.Ejecutar(idUsuario);
+                return Ok(asistencias);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+       }
     }
 
     public class ConfirmarAsistenciaRequest
