@@ -7,7 +7,6 @@ using Sportify.Infraestructura.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Sportify.Dominio.Asistencias;
 
 namespace Sportify.Web.Controllers
 {
@@ -20,17 +19,15 @@ namespace Sportify.Web.Controllers
         private readonly IRepositorioAsistencias _repositorioAsistencias;
         private readonly IRepositorioReserva _repositorioReserva;
         private readonly UserManager<UsuarioIdentity> _userManager;
-
-        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, IRepositorioAsistencias repositorioAsistencias, IRepositorioReserva repositorioReserva, UserManager<UsuarioIdentity> userManager)
         private readonly AsistenciaListarAsistenciasDeUsuarioUseCase _listarAsistenciasUseCase;
-
-        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, AsistenciaListarAsistenciasDeUsuarioUseCase listarAsistenciasUseCase)
+        public AsistenciasController(AsistenciaPasarPresente asistenciaPasarPresente, AsistenciaAlta asistenciaAlta, IRepositorioAsistencias repositorioAsistencias, IRepositorioReserva repositorioReserva, UserManager<UsuarioIdentity> userManager, AsistenciaListarAsistenciasDeUsuarioUseCase listarAsistenciasUseCase)
         {
             this.asistenciaPasarPresente = asistenciaPasarPresente;
             this.asistenciaAlta = asistenciaAlta;
             this._repositorioAsistencias = repositorioAsistencias;
             this._repositorioReserva = repositorioReserva;
             this._userManager = userManager;
+            this._listarAsistenciasUseCase = listarAsistenciasUseCase;
         }
 
         [HttpGet("clase/{idTurno:guid}")] // api/Asistencias/clase/{idTurno}
@@ -63,7 +60,6 @@ namespace Sportify.Web.Controllers
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", error = ex.Message });
             }
-            this._listarAsistenciasUseCase = listarAsistenciasUseCase; 
         }
 
         [HttpPut("confirmar-presente")] // api/Asistencias/confirmar-presente

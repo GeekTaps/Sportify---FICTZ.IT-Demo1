@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import logoIcono from "../assets/logo_dibujito_sportify.png";
 import logoLetras from "../assets/logo_letras_sportify-no-bg.png";
@@ -11,6 +11,8 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const location = useLocation(); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,7 +43,8 @@ function LoginPage() {
 
       const data = await response.json();
       login(data);
-      navigate("/");
+      const destino = location.state?.redirigirA || "/";
+      navigate(destino);
     } catch (err) {
       setError(err.message);
     } finally {

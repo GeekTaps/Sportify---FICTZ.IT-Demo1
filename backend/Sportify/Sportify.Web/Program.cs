@@ -118,6 +118,7 @@ builder.Services.AddSwaggerGen();
 //Scoped de Asistencias
 builder.Services.AddScoped<AsistenciaPasarPresente>();
 builder.Services.AddScoped<AsistenciaAlta>();
+builder.Services.AddScoped<AsistenciaListarAsistenciasDeUsuarioUseCase>();
 
 //Scoped de Abonos
 builder.Services.AddScoped<AbonarUseCase>();

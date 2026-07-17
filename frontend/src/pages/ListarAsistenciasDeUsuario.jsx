@@ -12,7 +12,7 @@ const ListarAsistenciasDeUsuario = () => {
   useEffect(() => {
     const obtenerUsuarios = async () => {
       try {
-        const response = await fetch('/api/usuarios');
+        const response = await fetch('http://localhost:5266/api/usuarios');
         const data = await response.json();
         setUsuarios(data);
       } catch (error) {
@@ -46,22 +46,6 @@ const ListarAsistenciasDeUsuario = () => {
     obtenerAsistenciasDeUsuario();
   }, [usuarioSeleccionado]);
 
-  // Auxiliar para evaluar si el turno ya pasó
-  const turnoYaTranscurrio = (fechaTurno, horarioTurno) => {
-    const [dia, mes, anio] = fechaTurno.includes('/') ? fechaTurno.split('/') : fechaTurno.split('-');
-    const [horas, minutos] = horarioTurno.replace('hs', '').trim().split(':');
-    
-    const anioCorrecto = dia.length === 4 ? dia : anio;
-    const mesCorrecto = dia.length === 4 ? mes : mes - 1;
-    const diaCorrecto = dia.length === 4 ? anio : dia;
-
-    const fechaHoraTurno = new Date(anioCorrecto, mesCorrecto - 1, diaCorrecto, horas, minutos);
-    return fechaHoraTurno < new Date();
-  };
-
-  const asistenciasFiltradas = asistencias.filter(asistencia => 
-    asistencia.turno && turnoYaTranscurrio(asistencia.turno.fecha, asistencia.turno.horario)
-  );
 
   return (
     <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '1.5rem', fontFamily: 'sans-serif' }}>
@@ -106,11 +90,11 @@ const ListarAsistenciasDeUsuario = () => {
         <div>
           {cargandoAsistencias ? (
             <p style={{ textAlign: 'center' }}>Consultando historial...</p>
-          ) : asistenciasFiltradas.length === 0 ? (
+          ) : asistencias.length === 0 ? (
             <p style={{ textAlign: 'center', color: '#666' }}>Este alumno no registra asistencias en turnos transcurridos.</p>
           ) : (
             <ul style={{ listStyle: 'none', padding: 0 }}>
-              {asistenciasFiltradas.map((asistencia) => (
+              {asistencias.map((asistencia) => (
                 // 🌟 USAMOS EL MISMO COMPONENTE REUTILIZABLE ACÁ:
                 <ItemAsistencia 
                   key={asistencia.id}

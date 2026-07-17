@@ -112,7 +112,38 @@ public class RepositorioTurno : IRepositorioTurno
         }
         await archivo.SaveChangesAsync();
     }
-<<<<<<< HEAD
+    public async Task<List<Turno>> ListarTurnosPorHorario(Guid idHorario)
+    {
+        return await archivo.Turnos
+            .Where(t => t.IdHorario == idHorario)
+            .OrderBy(t => t.Fecha)
+            .ToListAsync();
+    }
+
+    public async Task<bool> HayLugarParaAbono(Guid idHorario)
+    {
+        var hoy = DateTime.Now.Date;
+
+        var maxFecha = new DateTime(
+            hoy.Year,
+            hoy.Month,
+            DateTime.DaysInMonth(hoy.Year, hoy.Month));
+
+        if (hoy.Day >= 20)
+            maxFecha = maxFecha.AddDays(10);
+
+        var turnos = await archivo.Turnos
+            .Where(t =>
+                t.IdHorario == idHorario &&
+                t.Fecha.Date >= hoy &&
+                t.Fecha.Date <= maxFecha)
+            .ToListAsync();
+
+        if (!turnos.Any())
+            throw new Exception("No existen turnos para ese horario.");
+
+        return turnos.All(t => t.cupo > 0);
+    }
     public async Task<List<Asistencia>> FiltrarAsistencias(List<Asistencia> asistencias)
     {
     // 1. Obtenemos las variables de comparación
@@ -145,34 +176,5 @@ public class RepositorioTurno : IRepositorioTurno
                    || (turno.Fecha == fechaActual && turno.horaFin > horaActual);
         })
         .ToList();
-=======
-
-    public async Task<List<Turno>> ListarTurnosPorHorario(Guid idHorario)
-    {
-        return await archivo.Turnos
-            .Where(t => t.IdHorario == idHorario)
-            .OrderBy(t => t.Fecha)
-            .ToListAsync();
-    }
-
-    public async Task<bool> HayLugarParaAbono(Guid idHorario)
-    {
-        var now = DateTime.Now;
-
-        var startOfNextMonth = new DateTime(now.Year, now.Month, 1).AddMonths(1);
-        var dateLimit = startOfNextMonth.AddDays(9).AddHours(23).AddMinutes(59);
-
-        var turnos = await archivo.Turnos
-            .Where(t =>
-                t.IdHorario == idHorario &&
-                t.Fecha >= now &&
-                t.Fecha <= dateLimit)
-            .ToListAsync();
-
-        if (!turnos.Any())
-            return false;
-
-        return turnos.Count(t => t.mostrarEnHome && t.cupo > 0) >= 3;
->>>>>>> 5ce4ebbec9bb847585c5bf6dd54494461132b615
     }
 }
