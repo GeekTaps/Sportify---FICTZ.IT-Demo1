@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 // import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import BotonCancelarTurno from "../components/FrontTurnos/BotonCancelarTurno";
 import AbonoInfoModal from "../components/FrontAbonos/AbonoInfoModal";
+import mpLogo from "../assets/logo-mercadopago-sin-letras.png";
 
 // HARDCODEO DE PAGOS: se deja comentado el init original de Mercado Pago.
 // initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
@@ -819,14 +820,28 @@ function TurnoPage() {
                     {requierePago && (
                       <div style={{ marginTop: "15px" }}>
                         <p>Para confirmar tu lugar, aboná la seña del 50%.</p>
-                        {/* HARDCODEO DE PAGOS: este botón reemplaza al widget de Mercado Pago por un pago local directo. */}
+                        {/* SIMULACION MERCADO PAGO */}
                         <button
-                          onClick={handlePagarReservaLocal}
-                          disabled={loadingReserva}
-                          className="btn btn-primary"
-                          style={{ width: "100%" }}
+                          onClick={() => {
+                            navigate(`/pagar/mercado-pago?tipo=reserva&idTurno=${modalTurno.id}&email=${encodeURIComponent(user.email)}&monto=${modalTurno.precio / 2}`);
+                          }}
+                          className="btn"
+                          style={{ 
+                            width: "100%", 
+                            backgroundColor: "#009ee3", 
+                            color: "white", 
+                            fontWeight: "bold",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "8px",
+                            border: "none",
+                            padding: "12px",
+                            borderRadius: "6px"
+                          }}
                         >
-                          {loadingReserva ? "Procesando..." : "Pagar ahora"}
+                          <img src={mpLogo} alt="Mercado Pago" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                          Pagar con Mercado Pago
                         </button>
                       </div>
                     )}

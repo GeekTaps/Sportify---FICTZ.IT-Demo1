@@ -119,26 +119,21 @@ public class RepositorioTurno : IRepositorioTurno
 
     public async Task<bool> HayLugarParaAbono(Guid idHorario)
     {
-        var hoy = DateTime.Now.Date;
+        var now = DateTime.Now;
 
-        var maxFecha = new DateTime(
-            hoy.Year,
-            hoy.Month,
-            DateTime.DaysInMonth(hoy.Year, hoy.Month));
-
-        if (hoy.Day >= 20)
-            maxFecha = maxFecha.AddDays(10);
+        var startOfNextMonth = new DateTime(now.Year, now.Month, 1).AddMonths(1);
+        var dateLimit = startOfNextMonth.AddDays(9).AddHours(23).AddMinutes(59);
 
         var turnos = await archivo.Turnos
             .Where(t =>
                 t.IdHorario == idHorario &&
-                t.Fecha.Date >= hoy &&
-                t.Fecha.Date <= maxFecha)
+                t.Fecha >= now &&
+                t.Fecha <= dateLimit)
             .ToListAsync();
 
         if (!turnos.Any())
-            throw new Exception("No existen turnos para ese horario.");
+            return false;
 
-        return turnos.All(t => t.cupo > 0);
+        return turnos.Count(t => t.mostrarEnHome && t.cupo > 0) >= 3;
     }
 }
