@@ -34,15 +34,14 @@ function AlumnosPage() {
   useEffect(() => {
     fetchAlumnos();
   }, []);
-
-  const toggleFiltro = () => {
+  
+const toggleFiltro = () => {
     const nuevo = !soloSuspendidos;
 
     setSoloSuspendidos(nuevo);
-    setSoloListaEspera(false);
 
     fetchAlumnos(nuevo ? "suspendidos" : "todos");
-  };
+};
 
 
   if (loading) return <p>Cargando...</p>;
