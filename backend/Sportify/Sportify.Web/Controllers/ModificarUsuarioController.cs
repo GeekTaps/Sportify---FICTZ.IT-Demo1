@@ -47,6 +47,10 @@ public class ModificarUsuarioController : ControllerBase
                 })
                 .ToList();
 
+            var userIdentity = await _context.Users.FindAsync(id);
+            bool suspendido = userIdentity?.Suspendido ?? false;
+            bool suspendidoPermanente = userIdentity?.SuspendidoPermanente ?? false;
+
             return Ok(new
             {
                 nombreCompleto = usuario.NombreCompleto,
@@ -54,7 +58,9 @@ public class ModificarUsuarioController : ControllerBase
                 dni = usuario.Dni,
                 fechaNacimiento = usuario.FechaNacimiento,
                 creditos = creditos,
-                abonos = abonos
+                abonos = abonos,
+                suspendido = suspendido,
+                suspendidoPermanente = suspendidoPermanente
             });
         }
         catch (ValidacionException ex)

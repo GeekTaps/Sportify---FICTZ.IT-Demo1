@@ -24,7 +24,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/activas/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -58,7 +59,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -92,7 +94,8 @@ function ReservasPage() {
     try {
       setMensaje("");
       const response = await fetch(
-        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}`
+        `http://localhost:5266/api/Reservas/usuario/anteriores/${user.id}?t=${new Date().getTime()}`,
+        { cache: "no-store" }
       );
 
       if (!response.ok) {
@@ -141,7 +144,7 @@ function ReservasPage() {
       );
       if (!res.ok) throw new Error("Error al obtener los detalles de la reserva.");
       const data = await res.json();
-      
+
       setReservaSeleccionada(data);
     } catch (err) {
       setErrorModal(err.message);
@@ -289,7 +292,7 @@ function ReservasPage() {
               </div>
             ) : (
               <div>
-                  {console.log(reservaSeleccionada)}
+                {console.log(reservaSeleccionada)}
                 <h2 style={{ marginTop: 0 }}>Detalle de Reserva</h2>
                 <p>
                   <strong>Actividad:</strong> {reservaSeleccionada.actividad}
@@ -308,38 +311,38 @@ function ReservasPage() {
                   {reservaSeleccionada.profesor}
                 </p>
                 <p>
-                 {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
+                  {reservaSeleccionada.paga ? "Confirmado ✅" : reservaSeleccionada.pagoSeña ? "Seña pagada 💰" : "Pendiente ⏳"}
                 </p>
-                
+
                 <p>
                   <strong>Monto:</strong> ${reservaSeleccionada.monto}
                 </p>
                 {reservaSeleccionada.pagoSeña && !reservaSeleccionada.paga && (
-  <button
-    className="btn btn-primary"
-    style={{ width: "100%", marginTop: "0.5rem" }}
-    onClick={async () => {
-      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idReserva: reservaSeleccionada.idReserva,
-          email: user.email
-        })
-      });
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.mensaje);
-        cerrarModal();
-        cargarReservasActivas();
-      } else {
-        alert(data.message || "Error al confirmar.");
-      }
-    }}
-  >
-    Pagar confirmación de reserva
-  </button>
-)}
+                  <button
+                    className="btn btn-primary"
+                    style={{ width: "100%", marginTop: "0.5rem" }}
+                    onClick={async () => {
+                      const response = await fetch("http://localhost:5266/api/pagos/confirmar-reserva", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          idReserva: reservaSeleccionada.idReserva,
+                          email: user.email
+                        })
+                      });
+                      const data = await response.json();
+                      if (response.ok) {
+                        alert(data.mensaje);
+                        cerrarModal();
+                        cargarReservasActivas();
+                      } else {
+                        alert(data.message || "Error al confirmar.");
+                      }
+                    }}
+                  >
+                    Pagar confirmación de reserva
+                  </button>
+                )}
                 {viendoHistorial && (
                   <p>
                     <strong>Asistencia:</strong> {reservaSeleccionada.asistio ? "Presente ✅" : "Ausente ❌"}
